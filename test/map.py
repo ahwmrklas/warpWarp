@@ -1,5 +1,6 @@
 from tkinter import *
 
+# HexaCanvas inherits from Canvas
 class HexaCanvas(Canvas):
     """ A canvas that provides a create-hexagone method """
     def __init__(self, master, *args, **kwargs):
@@ -75,8 +76,9 @@ class HexaCanvas(Canvas):
         if fill != None:
             self.create_polygon(point1, point2, point3, point4, point5, point6, fill=fill)
 
+# HexagonalGrid inherits from HexaCanvas
 class HexagonalGrid(HexaCanvas):
-    """ A grid whose each cell is hexagonal """
+    # A grid whose each cell is hexagonal
     def __init__(self, master, scale, grid_width, grid_height, *args, **kwargs):
 
         Δx     = (scale**2 - (scale/2.0)**2)**0.5
@@ -87,7 +89,9 @@ class HexagonalGrid(HexaCanvas):
         self.setHexaSize(scale)
 
     def setCell(self, xCell, yCell, *args, **kwargs ):
-        """ Create a content in the cell of coordinates x and y. Could specify options throught keywords : color, fill, color1, color2, color3, color4; color5, color6"""
+        # Create a content in the cell of coordinates x and y. Could specify
+        # options throught keywords : color, fill, color1, color2, color3,
+        # color4; color5, color6
 
         #compute pixel coordinate of the center of the cell:
         size = self.hexaSize
@@ -106,7 +110,7 @@ class HexagonalGrid(HexaCanvas):
 if __name__ == "__main__":
     tk = Tk()
 
-    grid = HexagonalGrid(tk, scale = 50, grid_width=4, grid_height=4)
+    grid = HexagonalGrid(tk, scale = 50, grid_width=8, grid_height=8)
     grid.grid(row=0, column=0, padx=5, pady=5)
 
     def correct_quit(tk):
@@ -116,14 +120,20 @@ if __name__ == "__main__":
     quit = Button(tk, text = "Quit", command = lambda :correct_quit(tk))
     quit.grid(row=1, column=0)
 
-    grid.setCell(0,0, fill='blue')
-    grid.setCell(1,0, fill='red')
-    grid.setCell(0,1, fill='green')
-    grid.setCell(1,1, fill='yellow')
-    grid.setCell(2,0, fill='cyan')
-    grid.setCell(0,2, fill='teal')
-    grid.setCell(2,1, fill='silver')
-    grid.setCell(1,2, fill='white')
-    grid.setCell(2,2, fill='gray')
+    #grid.setCell(0,0, fill='blue')
+    #grid.setCell(1,0, fill='red')
+    #grid.setCell(0,1, fill='green')
+    #grid.setCell(1,1, fill='yellow')
+    #grid.setCell(2,0, fill='cyan')
+    #grid.setCell(0,2, fill='teal')
+    #grid.setCell(2,1, fill='silver')
+    #grid.setCell(1,2, fill='white')
+    #grid.setCell(2,2, fill='gray')
+    #grid.setCell(3,3, fill='fuchsia')
+    #grid.setCell(4,4, fill='pink')
+
+    for x in range(0,7):
+        for y in range(0,7):
+            grid.setCell(x,y, fill='yellow')
 
     tk.mainloop()
