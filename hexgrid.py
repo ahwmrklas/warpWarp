@@ -31,10 +31,12 @@ class HexaCanvas(Canvas):
 
                     3
 
-        Each color is applied to the side that link the vertex with same number to its following.
+        Each color is applied to the side that link the vertex with same
+        number to its following.
         Ex : color 1 is applied on side (vertex1, vertex2)
 
-        Take care that tkinter ordinate axes is inverted to the standard euclidian ones.
+        Take care that tkinter ordinate axes is inverted to the standard
+        euclidian ones.
         Point on the screen will be horizontally mirrored.
         Displayed points:
 
@@ -115,3 +117,9 @@ class HexagonalGrid(HexaCanvas):
         pix_y = size + yCell*1.5*size
 
         self.create_hexagone(pix_x, pix_y, *args, **kwargs)
+
+    # PURPOSE: Draw the entire grid with the given color
+    def drawGrid(self, color):
+        for x in range(0, self.grid_width):
+            for y in range(0, self.grid_height):
+                self.setCell(x,y, fill=color)

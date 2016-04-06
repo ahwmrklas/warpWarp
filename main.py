@@ -26,7 +26,7 @@ def main():
     tk = Tk()
 
     # create a hex map that is the basis of our game display
-    hexMap = HexagonalGrid(tk, scale = 20, grid_width=10, grid_height=10)
+    hexMap = HexagonalGrid(tk, scale = 20, grid_width=30, grid_height=20)
 
     # Locate the hexmap on the tkinter "grid"
     hexMap.grid(row=0, column=0, padx=10, pady=10)
@@ -37,10 +37,8 @@ def main():
     # Locate the button on the tkinter "grid"
     quit.grid(row=1, column=0)
 
-    # display the whole hexMap. This should be moved in to a function inside hexMap
-    for x in range(0, hexMap.grid_width):
-        for y in range(0, hexMap.grid_height):
-            hexMap.setCell(x,y, fill='yellow')
+    # display the whole hexMap.
+    hexMap.drawGrid('blue')
 
     #hexMap.setCell(0,0, fill='blue')
     #hexMap.setCell(1,0, fill='red')
