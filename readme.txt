@@ -35,6 +35,7 @@ data model proposal:
 
 class Game():
     playerList
+    supplies
     activePlayer
     sockets
     map
