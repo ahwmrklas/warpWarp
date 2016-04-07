@@ -1,2 +1,55 @@
-This is the first file.
-It is a test
+rules: http://www.contrib.andrew.cmu.edu/usr/gc00/reviews/warpwar.html
+Map
+hexes
+planets
+warp lines
+
+Players
+decision makers
+    human
+    computer
+network connection
+
+Options:
+What to purchase
+How to use purchased items
+Where to place new units
+Where to move: Direction, how far
+Where to attack
+Which attack action and how powerful
+Retreat option
+
+Ships
+
+Combat
+
+Resources for building
+
+victory conditions
+-------------
+Print the grid/map
+
+
+------
+data model proposal:
+
+class Game():
+    playerList
+    activePlayer
+    sockets
+    map
+    turnNum
+    techLevel
+
+class Player():
+    shipList
+    baseList
+    buildPoints
+
+class Ship():
+    techLevel
+    shipStats
+    supplies
+    location
+
+class Base()

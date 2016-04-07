@@ -5,8 +5,8 @@ warp lines
 
 Players
 decision makers
-human
-computer
+    human
+    computer
 network connection
 
 Options:
@@ -27,3 +27,28 @@ Resources for building
 victory conditions
 -------------
 Print the grid/map
+
+
+------
+data model proposal:
+
+class Game():
+    playerList
+    activePlayer
+    sockets
+    map
+    turnNum
+    techLevel
+
+class Player():
+    shipList
+    baseList
+    buildPoints
+
+class Ship():
+    techLevel
+    shipStats
+    supplies
+    location
+
+class Base()
