@@ -8,6 +8,7 @@
 # imports
 from hexgrid import *
 from tkinter import *
+from xbm import TileContent
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
@@ -52,7 +53,7 @@ def main():
     #hexMap.setCell(2,2, fill='gray')
     #hexMap.setCell(3,3, fill='fuchsia')
 
-    hexMap.setCell(4,4, fill='pink')
+    hexMap.setCell(4,4, fill='pink', content=TileContent.BASIC_SHIP)
 
     # Let tkinter main loop run forever and handle input events
     tk.mainloop()
