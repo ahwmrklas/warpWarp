@@ -78,11 +78,8 @@ class HexaCanvas(Canvas):
         self.create_line(point5, point6, fill=color5, width=2)
         self.create_line(point6, point1, fill=color6, width=2)
 
-        #check for options
-        if content != TileContent.NO_ITEMS:
-            stipple = TileFiles[content]
-        else:
-            stipple = ''
+        #set stippling options.
+        stipple = TileFiles[content]
 
         if fill != None:
             self.create_polygon(point1, point2, point3, point4, point5, point6,
