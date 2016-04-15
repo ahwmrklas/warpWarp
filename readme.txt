@@ -1,3 +1,4 @@
+<pre>
 rules: http://www.contrib.andrew.cmu.edu/usr/gc00/reviews/warpwar.html
 Map
 hexes
@@ -54,3 +55,4 @@ class Ship():
     location
 
 class Base()
+</pre>
