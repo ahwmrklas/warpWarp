@@ -10,6 +10,8 @@ from hexgrid import *
 from tkinter import *
 from xbm import TileContent
 
+from samplegame import sampleGame
+
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
 # RETURNS: I don't know.

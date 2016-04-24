@@ -19,40 +19,40 @@ sampleGame = {
         'activePlayer': "dad"
     },
     'map':{'width':10, 'height':10},
-    'playerList': {
-        {'name':"dad"},
-        {'name':"Alex"},
-    },
+    'playerList': [
+        {'name': "dad"},
+        {'name': "Alex"},
+    ],
     'objects': {
-        'starList': {
+        'starList': [
             {'name':"Alpha",
              'location': {'x':1, 'y':2},
              'image':"alpha.png",
              'owner':"dad",
              'valueBP':3,
-             'visibility':{ {'player':"dad",  'percent':100},
+             'visibility':[ {'player':"dad",  'percent':100},
                             {'player':"alex", 'percent':30},
-                          },
+                          ],
             },
-        },
-        'thingList': {
+        ],
+        'thingList': [
             {'name':"AncientRelic",
              'location': {'x':4, 'y':7},
              'image':"relic.png",
              'owner':"none",
              'valueBP':0,
-             'visibility':{ {'player':"dad",  'percent':100},
+             'visibility':[ {'player':"dad",  'percent':100},
                             {'player':"alex", 'percent':30},
-                        },
+                          ],
             }
-        }
-        'shipList': {
+        ],
+        'shipList': [
             {'name': "first",
              'location': {'x':1, 'y':2},
              'image':"warpship.png",
-             'owner':"dad"
+             'owner':"dad",
              'techLevel': 1,
-             'moves': {'cur':3}   # relates to PowerDrive
+             'moves': {'cur':3},   # relates to PowerDrive
              'PD':{'max':5, 'cur':5},       # PowerDrive
              'WG':{'max':True, 'cur':True}, # Warp Generator
              'B': {'max':3, 'cur':3},       # Beams
@@ -66,23 +66,25 @@ sampleGame = {
              'SR':{'max':3, 'cur':3},       # System Ship Racks
              'H': {'max':1, 'cur':1},       # Holds (New)
              'R': {'max':1, 'cur':1},       # Repair Bays (New)
-             'visibility':{ {'player':"dad",  'percent':100},
+             'visibility':[ {'player':"dad",  'percent':100},
                             {'player':"alex", 'percent':30},
-                        },
+                          ],
             }
-        },
-        'warpLines': {
+        ],
+        'warpLineList': [
             {'start': "Alpha", 'end': "Beta"},
             {'start': "Beta",  'end': "Alpha"}
-        },
-        'starBaseList': {'name':"Babylon 5",
+        ],
+        'starBaseList': [
+            {'name':"Babylon 5",
              'location': {'x':4, 'y':7},
              'image':"relic.png",
              'owner':"none",
-        },
+            },
+        ],
     },
-    'history': {
+    'history': [
         {'cmd':eCmd.eStart, 'player':"dad"},
         {'cmd':eCmd.eBuild, 'player':"dad"},
-    }
+    ]
 }
