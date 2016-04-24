@@ -107,14 +107,7 @@ class HexagonalGrid(HexaCanvas):
         # color4; color5, color6
 
         #compute pixel coordinate of the center of the cell:
-        size = self.hexaSize
-        Δx = (size**2 - (size/2)**2)**0.5
-
-        pix_x = Δx + 2*Δx*xCell
-        if yCell%2 ==1 :
-            pix_x += Δx
-
-        pix_y = size + yCell*1.5*size
+        [pix_x, pix_y] = self.findPixel(xCell, yCell)
 
         self.create_hexagone(pix_x, pix_y, *args, **kwargs)
 
@@ -123,3 +116,25 @@ class HexagonalGrid(HexaCanvas):
         for x in range(0, self.grid_width):
             for y in range(0, self.grid_height):
                 self.setCell(x,y, fill=color)
+
+    #PURPOSE: Draw a ship on top of a hex grid
+    def drawShip(self, xCell, yCell):
+        offset = self.hexaSize * 3 / 4
+
+        #compute pixel coordinate of the center of the cell:
+        [pix_x, pix_y] = self.findPixel(xCell, yCell)
+        self.create_oval(pix_x - offset, pix_y - offset,
+                            pix_x + offset, pix_y + offset)
+
+
+    def findPixel(self, xCell, yCell):
+        size = self.hexaSize
+        Δx = (size**2 - (size/2)**2)**0.5
+
+        pix_x = Δx + 2*Δx*xCell
+        if yCell%2 ==1 :
+            pix_x += Δx
+
+        pix_y = size + yCell*1.5*size
+        return [pix_x, pix_y]
+
