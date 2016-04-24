@@ -9,6 +9,7 @@
 from hexgrid import *
 from tkinter import *
 from xbm import TileContent
+from dataModel import *
 
 from samplegame import sampleGame
 
@@ -54,9 +55,13 @@ def main():
     #hexMap.setCell(3,3, fill='fuchsia')
 
     hexMap.setCell(4,4, fill='pink', content=TileContent.BASIC_SHIP)
+    hexMap.drawShip(5,5)
+
+    foo = GameInfo(hexMap.grid_width, hexMap.grid_height, ["Alex", "Rex"])
 
     # Let tkinter main loop run forever and handle input events
     tk.mainloop()
+
 
 # Start the main function
 if __name__ == "__main__":
