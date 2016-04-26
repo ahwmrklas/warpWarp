@@ -117,14 +117,27 @@ class HexagonalGrid(HexaCanvas):
             for y in range(0, self.grid_height):
                 self.setCell(x,y, fill=color)
 
-    #PURPOSE: Draw a ship on top of a hex grid
-    def drawShip(self, xCell, yCell):
+    #PURPOSE: Draw a star on top of a hex grid
+    #RETURNS: Nothing
+    def drawStar(self, xCell, yCell):
         offset = self.hexaSize * 3 / 4
 
         #compute pixel coordinate of the center of the cell:
         [pix_x, pix_y] = self.findPixel(xCell, yCell)
-        self.create_oval(pix_x - offset, pix_y - offset,
-                            pix_x + offset, pix_y + offset)
+        #self.create_oval(pix_x - offset, pix_y - offset,
+        #                    pix_x + offset, pix_y + offset,
+        #                    fill="yellow")
+        self.photo = PhotoImage(file="resource/images/alpha.gif")
+        self.photo = self.photo.subsample(int(self.photo.width()/self.hexaSize))
+        self.create_image(pix_x,pix_y,image=self.photo)
+
+    #PURPOSE: display the star objects
+    #RETURNS: Nothing
+    def drawStars(self, starlist):
+        for star in starlist:
+            x = star['location']['x']
+            y = star['location']['y']
+            self.drawStar(x,y)
 
 
     def findPixel(self, xCell, yCell):

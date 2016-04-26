@@ -1,4 +1,6 @@
 from tkinter import *
+from xbm import TileContent
+from xbm import TileFiles
 
 # HexaCanvas inherits from Canvas
 class HexaCanvas(Canvas):
@@ -12,7 +14,10 @@ class HexaCanvas(Canvas):
         self.hexaSize = number
 
 
-    def create_hexagone(self, x, y, color = "black", fill="blue", color1=None, color2=None, color3=None, color4=None, color5=None, color6=None):
+    def create_hexagone(self, x, y, content = TileContent.NO_ITEMS,
+            color = "black", fill="blue",
+            color1=None, color2=None, color3=None, color4=None, color5=None,
+            color6=None):
         """ 
         Compute coordinates of 6 points relative to a center position.
         Point are numbered following this schema :
@@ -73,8 +78,14 @@ class HexaCanvas(Canvas):
         self.create_line(point5, point6, fill=color5, width=2)
         self.create_line(point6, point1, fill=color6, width=2)
 
+        #check for options
+        if content != TileContent.NO_ITEMS:
+            stipple = TileFiles[content]
+        else:
+            stipple = ''
+
         if fill != None:
-            self.create_polygon(point1, point2, point3, point4, point5, point6, fill=fill)
+            self.create_polygon(point1, point2, point3, point4, point5, point6, fill=fill, stipple=stipple)
 
 # HexagonalGrid inherits from HexaCanvas
 class HexagonalGrid(HexaCanvas):
@@ -134,6 +145,6 @@ if __name__ == "__main__":
 
     for x in range(0,7):
         for y in range(0,7):
-            grid.setCell(x,y, fill='yellow')
+            grid.setCell(x,y, TileContent.BASIC_SHIP, fill='yellow')
 
     tk.mainloop()
