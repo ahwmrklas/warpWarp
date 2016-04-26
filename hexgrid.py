@@ -119,7 +119,7 @@ class HexagonalGrid(HexaCanvas):
 
     #PURPOSE: Draw a star on top of a hex grid
     #RETURNS: Nothing
-    def drawStar(self, xCell, yCell):
+    def drawStar(self, xCell, yCell, imageStr):
         offset = self.hexaSize * 3 / 4
 
         #compute pixel coordinate of the center of the cell:
@@ -127,7 +127,7 @@ class HexagonalGrid(HexaCanvas):
         #self.create_oval(pix_x - offset, pix_y - offset,
         #                    pix_x + offset, pix_y + offset,
         #                    fill="yellow")
-        self.photo = PhotoImage(file="resource/images/alpha.gif")
+        self.photo = PhotoImage(file="resource/images/" + imageStr)
         self.photo = self.photo.subsample(int(self.photo.width()/self.hexaSize))
         self.create_image(pix_x,pix_y,image=self.photo)
 
@@ -137,7 +137,7 @@ class HexagonalGrid(HexaCanvas):
         for star in starlist:
             x = star['location']['x']
             y = star['location']['y']
-            self.drawStar(x,y)
+            self.drawStar(x,y, star['image'])
 
 
     def findPixel(self, xCell, yCell):
