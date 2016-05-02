@@ -117,28 +117,33 @@ class HexagonalGrid(HexaCanvas):
             for y in range(0, self.grid_height):
                 self.setCell(x,y, fill=color)
 
-    #PURPOSE: Draw a star on top of a hex grid
+    #PURPOSE: read the dictionary and display it
     #RETURNS: Nothing
-    def drawStar(self, xCell, yCell, imageStr):
-        offset = self.hexaSize * 3 / 4
+    def drawObjects(self, gameObjects):
+        self.photoList = []
+        self.drawObjectList(gameObjects['starList'])
+        self.drawObjectList(gameObjects['thingList'])
+        self.drawObjectList(gameObjects['shipList'])
+        #self.drawWarpLines(gameObjects['WarpLineList'])
+        self.drawObjectList(gameObjects['starBaseList'])
 
+    #PURPOSE: display a list of objects
+    #RETURNS: Nothing
+    def drawObjectList(self, objectList):
+        for obj in objectList:
+            x = obj['location']['x']
+            y = obj['location']['y']
+            self.drawObject(x,y, obj['image'])
+
+    #PURPOSE: Draw an object on top of a hex grid
+    #RETURNS: Nothing
+    def drawObject(self, xCell, yCell, imageStr):
         #compute pixel coordinate of the center of the cell:
         [pix_x, pix_y] = self.findPixel(xCell, yCell)
-        #self.create_oval(pix_x - offset, pix_y - offset,
-        #                    pix_x + offset, pix_y + offset,
-        #                    fill="yellow")
-        self.photo = PhotoImage(file="resource/images/" + imageStr)
-        self.photo = self.photo.subsample(int(self.photo.width()/self.hexaSize))
-        self.create_image(pix_x,pix_y,image=self.photo)
-
-    #PURPOSE: display the star objects
-    #RETURNS: Nothing
-    def drawStars(self, starlist):
-        for star in starlist:
-            x = star['location']['x']
-            y = star['location']['y']
-            self.drawStar(x,y, star['image'])
-
+        photo = PhotoImage(file="resource/images/" + imageStr)
+        self.photoList.append(
+                photo.subsample(int(photo.width()/self.hexaSize)))
+        self.create_image(pix_x,pix_y,image=self.photoList[-1])
 
     def findPixel(self, xCell, yCell):
         size = self.hexaSize
