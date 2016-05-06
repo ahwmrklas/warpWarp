@@ -11,6 +11,7 @@ from tkinter import *
 from xbm import TileContent
 from dataModel import *
 from samplegame import sampleGame
+from overlay import *
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
@@ -54,7 +55,8 @@ def main():
     #hexMap.setCell(3,3, fill='fuchsia')
 
     hexMap.setCell(4,4, fill='pink', content=TileContent.BASIC_SHIP)
-    hexMap.drawObjects(sampleGame['objects'])
+
+    hexMap.drawObjects(DrawArray(30, 20, sampleGame['objects']))
 
     foo = GameInfo(hexMap.grid_width, hexMap.grid_height, ["Alex", "Rex"])
 

@@ -119,25 +119,18 @@ class HexagonalGrid(HexaCanvas):
 
     #PURPOSE: read the dictionary and display it
     #RETURNS: Nothing
-    def drawObjects(self, gameObjects):
+    def drawObjects(self, drawArray):
         self.photoList = []
-        self.drawObjectList(gameObjects['starList'])
-        self.drawObjectList(gameObjects['thingList'])
-        self.drawObjectList(gameObjects['shipList'])
-        #self.drawWarpLines(gameObjects['WarpLineList'])
-        self.drawObjectList(gameObjects['starBaseList'])
-
-    #PURPOSE: display a list of objects
-    #RETURNS: Nothing
-    def drawObjectList(self, objectList):
-        for obj in objectList:
-            x = obj['location']['x']
-            y = obj['location']['y']
-            self.drawObject(x,y, obj['image'])
+        for x in range(self.grid_width):
+            for y in range (self.grid_height):
+                self.drawObject(x, y, drawArray.array[x][y][0])
 
     #PURPOSE: Draw an object on top of a hex grid
     #RETURNS: Nothing
     def drawObject(self, xCell, yCell, imageStr):
+        #did we get a realy image?
+        if imageStr == "":
+            return
         #compute pixel coordinate of the center of the cell:
         [pix_x, pix_y] = self.findPixel(xCell, yCell)
         photo = PhotoImage(file="resource/images/" + imageStr)
