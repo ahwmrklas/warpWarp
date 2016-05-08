@@ -1,4 +1,16 @@
 <pre>
+
+Get a copy of the repository:
+
+    git clone git@192.168.0.4:repos/warpWar
+
+You need "git" and a key.
+
+Generate a key like this.
+    ssh-keygen -C "<your email address"
+Then email dad the resulting file "id_rsa.pub"
+=========
+
 rules: http://www.contrib.andrew.cmu.edu/usr/gc00/reviews/warpwar.html
 Map
 hexes
