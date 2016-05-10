@@ -71,36 +71,36 @@ def main():
 
     '''
 
-    print test_xml
+    print(test_xml)
     deserialized1 = deserialize( test_xml )
-    #print deserialized1
+    #print(deserialized1)
     serialized1 = serialize( deserialized1 )
-    #print serialized1
+    #print(serialized1)
     deserialized2 = deserialize( serialized1 )
-    print
-    print type(deserialized1)
-    print
-    print deserialized1
+    print()
+    print(type(deserialized1))
+    print()
+    print(deserialized1)
     serialized2 = serialize( deserialized2 )
-    print
-    print serialized2
+    print()
+    print(serialized2)
 
     docList =  deserialized1['documents']
 
-    print
-    print type(docList)
-    print docList
+    print()
+    print(type(docList))
+    print(docList)
 
     doc = docList[0]
-    print
-    print type(doc)
-    print doc
-    print
-    print doc['title']
+    print()
+    print(type(doc))
+    print(doc)
+    print()
+    print(doc['title'])
 
     # compare using Python data structures
     if deserialized1 == deserialized2:
-        print "They are equal"
+        print("They are equal")
 
 
 if __name__ == '__main__':

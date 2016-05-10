@@ -101,8 +101,8 @@ def main():
     '''
     deserializer = XML2Py()
     python_object = deserializer.parse( xml_string )
-    print xml_string
-    print python_object
+    print(xml_string)
+    print(python_object)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,11 @@
 # class to handle game commands
 
+import sys
+sys.path.append("/home/ahw/views/warpWar/test")
+
+import XML2Py
+import Py2XML
+#from samplegame import sampleGame
 import samplegame
 
 # class to handle game commands
@@ -18,7 +24,7 @@ class gameserver:
     # PURPOSE: Return the xml representing the entire game
     # RETURNS: game state as an xml string
     def gameXml(self):
-        return "<myxml>"
+        return Py2XML.Py2XML().parse(samplegame.sampleGame, None)
 
     # PURPOSE: Called for class construction
     # RETURNS: true for properly parsed command

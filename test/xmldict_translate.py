@@ -152,5 +152,6 @@ if __name__ == '__main__':
         ]
     }
     
+    print(dict2xml(TEST_DICT))
     print(xml2dict(dict2xml(xml2dict(TEST_STRING))))
     print(dict2xml(xml2dict(dict2xml(TEST_DICT))))

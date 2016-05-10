@@ -111,8 +111,8 @@ def main():
     
     serializer = Py2XML()
     xml_string = serializer.parse( python_object )
-    print python_object
-    print xml_string
+    print(python_object)
+    print(xml_string)
 
 
 if __name__ == '__main__':
