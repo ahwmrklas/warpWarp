@@ -51,6 +51,7 @@ class HexaCanvas(Canvas):
         """
         size = self.hexaSize
         Δx = (size**2 - (size/2)**2)**0.5
+        self.Δx = Δx 
 
         point1 = (x+Δx, y+size/2)
         point2 = (x+Δx, y-size/2)
@@ -87,6 +88,7 @@ class HexaCanvas(Canvas):
             self.create_polygon(point1, point2, point3, point4, point5, point6,
                     fill=fill, stipple=stipple)
 
+
 # HexagonalGrid inherits from HexaCanvas
 class HexagonalGrid(HexaCanvas):
     # A grid whose each cell is hexagonal
@@ -99,6 +101,7 @@ class HexagonalGrid(HexaCanvas):
         height = 1.5 * scale * grid_height + 0.5 * scale
 
         HexaCanvas.__init__(self, master, background='white', width=width, height=height, *args, **kwargs)
+        self.bind("<Button-1>",self.clickCallback)
         self.setHexaSize(scale)
 
     def setCell(self, xCell, yCell, *args, **kwargs ):
@@ -148,4 +151,32 @@ class HexagonalGrid(HexaCanvas):
 
         pix_y = size + yCell*1.5*size
         return [pix_x, pix_y]
+
+    #placeholder for canvas onclick listener
+    def clickCallback(self, event):
+            print ("clicked at", event.x, event.y)
+            #who am I closest to? guess.
+            x_guess = int(event.x/ (2 * self.Δx))
+            y_guess = int(event.y / (1.5 * self.hexaSize))
+            print ("probably hex ", x_guess, y_guess)
+            #Who surrounds that hex? (They don't have to be real!)
+            guess = (x_guess,y_guess)
+            x_pix,y_pix = self.findPixel(x_guess,y_guess)
+            error = (x_pix - event.x)**2 + (y_pix - event.y)**2
+            for neighbor in [((y_guess%2),1),(1,0),((y_guess%2),-1),
+                    (y_guess%2-1,-1),(-1,0),(y_guess%2-1,1)]:
+                x_curr = x_guess + neighbor[0]
+                y_curr = y_guess + neighbor[1]
+                #Which one am I closest to? measure!
+                #find the pixel location
+                x_pix,y_pix = self.findPixel(x_curr,y_curr)
+                #pythagoras to the rescue!
+                if (error > (event.x - x_pix)**2 + (event.y - y_pix)**2):
+                    guess = (x_curr, y_curr)
+                    error = (event.x - x_pix)**2 + (event.y - y_pix)**2
+            #Am I real?
+            if (guess[0] >= 0 and guess[0] < self.grid_width and
+                    guess[1] >= 0 and guess[1] < self.grid_height):
+                self.setCell(guess[0], guess[1], fill='red')
+
 
