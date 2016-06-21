@@ -1,10 +1,17 @@
 #
 # Demo program to show how to connect to WarpWar server
 #
+
+import sys
+sys.path.append("/home/ahw/views/warpWar/test")
+
 import socket         # Import socket module
 import tkinter as tk
 import threading
 import queue as Q
+
+import XML2Py
+import Py2XML
 
 
 # Socket thread
@@ -90,6 +97,16 @@ class myWindow(threading.Thread):
     def sendMsg(self):
         # print(self.ip, self.port, self.msg)
         self.hCOM.sendCmd(self.ip.get(), int(self.port.get()), self.msg.get())
+
+    # PURPOSE: Send the new game command
+    # RETURNS: none
+    def newGame(self):
+        # print(self.ip, self.port, self.msg)
+        cmd  = { 'cmd' : {'cmd': "newgame", 'name': "foo"} }
+        sendXml = Py2XML.Py2XML().parse(cmd, None)
+        print(" rex ", sendXml)
+        self.hCOM.sendCmd(self.ip.get(), int(self.port.get()), sendXml)
+       
        
     # PURPOSE: Construct all the GUI junk
     # RETURNS: nothing
@@ -131,6 +148,9 @@ class myWindow(threading.Thread):
 
         tmp = tk.Button(self.root, text="Send", command=self.sendMsg)
         tmp.grid(row=5, column=1)
+
+        tmp = tk.Button(self.root, text="newgame", command=self.newGame)
+        tmp.grid(row=5, column=2)
 
         tmp = tk.Label(self.root, text="Resp Msg: ")
         tmp.grid(row=7, column=0)
