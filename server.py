@@ -25,7 +25,7 @@ class srvrThrd(threading.Thread):
         self.hGUI = hGui
         self.serverContinue = True
         self.gameserver = gameserver.gameserver()
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="ServerSvrThread")
         self.start()
 
     # PURPOSE: automatically called by base thread class, right?
@@ -61,7 +61,7 @@ class MyTkApp(threading.Thread):
     def __init__(self):
         self.Q = Q.Queue()
         self.hNET = None
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="ServerMyTkApp")
         self.start()
         
     # PURPOSE: Button handler. The Quit button

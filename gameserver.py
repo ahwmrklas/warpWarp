@@ -30,7 +30,12 @@ class gameserver:
     # PURPOSE: Called for class construction
     # RETURNS: true for properly parsed command
     def parseCmd(self, xmlString):
-        root = XML2Py.XML2Py().parse( xmlString )
+        try:
+            root = XML2Py.XML2Py().parse( xmlString )
+        except Exception as error:
+            print("XML parse error for ", xmlString, "\n")
+            return False
+
         cmd = root['cmd']
         cmdStr = cmd['cmd']
 

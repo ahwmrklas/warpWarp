@@ -22,7 +22,7 @@ class comThrd(threading.Thread):
     def __init__(self, hGui):
         self.Q = Q.Queue()
         self.hGUI = hGui
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="ClientComThrd")
         self.start()
 
     # PURPOSE: For external parties to send a "text" message
@@ -47,14 +47,23 @@ class comThrd(threading.Thread):
         ip = self.Q.get()
         port = self.Q.get()
         msg = self.Q.get()
+        returnMe = None
         print("client ", ip, port, msg, "\n")
-        s = socket.socket()
-        s.connect((ip, port))
-        s.send(msg.encode())
-        cmd = s.recv(1024)
-        print("client " + cmd.decode())
+        try:
+            s = socket.socket()
+            s.connect((ip, port))
+            s.send(msg.encode())
+            cmd = s.recv(4096)
+            xmlStr = cmd.decode()
+            print("client received (", len(xmlStr), "):\n")
+            # print(xmlStr)
+            self.hGUI.displayCmd(cmd)
+        except Exception as error:
+            returnMe = error
+            print("Sockect error: ", error, "\n")
+
         s.close()
-        self.hGUI.displayCmd(cmd)
+        return returnMe
 
     # PURPOSE: Do what is needed when server sends us a quit message
     # RETURNS: none
@@ -74,7 +83,7 @@ class comThrd(threading.Thread):
 
         print("client comThrd exiting")
 
-# GUI thread
+# GUI thread. This is only for test. The real GUI is the players UI
 class myWindow(threading.Thread):
 
     # PURPOSE: Called for class construction
@@ -82,7 +91,7 @@ class myWindow(threading.Thread):
     def __init__(self):
         self.Q = Q.Queue()        
         self.hCOM = comThrd(self)
-        threading.Thread.__init__(self)
+        threading.Thread.__init__(self, name="ClientMyWindow")
         self.start()
 
     # PURPOSE: Called back for quit. Clean up socket and self

@@ -11,6 +11,13 @@ Generate a key like this.
 Then email dad the resulting file "id_rsa.pub"
 =======
 
+Start the server and the client and the map
+python3 server.py &
+python3 client.py &
+python3 main.py &
+
+=======
+
 rules: http://www.contrib.andrew.cmu.edu/usr/gc00/reviews/warpwar.html
 Map
 hexes
