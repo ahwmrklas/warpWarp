@@ -3,18 +3,13 @@
 # This is a test GUI to drive the client and server communications
 #
 
-import sys
-sys.path.append("/home/ahw/views/warpWar/test")
-
 from client import comThrd
+from cmds import warpWarCmds
 
 import socket         # Import socket module
 import tkinter as tk
 import threading
 import queue as Q
-
-import XML2Py
-import Py2XML
 
 # GUI thread. This is only for test. The real GUI is the players UI
 class myWindow(threading.Thread):
@@ -44,9 +39,9 @@ class myWindow(threading.Thread):
     # RETURNS: none
     def newGame(self):
         # print(self.ip, self.port, self.msg)
-        cmd  = { 'cmd' : {'cmd': "newgame", 'name': "foo"} }
-        sendXml = Py2XML.Py2XML().parse(cmd, None)
-        print(" rex ", sendXml)
+        tmp = warpWarCmds()
+        sendXml = tmp.newGame("foo")
+        print(" client sending: ", sendXml)
         self.hCOM.sendCmd(self.ip.get(), int(self.port.get()), sendXml)
        
        
@@ -130,7 +125,7 @@ class myWindow(threading.Thread):
 # RETURNS: none?
 def main():
     lDLG = myWindow()
-    print("two threads created main program exit")
+    print("client: threads created main program exit")
 
 
 # Start the main function

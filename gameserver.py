@@ -27,7 +27,7 @@ class gameserver:
     def gameXml(self):
         return Py2XML.Py2XML().parse(self.game, None)
 
-    # PURPOSE: Called for class construction
+    # PURPOSE: Interpret XML command and do something
     # RETURNS: true for properly parsed command
     def parseCmd(self, xmlString):
         try:

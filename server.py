@@ -13,11 +13,7 @@ import tkinter as tk
 import threading
 import queue as Q
 import gameserver
-
-import sys
-sys.path.append("/home/ahw/views/warpWar/test")
-import XML2Py
-import Py2XML
+from cmds import warpWarCmds
 
 # server thread for sending data to and fro
 class srvrThrd(threading.Thread):
@@ -36,17 +32,17 @@ class srvrThrd(threading.Thread):
     # PURPOSE: For anyone to kill the thread
     # RETURNS: none
     def quit(self):
-        print("server Sending quit msg to server")
+        print("server: Sending quit msg to server")
         try:
             s = socket.socket()
             s.connect( (self.ipAddr, self.port) )
-            cmd  = { 'cmd' : {'cmd': "quit"} }
-            sendXml = Py2XML.Py2XML().parse(cmd, None)
+            tmp = warpWarCmds()
+            sendXml = tmp.quitGame()
 
             s.send(sendXml.encode())
             s.close()
         except:
-            print("Socket error. Only GUI closes")
+            print("server: Socket error. Only GUI closes")
 
 
     # PURPOSE: automatically called by base thread class, right?
@@ -71,4 +67,4 @@ class srvrThrd(threading.Thread):
            c.send(self.gameserver.gameXml().encode())
            c.close()
 
-        print("socket listen exiting")
+        print("server: socket listen exiting")

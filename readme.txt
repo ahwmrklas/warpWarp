@@ -12,8 +12,8 @@ Then email dad the resulting file "id_rsa.pub"
 =======
 
 Start the server and the client and the map
-python3 server.py &
-python3 client.py &
+python3 STest.py &
+python3 CTest.py &
 python3 main.py &
 
 =======
