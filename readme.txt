@@ -9,6 +9,12 @@ You need "git" and a key.
 Generate a key like this.
     ssh-keygen -C "your email address"
 Then email dad the resulting file "id_rsa.pub"
+Dad will append that file to the authorized keys on the "git" account.
+cat name.id_rsa.pub >> ~git/.ssh/authorized_keys
+
+You need to install python3 and git.
+smartgit works for windows but you still need the ssh keys. Possibly generate
+them on linux and install the private key on windows.
 =======
 
 Start the server and the client and the map

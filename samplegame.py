@@ -26,7 +26,7 @@ sampleGame = {
     'objects': {
         'starList': [
             {'name':"Alpha",
-             'location': {'x':1, 'y':2},
+             'location': {'x':1, 'y':3},
              'image':"alpha.png",
              'owner':"dad",
              'valueBP':3,
@@ -77,8 +77,8 @@ sampleGame = {
         ],
         'starBaseList': [
             {'name':"Babylon 5",
-             'location': {'x':4, 'y':7},
-             'image':"relic.png",
+             'location': {'x':4, 'y':8},
+             'image':"b_5.png",
              'owner':"none",
             },
         ],

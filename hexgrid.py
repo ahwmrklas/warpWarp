@@ -99,9 +99,11 @@ class HexagonalGrid(HexaCanvas):
         Δx     = (scale**2 - (scale/2.0)**2)**0.5
         width  = 2 * Δx * grid_width + Δx
         height = 1.5 * scale * grid_height + 0.5 * scale
+        self.clickCallBack = None
 
         HexaCanvas.__init__(self, master, background='white', width=width, height=height, *args, **kwargs)
-        self.bind("<Button-1>",self.clickCallback)
+        self.bind("<Button-1>", self.clickCallback)
+        # self.bind("<Motion>", self.motion)
         self.setHexaSize(scale)
 
     def setCell(self, xCell, yCell, *args, **kwargs ):
@@ -131,7 +133,7 @@ class HexagonalGrid(HexaCanvas):
     #PURPOSE: Draw an object on top of a hex grid
     #RETURNS: Nothing
     def drawObject(self, xCell, yCell, imageStr):
-        #did we get a realy image?
+        #did we get a real image?
         if imageStr == "":
             return
         #compute pixel coordinate of the center of the cell:
@@ -151,6 +153,10 @@ class HexagonalGrid(HexaCanvas):
 
         pix_y = size + yCell*1.5*size
         return [pix_x, pix_y]
+
+    def setClickCallBack(self, func, private):
+        self.clickCallBack = func
+        self.clickCallBackPrivate = private
 
     #placeholder for canvas onclick listener
     def clickCallback(self, event):
@@ -177,6 +183,9 @@ class HexagonalGrid(HexaCanvas):
             #Am I real?
             if (guess[0] >= 0 and guess[0] < self.grid_width and
                     guess[1] >= 0 and guess[1] < self.grid_height):
-                self.setCell(guess[0], guess[1], fill='red')
+                if (self.clickCallBack is not None):
+                    self.clickCallBack(self.clickCallBackPrivate, guess[0], guess[1])
 
-
+    #placeholder for canvas motion listener
+    def motion(self, event):
+        print ("moved ", event.x, event.y)
