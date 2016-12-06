@@ -26,6 +26,7 @@ sampleGame = {
     'objects': {
         'starList': [
             {'name':"Alpha",
+             'type': "star",
              'location': {'x':1, 'y':3},
              'image':"alpha.png",
              'owner':"dad",
@@ -37,6 +38,7 @@ sampleGame = {
         ],
         'thingList': [
             {'name':"AncientRelic",
+             'type': "special",
              'location': {'x':4, 'y':7},
              'image':"relic.png",
              'owner':"none",
@@ -48,6 +50,7 @@ sampleGame = {
         ],
         'shipList': [
             {'name': "first",
+             'type': "ship",
              'location': {'x':1, 'y':2},
              'image':"warpship.png",
              'owner':"dad",
@@ -71,16 +74,17 @@ sampleGame = {
                           ],
             }
         ],
-        'warpLineList': [
-            {'start': "Alpha", 'end': "Beta"},
-            {'start': "Beta",  'end': "Alpha"}
-        ],
         'starBaseList': [
-            {'name':"Babylon 5",
+            {'name': "Babylon 5",
+             'type': "base",
              'location': {'x':4, 'y':8},
              'image':"b_5.png",
              'owner':"none",
             },
+        ],
+        'warpLineList': [
+            {'start': "Alpha", 'end': "Beta"},
+            {'start': "Beta",  'end': "Alpha"}
         ],
     },
     'history': [

@@ -83,14 +83,14 @@ def clickHex(tkRoot, x, y):
     # Find all of the things located at x,y
     lists = tkRoot.game['objects']
     starList = lists['starList']
+    starBaseList = lists['starBaseList']
     thingList = lists['thingList']
     shipList = lists['shipList']
-    starBaseList = lists['starBaseList']
     xyList = []
-    xyList.append(findObjectsAt(starList, x, y))
-    xyList.append(findObjectsAt(thingList, x, y))
-    xyList.append(findObjectsAt(shipList, x, y))
-    xyList.append(findObjectsAt(starBaseList, x, y))
+    xyList.extend(findObjectsAt(starList, x, y))
+    xyList.extend(findObjectsAt(thingList, x, y))
+    xyList.extend(findObjectsAt(shipList, x, y))
+    xyList.extend(findObjectsAt(starBaseList, x, y))
 
     hexInfo(tkRoot, xyList)
 

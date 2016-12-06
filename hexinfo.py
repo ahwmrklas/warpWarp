@@ -3,7 +3,8 @@
 # Must give the location (the x,y or some sort of class with all the
 # hex info?) And of course must give the info
 
-from tkinter import *
+import tkinter as tk
+from tkinter import ttk
 from tkinter.simpledialog import *
 
 class hexInfo(Dialog):
@@ -14,26 +15,50 @@ class hexInfo(Dialog):
         self.objList = objList
         Dialog.__init__(self, master)
 
+    # PURPOSE: Override base class so we don't display any buttons
+    # RETURNS:
+    #def buttonbox(self):
+    #    pass
+
     # PURPOSE:
     # RETURNS:
     def body(self, master):
 
+        tree = ttk.Treeview(master, columns=['Owner', 'Description'])
+        tree.heading('#0', text='Name', anchor=tk.W)
+        tree.heading('Owner', text='Owner', anchor=tk.W)
+        tree.heading('Description', text='Description', anchor=tk.W)
+        tree.column('#0', width=150)
+        tree.column('Owner', width=80)
+        tree.column('Description', width=200)
+
+        tree.grid(row=0)
         for entry in self.objList:
-            print(entry)
-        Label(master, text="First:").grid(row=0)
-        Label(master, text="Second:").grid(row=1)
+            if entry:
+                print(entry)
 
-        self.e1 = Entry(master)
-        self.e2 = Entry(master)
+                # Shrink the image (and I needed self.photo instead of photo
+                # Something online suggested a tk bug?)
+                self.photo = tk.PhotoImage(file="resource/images/" + entry['image'])
+                self.photo = self.photo.subsample(int(self.photo.width()/20))
 
-        self.e1.grid(row=0, column=1)
-        self.e2.grid(row=1, column=1)
+                base = tree.insert("", 'end', image=self.photo,
+                                   text=entry['name'],
+                                   values=[entry['owner'], entry['type']])
+                if entry['type'] == 'ship':
+                    title = "techLevel " + str(entry['techLevel'])
+                    text1 =  "Moves left: " + str(entry['moves']['cur'])
+                    text2 =  "PD: " +  str(entry['PD']['cur']) + "(" + str(entry['PD']['max']) + ")"
+                    line = tree.insert(base, 'end',
+                                       text=title,
+                                       values=["", text1])
+                    line = tree.insert(base, 'end',
+                                       text="",
+                                       values=["", text2])
 
-        return self.e1 # initial focus
+        return tree # initial focus
 
     # PURPOSE:
     # RETURNS:
     def apply(self):
-        first = int(self.e1.get())
-        second = int(self.e2.get())
-        print(first, second) # or something
+        print("nothing to apply")
