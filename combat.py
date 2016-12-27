@@ -100,14 +100,53 @@ class combat(Dialog):
 
                 CurPD = entry['PD']['cur']
                 text = "PowerDrive:" + str(CurPD) + " of " + str(entry['PD']['max'])
-                PD = Label(shipFrame, text=text)
-                PD.pack()
+                tmp = Label(shipFrame, text=text)
+                tmp.pack()
 
                 tacticVar = StringVar(shipFrame)
                 tacticVar.set("choose")
 
+                tmp = Label(shipFrame, text="Move")
+                tmp.pack()
                 Drive = Spinbox(shipFrame, from_=0, to=CurPD)
                 Drive.pack()
+
+                CurB = entry['B']['cur']
+                text = "Beams:" + str(CurB) + " of " + str(entry['B']['max'])
+                tmp = Label(shipFrame, text=text)
+                tmp.pack()
+                Beams = Spinbox(shipFrame, from_=0, to=CurB)
+                Beams.pack()
+
+                CurS = entry['S']['cur']
+                text = "Screens:" + str(CurS) + " of " + str(entry['S']['max'])
+                tmp = Label(shipFrame, text=text)
+                tmp.pack()
+                Screens = Spinbox(shipFrame, from_=0, to=CurS)
+                Screens.pack()
+
+                CurM = entry['M']['cur']
+                text = "Missiles:" + str(CurM) + " of " + str(entry['M']['max'])
+                tmp = Label(shipFrame, text=text)
+                tmp.pack()
+
+                MaxT = entry['T']['max']
+                CurT = entry['T']['cur']
+                # Can't fire more tubes than missiles (or PD)
+                CurT = min(CurT, CurM, CurPD)
+                Tubes = []
+                for i in range(0, CurT):
+                    tmp = Label(shipFrame, text="Tube_" + str(i+1))
+                    tmp.pack()
+                    Tubes.append(Spinbox(shipFrame, from_=0, to=99))
+                    Tubes[i].pack()
+
+                # User feedback showing all their tubes can't be used
+                for i in range(CurT, MaxT):
+                    tmp = Label(shipFrame, text="Tube_" + str(i+1))
+                    tmp.pack()
+                    Tubes.append(Spinbox(shipFrame, from_=0, to=99, state = DISABLED))
+                    Tubes[i].pack()
 
                 tactic = OptionMenu(shipFrame, tacticVar, "attack", "dodge", "retreat")
                 tactic.pack()
