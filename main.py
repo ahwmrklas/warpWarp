@@ -69,6 +69,7 @@ def addMenus(tkRoot):
     tkRoot.config(menu=menuBar)
 
 
+
 # PURPOSE: Just make a function out of the main code. It doesn't
 #          seem right without that.
 # RETURNS: ?? hmmm
@@ -91,7 +92,7 @@ def main():
     
     updateMap(tkRoot, hexMap, sampleGame)
 
-    hexMove(hexMap, tkRoot, "first")
+    setupMovement(hexMap, tkRoot)
     foo = GameInfo(hexMap.grid_width, hexMap.grid_height, sampleGame['playerList'])
 
     # Let tkinter main loop run forever and handle input events

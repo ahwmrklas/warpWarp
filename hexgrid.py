@@ -103,6 +103,7 @@ class HexagonalGrid(HexaCanvas):
 
         HexaCanvas.__init__(self, master, background='white', width=width, height=height, *args, **kwargs)
         self.bind("<Button-1>", self.clickCallback)
+        self.bind("<Button-3>", self.rightClickCallback)
         # self.bind("<Motion>", self.motion)
         self.setHexaSize(scale)
 
@@ -152,23 +153,49 @@ class HexagonalGrid(HexaCanvas):
             pix_x += Δx
 
         pix_y = size + yCell*1.5*size
+        pix_x = int(pix_x)
+        pix_y = int(pix_y)
         return [pix_x, pix_y]
 
     def setPrivateCallBack(self, func, private):
         self.externalCallBack = func
         self.externalPrivateData = private
 
+    def getPrivateCallBack(self):
+        return self.externalCallBack, self.externalPrivateData
+
+    def setRightPrivateCallBack(self, func, private, needsRoot = False):
+        self.externalRightCallBack = func
+        self.externalRightPrivateData = private
+        self.rightClickNeedsRoot = needsRoot
+
     #placeholder for canvas onclick listener
     def clickCallback(self, event):
-            print ("clicked at", event.x, event.y)
+        x,y = self.getHexForPix(event.x, event.y)
+        if x >= 0 and y >= 0: 
+            if (self.externalCallBack is not None):
+                self.externalCallBack(self.externalPrivateData, x, y)
+
+    #placeholder for canvas onclick listener
+    def rightClickCallback(self, event):
+        x,y = self.getHexForPix(event.x, event.y)
+        if x >= 0 and y >= 0: 
+            if (self.externalRightCallBack is not None):
+                if (self.rightClickNeedsRoot):
+                    self.externalRightCallBack(self.externalRightPrivateData, event.x_root, event.y_root, x, y)
+                else:
+                    self.externalRightCallBack(self.externalRightPrivateData, x, y)
+
+    def getHexForPix(self, x, y):
+            print ("clicked at", x, y)
             #who am I closest to? guess.
-            x_guess = int(event.x/ (2 * self.Δx))
-            y_guess = int(event.y / (1.5 * self.hexaSize))
+            x_guess = int(x/ (2 * self.Δx))
+            y_guess = int(y / (1.5 * self.hexaSize))
             print ("probably hex ", x_guess, y_guess)
             #Who surrounds that hex? (They don't have to be real!)
             guess = (x_guess,y_guess)
             x_pix,y_pix = self.findPixel(x_guess,y_guess)
-            error = (x_pix - event.x)**2 + (y_pix - event.y)**2
+            error = (x_pix - x)**2 + (y_pix - y)**2
             for neighbor in [((y_guess%2),1),(1,0),((y_guess%2),-1),
                     (y_guess%2-1,-1),(-1,0),(y_guess%2-1,1)]:
                 x_curr = x_guess + neighbor[0]
@@ -177,14 +204,16 @@ class HexagonalGrid(HexaCanvas):
                 #find the pixel location
                 x_pix,y_pix = self.findPixel(x_curr,y_curr)
                 #pythagoras to the rescue!
-                if (error > (event.x - x_pix)**2 + (event.y - y_pix)**2):
+                if (error > (x - x_pix)**2 + (y - y_pix)**2):
                     guess = (x_curr, y_curr)
-                    error = (event.x - x_pix)**2 + (event.y - y_pix)**2
+                    error = (x - x_pix)**2 + (y - y_pix)**2
             #Am I real?
             if (guess[0] >= 0 and guess[0] < self.grid_width and
                     guess[1] >= 0 and guess[1] < self.grid_height):
-                if (self.externalCallBack is not None):
-                    self.externalCallBack(self.externalPrivateData, guess[0], guess[1])
+                return guess[0], guess[1]
+            else:
+                return -1,-1
+
 
     #placeholder for canvas motion listener
     def motion(self, event):
