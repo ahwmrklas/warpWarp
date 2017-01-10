@@ -155,8 +155,8 @@ class HexagonalGrid(HexaCanvas):
         return [pix_x, pix_y]
 
     def setClickCallBack(self, func, private):
-        self.clickCallBack = func
-        self.clickCallBackPrivate = private
+        self.externalCallBack = func
+        self.externalPrivateData = private
 
     #placeholder for canvas onclick listener
     def clickCallback(self, event):
@@ -183,8 +183,8 @@ class HexagonalGrid(HexaCanvas):
             #Am I real?
             if (guess[0] >= 0 and guess[0] < self.grid_width and
                     guess[1] >= 0 and guess[1] < self.grid_height):
-                if (self.clickCallBack is not None):
-                    self.clickCallBack(self.clickCallBackPrivate, guess[0], guess[1])
+                if (self.externalCallBack is not None):
+                    self.externalCallBack(self.externalPrivateData, guess[0], guess[1])
 
     #placeholder for canvas motion listener
     def motion(self, event):
