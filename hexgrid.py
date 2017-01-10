@@ -154,7 +154,7 @@ class HexagonalGrid(HexaCanvas):
         pix_y = size + yCell*1.5*size
         return [pix_x, pix_y]
 
-    def setClickCallBack(self, func, private):
+    def setPrivateCallBack(self, func, private):
         self.externalCallBack = func
         self.externalPrivateData = private
 
