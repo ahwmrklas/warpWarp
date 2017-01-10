@@ -19,7 +19,7 @@ def main():
 
     root = tk.Tk()
     root.title("testCombat")
-    combat(root, shipList, [])
+    combat(root, shipList, shipList)
     root.mainloop()
 
 # Start the main function
