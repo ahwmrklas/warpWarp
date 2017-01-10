@@ -127,6 +127,8 @@ class combat(Dialog):
     # RETURNS:
     def body(self, master):
 
+        master.pack(fill=BOTH, expand=1)
+
         panes = tk.PanedWindow(master, orient="horizontal")
         panes.pack(fill=BOTH, expand=1)
         #panes.grid_rowconfigure(0, weight = 1)
