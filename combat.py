@@ -23,21 +23,17 @@ class combat(Dialog):
         for ship in enemyList:
             targetList.append(ship["name"])
 
-        tmp = Label(shipFrame, text="Target: ")
-        tmp.pack()
-
         if (len(targetList) > 0):
             targetVar = StringVar(shipFrame)
-            targetVar.set("choose")
+            targetVar.set("target")
             target = OptionMenu(shipFrame, targetVar, *targetList)
-            target.pack()
 
         # since this is called multiple times I assume I need
         # to record something so I know which
         # target selector is which. (which tube? or beam?)
         # So this will probably change. This is really just
         # a reminder return
-        return targetVar
+        return target
 
     # PURPOSE:
     # RETURNS:
@@ -58,39 +54,52 @@ class combat(Dialog):
         #self.photo = self.photo.subsample(int(self.photo.width()/200))
         w = Canvas(shipFrame, width=50, height=50)
         w.create_image((0,0), image=self.photo)
-        w.pack(expand=True, fill=BOTH)
+        w.pack()
 
         CurPD = ship['PD']['cur']
         text = "PowerDrive:" + str(CurPD) + " of " + str(ship['PD']['max'])
-        tmp = Label(shipFrame, text=text)
-        tmp.pack()
+        powerFrame = LabelFrame(shipFrame,
+                                 text=text,
+                                 bg="blue", bd=1, relief="sunken")
+        powerFrame.pack()
 
-        tacticVar = StringVar(shipFrame)
-        tacticVar.set("choose")
+        tacticVar = StringVar(powerFrame)
+        tacticVar.set("tactic")
 
-        tmp = Label(shipFrame, text="Move")
-        tmp.pack()
-        Drive = Spinbox(shipFrame, from_=0, to=CurPD)
-        Drive.pack()
+        tmp = Label(powerFrame, text="Move")
+        tmp.grid(row=2, column=0)
+        Drive = Spinbox(powerFrame, width=3, from_=0, to=CurPD)
+        Drive.grid(row=2, column=1)
 
         CurB = ship['B']['cur']
         text = "Beams:" + str(CurB) + " of " + str(ship['B']['max'])
-        tmp = Label(shipFrame, text=text)
-        tmp.pack()
-        Beams = Spinbox(shipFrame, from_=0, to=CurB)
-        Beams.pack()
+        tmp = Label(powerFrame, text=text)
+        tmp.grid(row=3, column=0)
+        Beams = Spinbox(powerFrame, width=3, from_=0, to=CurB)
+        Beams.grid(row=3, column=1)
+
+        tmp = Label(powerFrame, text="Target: ")
+        tmp.grid(row=3, column=2)
+        target = self.targetList(powerFrame, enemyList)
+        target.grid(row=3, column=3)
 
         CurS = ship['S']['cur']
         text = "Screens:" + str(CurS) + " of " + str(ship['S']['max'])
-        tmp = Label(shipFrame, text=text)
-        tmp.pack()
-        Screens = Spinbox(shipFrame, from_=0, to=CurS)
-        Screens.pack()
+        tmp = Label(powerFrame, text=text)
+        tmp.grid(row=4, column=0)
+        Screens = Spinbox(powerFrame, width=3, from_=0, to=CurS)
+        Screens.grid(row=4, column=1)
+
+        tacticList = ["attack", "dodge", "retreat"]
+        tactic = OptionMenu(powerFrame, tacticVar, *tacticList)
+        tactic.grid(row=5, column=0)
 
         CurM = ship['M']['cur']
         text = "Missiles:" + str(CurM) + " of " + str(ship['M']['max'])
-        tmp = Label(shipFrame, text=text)
-        tmp.pack()
+        missleFrame = LabelFrame(shipFrame,
+                                 text=text,
+                                 bg="blue", bd=1, relief="sunken")
+        missleFrame.pack()
 
         MaxT = ship['T']['max']
         CurT = ship['T']['cur']
@@ -98,25 +107,22 @@ class combat(Dialog):
         CurT = min(CurT, CurM, CurPD)
         Tubes = []
         for i in range(0, CurT):
-            tmp = Label(shipFrame, text="Tube_" + str(i+1))
-            tmp.pack()
-            Tubes.append(Spinbox(shipFrame, from_=0, to=99))
-            Tubes[i].pack()
-            self.targetList(shipFrame, enemyList)
+            tmp = Label(missleFrame, text="Tube_" + str(i+1))
+            tmp.grid(row=i, column=0)
+            Tubes.append(Spinbox(missleFrame, width=3, from_=0, to=99))
+            Tubes[i].grid(row=i, column=1)
+            tmp = Label(missleFrame, text="Target: ")
+            tmp.grid(row=i, column=2)
+            target = self.targetList(missleFrame, enemyList)
+            target.grid(row=i, column=3)
 
         # User feedback showing all their tubes can't be used
         for i in range(CurT, MaxT):
-            tmp = Label(shipFrame, text="Tube_" + str(i+1))
-            tmp.pack()
-            Tubes.append(Spinbox(shipFrame,
-                                 from_=0, to=99, state = DISABLED))
-            Tubes[i].pack()
-
-        tacticList = ["attack", "dodge", "retreat"]
-        tactic = OptionMenu(shipFrame, tacticVar, *tacticList)
-        tactic.pack()
-
-        self.targetList(shipFrame, enemyList)
+            tmp = Label(missleFrame, text="Tube_" + str(i+1))
+            tmp.grid(row=i, column=0)
+            Tubes.append(Spinbox(missleFrame,
+                                 width=3, from_=0, to=99, state = DISABLED))
+            Tubes[i].grid(row=i, column=1)
 
     # PURPOSE: Override base class so we don't display any buttons
     # RETURNS:
