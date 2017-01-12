@@ -1,6 +1,7 @@
 from tkinter import *
 from xbm import TileContent
 from xbm import TileFiles
+from ijk import *
 
 # HexaCanvas inherits from Canvas
 class HexaCanvas(Canvas):
@@ -179,6 +180,7 @@ class HexagonalGrid(HexaCanvas):
     #placeholder for canvas onclick listener
     def rightClickCallback(self, event):
         x,y = self.getHexForPix(event.x, event.y)
+        i,j,k = XYtoIJK(x,y)
         if x >= 0 and y >= 0: 
             if (self.externalRightCallBack is not None):
                 if (self.rightClickNeedsRoot):

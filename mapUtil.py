@@ -36,6 +36,7 @@ def initMap(tkRoot, game):
 # RETURN: none
 def updateMap(tkRoot, hexMap, game):
 
+    hexMap.drawGrid('blue')
     dim = game['map']
     lists = game['objects']
     starList = lists['starList']

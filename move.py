@@ -8,6 +8,7 @@ from tkinter import *
 from xbm import TileContent
 from dataModel import *
 from mapUtil import *
+from ijk import *
 
 class menuMover:
     def __init__(self, private, x, y, shipMove):
@@ -17,10 +18,14 @@ class menuMover:
         self.startY = y
         self.movement = shipMove
     def __call__(self):
-        print (self.startX)
-        print (self.startY)
-        print (self.movement)
         self.hexGrid.setPrivateCallBack(moveOnClick, self.private)
+        startI,startJ,startK = XYtoIJK(self.startX, self.startY)
+        for i in range(-self.movement,self.movement + 1):
+            for j in range(-self.movement,self.movement + 1):
+                for k in range(-self.movement,self.movement + 1):
+                    if i+j+k==0:
+                        x,y = IJKtoXY(startI + i,startJ + j,startK + k)
+                        self.hexGrid.setCell(x,y,fill=None,color1='Green',color2='Green',color3='Green',color4='Green',color5='Green',color6='Green')
 
 #set the new onclick listener
 def setupMovement(hexGrid, tkRoot):
@@ -30,8 +35,6 @@ def setupMovement(hexGrid, tkRoot):
     # create a menu
     def do_popup(private, root_x, root_y, hex_x, hex_y):
         # display the popup menu
-        print (root_x)
-        print (root_y)
         popup = Menu(tkRoot, tearoff=0)
         popup.add_command(label="Ships in this sector:")
         for ship in tkRoot.game['objects']['shipList']:
@@ -64,7 +67,11 @@ def moveOnClick(private, x, y):
             if (abs(x - cur_x) + abs(y - cur_y) <= moveLeft):
                 ship['location']['x'] = x
                 ship['location']['y'] = y
-                ship['PD']['cur'] = ship['PD']['cur'] - (abs(x - cur_x) + abs(y - cur_y))
+                #find the ijk stuff for decrementing the right number of moves
+                si,sj,sk = XYtoIJK(x,y)
+                fi,fj,fk = XYtoIJK(cur_x,cur_y)
+                delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+                ship['PD']['cur'] = ship['PD']['cur'] - delta
 
                 updateMap(tkRoot, hexGrid, tkRoot.game)
 
