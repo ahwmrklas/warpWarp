@@ -64,13 +64,13 @@ def moveOnClick(private, x, y):
             cur_x = ship['location']['x']
             cur_y = ship['location']['y']
 
-            if (abs(x - cur_x) + abs(y - cur_y) <= moveLeft):
+            si,sj,sk = XYtoIJK(x,y)
+            fi,fj,fk = XYtoIJK(cur_x,cur_y)
+            delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+            if (delta <= moveLeft):
                 ship['location']['x'] = x
                 ship['location']['y'] = y
                 #find the ijk stuff for decrementing the right number of moves
-                si,sj,sk = XYtoIJK(x,y)
-                fi,fj,fk = XYtoIJK(cur_x,cur_y)
-                delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
                 ship['PD']['cur'] = ship['PD']['cur'] - delta
 
                 updateMap(tkRoot, hexGrid, tkRoot.game)
