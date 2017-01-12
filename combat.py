@@ -50,18 +50,23 @@ class combat(Dialog):
 
         # Shrink the image (and I needed self.photo instead of photo
         # Something online suggested a tk bug?)
+        #self.photo = tk.PhotoImage(file="resource/images/" + "b_5.png")
         self.photo = tk.PhotoImage(file="resource/images/" + ship['image'])
+        self.photo = self.photo.zoom(3)
         #self.photo = self.photo.subsample(int(self.photo.width()/200))
-        w = Canvas(shipFrame, width=50, height=50)
-        w.create_image((0,0), image=self.photo)
-        w.pack()
+        w = Canvas(shipFrame, relief=SUNKEN, width='6c', height='4c', bg="pink")
+        scaleW = int(self.photo.width()/w.winfo_reqwidth())
+        scaleH = int(self.photo.height()/w.winfo_reqheight())
+        self.photo = self.photo.subsample(scaleW, scaleH)
+        w.create_image(0,0, anchor=NW, image=self.photo)
+        w.pack(fill=BOTH, expand=1)
 
         CurPD = ship['PD']['cur']
         text = "PowerDrive:" + str(CurPD) + " of " + str(ship['PD']['max'])
         powerFrame = LabelFrame(shipFrame,
                                  text=text,
                                  bg="blue", bd=1, relief="sunken")
-        powerFrame.pack()
+        powerFrame.pack(fill=BOTH, expand=1)
 
         tacticVar = StringVar(powerFrame)
         tacticVar.set("tactic")
@@ -99,7 +104,7 @@ class combat(Dialog):
         missleFrame = LabelFrame(shipFrame,
                                  text=text,
                                  bg="blue", bd=1, relief="sunken")
-        missleFrame.pack()
+        missleFrame.pack(fill=BOTH, expand=1)
 
         MaxT = ship['T']['max']
         CurT = ship['T']['cur']
