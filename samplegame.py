@@ -78,8 +78,9 @@ sampleGame = {
             {'name': "Babylon 5",
              'type': "base",
              'location': {'x':4, 'y':8},
-             'image':"b_5.png",
-             'owner':"none",
+             'image': "b_5.png",
+             'owner': "Alex",
+             'stockpile': 15
             },
         ],
         'warpLineList': [
