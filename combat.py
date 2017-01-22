@@ -29,31 +29,75 @@ class combat(Dialog):
     # PURPOSE:
     # RETURNS:
     def disableBeamAndScreen(self):
+        print("disableBeamAndScreen")
         for w in self.energyFrame.winfo_children():
             w.configure(state="disable")
 
-    # PURPOSE:
+    # PURPOSE: Knowing how many and which tubes can be enabled is very
+    #          tricky.
+    #     don't enable tubes which are damaged
+    #     only enable enough tubes for the # of missiles we have
+    #     only enable enough tubes that we can power
+    #       So if available power goes down (more power was used to move)
+    #       we need to pick a tube to disable ... well, we better not pick
+    #       a tube that is already in use!
+    #         
     # RETURNS:
     def enableTubes(self):
         print("enableTubes")
+        available = self.availablePower()
+        usedT = self.getTubesUsed()
+
+        CurM  = self.ship['M']['cur'] # # of missiles available
+        MaxT  = self.ship['T']['max'] # Total tubes, even damaged
+        CurT  = self.ship['T']['cur'] # current undamaged tubes
+
+        tubesToEnable = min(CurT, CurM, available+usedT)
+        if (usedT > tubesToEnable):
+            print("ERROR:", usedT, ">", tubesToEnable)
+            assert()
+
+        tubesToDisable = MaxT - tubesToEnable
+        print(" To Enable", tubesToEnable)
+        print(" To Disable", tubesToDisable)
+
         # We shouldn't re-enable ALL of the tubes
         # check .functionalTube
-        for w in self.missleFrame.winfo_children():
-            if (w.winfo_class() == "Spinbox"):
-                if (w.functionalTube):
-                    w.configure(state="readonly")
+        for tube in reversed(self.Tubes):
+            if ((tubesToDisable > 0) and (tube.var.get() <= 0)):
+                tubesToDisable -= 1
+                tube.configure(state="disabled")
+                tube.label.configure(state="disabled")
+                tube.target.configure(state="disabled")
             else:
-                w.configure(state="normal")
+                tubesToEnable -= 1
+                tube.configure(state="readonly")
+                tube.label.configure(state="normal")
+                tube.target.configure(state="normal")
+
+        if (tubesToEnable != 0):
+            print("Error tubesToEnable != 0", tubesToEnable )
+        if (tubesToDisable != 0):
+            print("Error tubesToDisable != 0", tubesToDisable )
 
     # PURPOSE:
     # RETURNS:
     def disableTubes(self):
+        print("disableTubes")
         for w in self.missleFrame.winfo_children():
             w.configure(state="disable")
 
     # PURPOSE:
     # RETURNS:
-    def recalculateRages(self):
+    def availablePower(self):
+        CurPD = self.ship['PD']['cur']
+        usedPD = self.getPowerUsed()
+        available = CurPD - usedPD
+        return available
+
+    # PURPOSE:
+    # RETURNS:
+    def recalculateRanges(self):
         CurPD = self.ship['PD']['cur']
         CurB  = self.ship['B']['cur']
         CurS  = self.ship['S']['cur']
@@ -69,13 +113,11 @@ class combat(Dialog):
             usedM = self.moveVar.get()
             usedB = self.beamVar.get()
             usedS = self.screenVar.get()
-            for tube in self.Tubes:
-                if (tube.var.get() > 0):
-                    usedT = usedT + 1
+            usedT = self.getTubesUsed()
         except AttributeError:
             print("Missing member. Do nothing.")
         print("recalculate valid ranges")
-        available = CurPD - usedPD
+        available = self.availablePower()
         print("AVAIL: ", available)
         print("power", CurPD, "used: ", usedPD)
         print("move:", CurPD, "used: ", usedM, "new:", min(CurPD, available+usedM))
@@ -89,53 +131,24 @@ class combat(Dialog):
 
     # PURPOSE:
     # RETURNS:
-    def moveTrace(self, name, index, mode):
-        print("move trace ", self.moveVar.get())
-        self.updatePowerDrive()
-        self.recalculateRages()
-
-    # PURPOSE:
-    # RETURNS:
-    def beamTrace(self, name, index, mode):
-        print("beam trace ", self.beamVar.get())
-
-        if ((self.beamVar.get() > 0) or (self.screenVar.get() > 0)):
-            self.disableTubes()
-        else:
-            self.enableTubes()
-        self.updatePowerDrive()
-        self.recalculateRages()
-
-    # PURPOSE:
-    # RETURNS:
-    def screenTrace(self, name, index, mode):
-        print("screen trace ", self.screenVar.get())
-
-        if (not self.beamVar):
-            print("catch an error during destruction")
-            return
-
-        if ((self.beamVar.get() > 0) or (self.screenVar.get() > 0)):
-            self.disableTubes()
-        else:
-            self.enableTubes()
-        self.updatePowerDrive()
-        self.recalculateRages()
-
-    # PURPOSE:
-    # RETURNS:
-    def tubeTrace(self, i):
-        print("tube trace ", i, self.Tubes[i].var.get())
+    def allUpdate(self, name, index, mode):
+        print("allUpdate")
         self.updatePowerDrive()
         self.updateMissiles()
-        # If ANY Tube is in use, disable Beams
-        for tube in self.Tubes:
-            if (tube.var.get() > 0):
-                self.disableBeamAndScreen()
-                return
+        self.recalculateRanges()
+        if ((self.beamVar.get() > 0) or (self.screenVar.get() > 0)):
+            self.enableBeamAndScreen()
+            self.disableTubes()
+        else:
+            self.enableTubes()
 
-        self.enableBeamAndScreen()
-        self.recalculateRages()
+            # If ANY Tube is in use, disable Beams
+            for tube in self.Tubes:
+                if (tube.var.get() > 0):
+                    self.disableBeamAndScreen()
+                    return
+
+            self.enableBeamAndScreen()
 
     # PURPOSE:
     # RETURNS:
@@ -158,15 +171,25 @@ class combat(Dialog):
 
     # PURPOSE:
     # RETURNS:
+    def getTubesUsed(self):
+        usedT = 0
+        try:
+            for tube in self.Tubes:
+                if (tube.var.get() > 0):
+                    usedT = usedT + 1
+        except AttributeError:
+            print("Missing tubes. Do nothing.")
+        return usedT
+
+    # PURPOSE:
+    # RETURNS:
     def getPowerUsed(self):
         usedPD = 0
         try:
             usedPD = usedPD + self.moveVar.get()
             usedPD = usedPD + self.screenVar.get()
             usedPD = usedPD + self.beamVar.get()
-            for tube in self.Tubes:
-                if (tube.var.get() > 0):
-                    usedPD = usedPD + 1
+            usedPD = usedPD + self.getTubesUsed()
         except AttributeError:
             print("Missing member. Do nothing.")
 
@@ -190,10 +213,7 @@ class combat(Dialog):
     # RETURNS:
     def updateMissiles(self):
 
-        firing = 0
-        for tube in self.Tubes:
-            if (tube.var.get() > 0):
-                firing = firing + 1
+        firing = self.getTubesUsed()
 
         CurM = self.ship['M']['cur']
         text = ( "Missiles:"
@@ -294,48 +314,36 @@ class combat(Dialog):
         self.missleFrame.pack(fill=BOTH, expand=1)
 
         MaxT = ship['T']['max']
-        CurT = ship['T']['cur']
-        # Can't fire more tubes than missiles (or PD)
-        CurT = min(CurT, CurM, CurPD)
         self.Tubes = []
-        for i in range(0, CurT):
-            tmp = Label(self.missleFrame, text="Tube_" + str(i+1))
-            tmp.grid(row=i, column=0, sticky="W")
+        for i in range(0, MaxT):
+            tmp = Spinbox(self.missleFrame,
+                          width=3, from_=0, to=99
+                         )
+            tmp.grid(row=i, column=1)
             self.Tubes.append(tmp)
 
-            self.Tubes[i].var = IntVar(self.missleFrame)
-            self.Tubes[i].var.set(0)
-            self.Tubes[i].var.trace("w", lambda n1, n2, op, i=i: self.tubeTrace(i))
-            tmp = Spinbox(self.missleFrame,
-                          width=3, from_=0, to=99,
-                          textvariable=self.Tubes[i].var,
-                          state = "readonly"
-                         )
-            tmp.functionalTube = True
-            self.Tubes[i].spin = tmp
-            self.Tubes[i].spin.grid(row=i, column=1)
-
-            target = self.targetList(self.missleFrame, enemyList)
-            target.grid(row=i, column=2)
-
-        # User feedback showing all their tubes can't be used
-        for i in range(CurT, MaxT):
             tmp = Label(self.missleFrame, text="Tube_" + str(i+1))
             tmp.grid(row=i, column=0, sticky="W")
-            self.Tubes.append(tmp)
+            self.Tubes[i].label = tmp
 
-            tmp = Spinbox(self.missleFrame,
-                          width=3, from_=0, to=99,
-                          state = DISABLED
-                         )
-            tmp.functionalTube = False
-            self.Tubes[i].spin = tmp
-            self.Tubes[i].spin.grid(row=i, column=1)
+            tmp = IntVar(self.missleFrame)
+            tmp.set(0)
+            tmp.trace("w", self.allUpdate)
+            self.Tubes[i].var = tmp
+
+            tmp = self.targetList(self.missleFrame, enemyList)
+            tmp.grid(row=i, column=2)
+            self.Tubes[i].target = tmp
+
+            self.Tubes[i].configure(textvariable=self.Tubes[i].var)
+
+        # Figure out which of those tubes to enable/disable
+        self.enableTubes()
 
         # Begin Trace late. (After all objects are instantiated)
-        self.moveVar.trace("w", self.moveTrace)
-        self.beamVar.trace("w", self.beamTrace)
-        self.screenVar.trace("w", self.screenTrace)
+        self.moveVar.trace("w", self.allUpdate)
+        self.beamVar.trace("w", self.allUpdate)
+        self.screenVar.trace("w", self.allUpdate)
 
         self.updatePowerDrive()
         self.updateMissiles()
