@@ -2,6 +2,7 @@ from hexgrid import *
 from tkinter import *
 from overlay import *
 from hexinfo import *
+
 # PURPOSE:
 # RETURNS: list of objects at x,y
 def findObjectsAt(objList, x, y):
@@ -68,4 +69,3 @@ def clickHex(tkRoot, x, y):
     xyList.extend(findObjectsAt(starBaseList, x, y))
 
     hexInfo(tkRoot, xyList)
-

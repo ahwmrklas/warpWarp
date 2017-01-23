@@ -15,6 +15,7 @@ from overlay import *
 from hexinfo import *
 from move import *
 from mapUtil import *
+from connect import *
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
@@ -26,6 +27,11 @@ def exitProgram(tkRoot):
 
 # I don't like these. They don't seem very objecty
 # Perhaps each of them should be a class?
+def connectServer(tkRoot):
+    print("connectServer")
+    tmp = connect(tkRoot, "127.0.0.1", "12345")
+    tmp.result.quitCmd()
+
 def newGame():
     print("newGame")
 
@@ -52,6 +58,7 @@ def addMenus(tkRoot):
 
     fileMenu = Menu(menuBar)
 
+    fileMenu.add_command(label="Connect", command=lambda:connectServer(tkRoot))
     fileMenu.add_command(label="New", command=newGame)
     fileMenu.add_command(label="Open", command=openGame)
     fileMenu.add_command(label="Save", command=saveGame)
@@ -67,8 +74,6 @@ def addMenus(tkRoot):
     menuBar.add_cascade(label="Help", menu=helpMenu)
 
     tkRoot.config(menu=menuBar)
-
-
 
 # PURPOSE: Just make a function out of the main code. It doesn't
 #          seem right without that.

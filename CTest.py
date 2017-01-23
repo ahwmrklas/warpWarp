@@ -18,7 +18,6 @@ class myWindow(threading.Thread):
     # RETURNS: none
     def __init__(self):
         self.Q = Q.Queue()        
-        self.hCOM = comThrd(self)
         threading.Thread.__init__(self, name="ClientMyWindow")
         self.start()
 
@@ -33,7 +32,7 @@ class myWindow(threading.Thread):
     # RETURNS: none
     def sendMsg(self):
         # print(self.ip, self.port, self.msg)
-        self.hCOM.sendCmd(self.ip.get(), int(self.port.get()), self.msg.get())
+        self.hCOM.sendCmd(self.msg.get())
 
     # PURPOSE: Send the new game command
     # RETURNS: none
@@ -42,7 +41,8 @@ class myWindow(threading.Thread):
         tmp = warpWarCmds()
         sendXml = tmp.newGame("foo")
         print(" client sending: ", sendXml)
-        self.hCOM.sendCmd(self.ip.get(), int(self.port.get()), sendXml)
+        self.hCOM = comThrd(self.ip.get(), int(self.port.get()))
+        self.hCOM.sendCmd(sendXml)
        
        
     # PURPOSE: Construct all the GUI junk
@@ -97,19 +97,18 @@ class myWindow(threading.Thread):
         self.respEntry = tk.Entry(self.root, textvariable=self.resp)
         self.respEntry.grid(row=7, column=1)    
 
-    # PURPOSE: for external parties to send a message to the GUI thread
-    #          The socket client uses this
-    # RETURNS: none
-    def displayCmd(self, msg):
-        self.Q.put(msg)
-
     # PURPOSE: drain the Q
     #    While this returns. It also starts a timer
     #    that will call this function again
     # RETURNS: none
     def poll(self):
-        while not self.Q.empty():
-            self.resp.set(self.Q.get())
+        if self.hCOM is None:
+            msg = None
+        else:
+            msg = self.hCOM.pull()
+        while msg is not None:
+            self.resp.set(msg)
+            msg = self.hCOM.pull()
         self.root.after(2000, self.poll)
 
     # PURPOSE: automatically called by base thread class, right?
@@ -117,6 +116,7 @@ class myWindow(threading.Thread):
     #     thing so the GUI responds to the user
     # RETURNS: none
     def run(self):
+        self.hCOM = None
         self.initGui()
         self.poll()
         self.root.mainloop()

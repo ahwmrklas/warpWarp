@@ -18,19 +18,19 @@ class comThrd(threading.Thread):
 
     # PURPOSE: Called for class construction
     # RETURNS: none
-    def __init__(self, hGui):
+    def __init__(self, ip, port):
         self.Q = Q.Queue()
-        self.hGUI = hGui
+        self.hGUI = Q.Queue()
+        self.ip = ip
+        self.port = port
         threading.Thread.__init__(self, name="ClientComThrd")
         self.start()
 
     # PURPOSE: For external parties to send a "text" message
     #    send a msg via our Q for our thread to handle
     # RETURNS: none
-    def sendCmd(self, ip, port, msg):
+    def sendCmd(self, msg):
         self.Q.put("send")
-        self.Q.put(ip)
-        self.Q.put(port)
         self.Q.put(msg)
 
     # PURPOSE: For external parties to send a "quit" message
@@ -38,25 +38,30 @@ class comThrd(threading.Thread):
     # RETURNS: none
     def quitCmd(self):
         self.Q.put("quit")
-        
+
+    # PURPOSE: Get items from the Q
+    # RETURNS: return a string
+    def pull(self):
+        if (not self.hGUI.empty()):
+            return self.hGUI.get()
+        return None
+
     # PURPOSE: Our Q holds a message to send to the server. Do so.
     #    Send a message and wait for a response
     # RETURNS: none
     def handleSend(self):
-        ip = self.Q.get()
-        port = self.Q.get()
         msg = self.Q.get()
         returnMe = None
-        print("client ", ip, port, msg, "\n")
+        print("client ", self.ip, self.port, msg, "\n")
         try:
             s = socket.socket()
-            s.connect((ip, port))
+            s.connect((self.ip, self.port))
             s.send(msg.encode())
             cmd = s.recv(4096)
             xmlStr = cmd.decode()
             print("client received (", len(xmlStr), "):\n")
             # print(xmlStr)
-            self.hGUI.displayCmd(cmd)
+            self.hGUI.put(xmlStr)
         except Exception as error:
             returnMe = error
             print("Sockect error: ", error, "\n")
