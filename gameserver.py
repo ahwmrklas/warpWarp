@@ -42,6 +42,9 @@ class gameserver:
         if cmdStr == 'quit':
             print("quitCommandRecieved")
             self.gameContinues = False
+        elif cmdStr == 'ping':
+            # simple test to see if server responds. So print and respond
+            print("ping")
         elif cmdStr == 'newgame':
             # What to do? Offer to save current game? NO! this is the server,
             # do as commanded

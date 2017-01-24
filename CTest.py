@@ -24,7 +24,8 @@ class myWindow(threading.Thread):
     # PURPOSE: Called back for quit. Clean up socket and self
     # RETURNS: none
     def quitCB(self):
-        self.hCOM.quitCmd()
+        if (self.hCOM is not None):
+            self.hCOM.quitCmd()
         self.root.quit()
         print("Client Gui exit")
 
@@ -33,6 +34,15 @@ class myWindow(threading.Thread):
     def sendMsg(self):
         # print(self.ip, self.port, self.msg)
         self.hCOM.sendCmd(self.msg.get())
+
+    # PURPOSE: Send ping cmd
+    # RETURNS: none
+    def ping(self):
+        # print(self.ip, self.port, self.msg)
+        tmp = warpWarCmds()
+        sendXml = tmp.ping()
+        print(" client sending: ", sendXml)
+        self.hCOM.sendCmd(sendXml)
 
     # PURPOSE: Send the new game command
     # RETURNS: none
@@ -84,9 +94,12 @@ class myWindow(threading.Thread):
         self.msgEntry.grid(row=4, column=1)
 
         tmp = tk.Button(self.root, text="Send", command=self.sendMsg)
-        tmp.grid(row=5, column=1)
+        tmp.grid(row=5, column=0)
 
         tmp = tk.Button(self.root, text="newgame", command=self.newGame)
+        tmp.grid(row=5, column=1)
+
+        tmp = tk.Button(self.root, text="Ping", command=self.ping)
         tmp.grid(row=5, column=2)
 
         tmp = tk.Label(self.root, text="Resp Msg: ")

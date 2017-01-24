@@ -29,8 +29,9 @@ def exitProgram(tkRoot):
 # Perhaps each of them should be a class?
 def connectServer(tkRoot):
     print("connectServer")
-    tmp = connect(tkRoot, "127.0.0.1", "12345")
-    tmp.result.quitCmd()
+    tmp = connect(tkRoot, "silver", "12345")
+    if (tmp is not None and tmp.result is not None):
+        tmp.result.quitCmd()
 
 def newGame():
     print("newGame")

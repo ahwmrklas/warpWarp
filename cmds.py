@@ -18,6 +18,13 @@ class warpWarCmds():
     def __init__(self):
         print("create Cmd ... thingy")
 
+    # PURPOSE: test for server connectivity
+    # RETURNS: string with xml
+    def ping(self):
+        cmd  = { 'cmd' : {'cmd': "ping"} }
+        xmlStr = Py2XML.Py2XML().parse(cmd, None)
+        return xmlStr
+
     # PURPOSE: Create a new game string
     # RETURNS: string with xml
     def newGame(self, name):
