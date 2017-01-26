@@ -8,10 +8,7 @@ sys.path.append("/home/ahw/views/warpWar/test")
 import socket         # Import socket module
 import threading
 import queue as Q
-
-import XML2Py
-import Py2XML
-
+import time
 
 # Socket thread
 class comThrd(threading.Thread):
@@ -46,6 +43,24 @@ class comThrd(threading.Thread):
             return self.hGUI.get()
         return None
 
+    # PURPOSE: wait for a response in Q
+    # RETURNS: return a string
+    def waitFor(self, count):
+        resp = self.pull()
+        tooMany = count
+        while (resp is None):
+            if (tooMany <= 0):
+                print("Failed to connect")
+                return ""
+            tooMany -= 1
+            resp = self.pull()
+            print("sleeping")
+            time.sleep(2)
+
+        print("RESP:", len(resp))
+        return resp
+
+
     # PURPOSE: Our Q holds a message to send to the server. Do so.
     #    Send a message and wait for a response
     # RETURNS: none
@@ -64,7 +79,7 @@ class comThrd(threading.Thread):
             self.hGUI.put(xmlStr)
         except Exception as error:
             returnMe = error
-            print("Sockect error: ", error, "\n")
+            print("Socket error: ", error, "\n")
 
         s.close()
         return returnMe

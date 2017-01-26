@@ -8,7 +8,6 @@
 # imports
 from hexgrid import *
 from tkinter import *
-from xbm import TileContent
 from dataModel import *
 from samplegame import sampleGame
 from overlay import *
@@ -16,12 +15,17 @@ from hexinfo import *
 from move import *
 from mapUtil import *
 from connect import *
+from cmds import warpWarCmds
+import json
+
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
 # RETURNS: I don't know.
 def exitProgram(tkRoot):
     print("quitMain")
+    if (tkRoot.hCon is not None):
+        tkRoot.hCon.quitCmd()
     tkRoot.destroy()
     tkRoot.quit()
 
@@ -29,12 +33,28 @@ def exitProgram(tkRoot):
 # Perhaps each of them should be a class?
 def connectServer(tkRoot):
     print("connectServer")
+    if (tkRoot.hCon is not None):
+        tkRoot.hCon.quitCmd()
     tmp = connect(tkRoot, "silver", "12345")
-    if (tmp is not None and tmp.result is not None):
-        tmp.result.quitCmd()
+    if (tmp is not None):
+        tkRoot.hCon = tmp.result
 
-def newGame():
+def newGame(tkRoot):
     print("newGame")
+    if (tkRoot.hCon is not None):
+        sendXml = warpWarCmds().newGame("foo")
+        print(" main sending: ", sendXml)
+        tkRoot.hCon.sendCmd(sendXml)
+        resp = tkRoot.hCon.waitFor(5)
+
+    root = json.loads(resp)
+    print("root")
+    print(root)
+
+    # not the right place to update.
+    # Send message? And that updates?
+    updateMap(tkRoot, tkRoot.hexMap, root)
+
 
 # I don't like these. They don't seem very objecty
 def openGame():
@@ -60,7 +80,7 @@ def addMenus(tkRoot):
     fileMenu = Menu(menuBar)
 
     fileMenu.add_command(label="Connect", command=lambda:connectServer(tkRoot))
-    fileMenu.add_command(label="New", command=newGame)
+    fileMenu.add_command(label="New", command=lambda:newGame(tkRoot))
     fileMenu.add_command(label="Open", command=openGame)
     fileMenu.add_command(label="Save", command=saveGame)
     fileMenu.add_separator()
@@ -83,12 +103,15 @@ def main():
 
     # Instance of tkinter to do GUI stuff
     tkRoot = Tk()
+    tkRoot.hCon = None
+    tkRoot.hexMap = None
+    tkRoot.game = None
 
     # menu bar
     addMenus(tkRoot)
 
     tkRoot.game = sampleGame
-    hexMap = initMap(tkRoot, sampleGame)
+    tkRoot.hexMap = initMap(tkRoot, sampleGame)
 
     # Create a quit button (obviously to exit the program)
     quit = Button(tkRoot, text = "Quit", command = lambda :exitProgram(tkRoot))
@@ -96,10 +119,12 @@ def main():
     # Locate the button on the tkinter "grid"
     quit.grid(row=1, column=0)
     
-    updateMap(tkRoot, hexMap, sampleGame)
+    updateMap(tkRoot, tkRoot.hexMap, sampleGame)
 
-    setupMovement(hexMap, tkRoot)
-    foo = GameInfo(hexMap.grid_width, hexMap.grid_height, sampleGame['playerList'])
+    setupMovement(tkRoot.hexMap, tkRoot)
+    foo = GameInfo(tkRoot.hexMap.grid_width,
+                   tkRoot.hexMap.grid_height,
+                   sampleGame['playerList'])
 
     # Let tkinter main loop run forever and handle input events
     tkRoot.mainloop()

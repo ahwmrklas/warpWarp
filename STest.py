@@ -10,7 +10,6 @@ import socket
 import tkinter as tk
 import threading
 import queue as Q
-import gameserver
 
 # GUI thread for management
 class MyTkApp(threading.Thread):

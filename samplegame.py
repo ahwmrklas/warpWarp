@@ -10,15 +10,15 @@ class eCmd(Enum):
 sampleGame = {
     'options': {
         'serverIp'  : "192.168.1.5",
-        'mapSize'   : {'width':10, 'hight':10},
+        'mapSize'   : {'width':10, 'height':10},
         'startingBP': 20,
-        'perTurnBP' :  5
+        'perTurnBP' :  5,
     },
     'state': {
         'turnNumber': 0,
-        'activePlayer': "dad"
+        'activePlayer': "dad",
     },
-    'map':{'width':10, 'height':10},
+    'map': {'width':10, 'height':10},
     'playerList': [
         {'name': "dad"},
         {'name': "Alex"},
@@ -46,12 +46,12 @@ sampleGame = {
              'visibility':[ {'player':"dad",  'percent':100},
                             {'player':"alex", 'percent':30},
                           ],
-            }
+            },
         ],
         'shipList': [
             {'name': "first",
              'type': "ship",
-             'location': {'x':1, 'y':2},
+             'location': {'x':4, 'y':3},
              'image':"warpship.png",
              'owner':"dad",
              'techLevel': 1,
@@ -72,7 +72,7 @@ sampleGame = {
              'visibility':[ {'player':"dad",  'percent':100},
                             {'player':"alex", 'percent':30},
                           ],
-            }
+            },
         ],
         'starBaseList': [
             {'name': "Babylon 5",
@@ -80,16 +80,16 @@ sampleGame = {
              'location': {'x':4, 'y':8},
              'image': "b_5.png",
              'owner': "Alex",
-             'stockpile': 15
+             'stockpile': 15,
             },
         ],
         'warpLineList': [
             {'start': "Alpha", 'end': "Beta"},
-            {'start': "Beta",  'end': "Alpha"}
+            {'start': "Beta",  'end': "Alpha"},
         ],
     },
     'history': [
-        {'cmd':eCmd.eStart, 'player':"dad"},
-        {'cmd':eCmd.eBuild, 'player':"dad"},
-    ]
+        {'cmd':"start", 'player':"dad"},
+        {'cmd':"build", 'player':"dad"},
+    ],
 }

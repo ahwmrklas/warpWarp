@@ -3,8 +3,7 @@
 import sys
 sys.path.append("/home/ahw/views/warpWar/test")
 
-import XML2Py
-import Py2XML
+import json
 #from samplegame import sampleGame
 import samplegame
 
@@ -25,13 +24,13 @@ class gameserver:
     # PURPOSE: Return the xml representing the entire game
     # RETURNS: game state as an xml string
     def gameXml(self):
-        return Py2XML.Py2XML().parse(self.game, None)
+        return json.dumps(self.game, ensure_ascii=False)
 
     # PURPOSE: Interpret XML command and do something
     # RETURNS: true for properly parsed command
     def parseCmd(self, xmlString):
         try:
-            root = XML2Py.XML2Py().parse( xmlString )
+            root = json.loads(xmlString)
         except Exception as error:
             print("XML parse error for ", xmlString, "\n")
             return False
