@@ -1,6 +1,6 @@
 """
 Purpose: The python classes for the data model
-This class should be designed with the xml data that we eventually want to
+This class should be designed with the JSON data that we eventually want to
 send in mind.
 
 map -- The dimensions of the game board. Two chars, x and y

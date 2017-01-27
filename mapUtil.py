@@ -15,13 +15,11 @@ def findObjectsAt(objList, x, y):
 
 # PURPOSE:
 # RETURNS: hexMap handle
-def initMap(tkRoot, game):
-
-    dim = game['map']
+def initMap(tkRoot, width, height):
 
     # create a hex map that is the basis of our game display
-    hexMap = HexagonalGrid(tkRoot, scale = 20, grid_width=dim['width'],
-                           grid_height=dim['height'])
+    hexMap = HexagonalGrid(tkRoot, scale = 20, grid_width=width,
+                           grid_height=height)
 
     hexMap.setPrivateCallBack(clickHex, tkRoot)
 

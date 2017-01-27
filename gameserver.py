@@ -21,18 +21,18 @@ class gameserver:
     def gameOn(self):
         return self.gameContinues
 
-    # PURPOSE: Return the xml representing the entire game
-    # RETURNS: game state as an xml string
-    def gameXml(self):
+    # PURPOSE: Return the JSON representing the entire game
+    # RETURNS: game state as a JSON string
+    def gameJson(self):
         return json.dumps(self.game, ensure_ascii=False)
 
-    # PURPOSE: Interpret XML command and do something
+    # PURPOSE: Interpret JSON command and do something
     # RETURNS: true for properly parsed command
-    def parseCmd(self, xmlString):
+    def parseCmd(self, jsonStr):
         try:
-            root = json.loads(xmlString)
+            root = json.loads(jsonStr)
         except Exception as error:
-            print("XML parse error for ", xmlString, "\n")
+            print("JSON parse error for ", jsonStr, "\n")
             return False
 
         cmd = root['cmd']
@@ -93,9 +93,9 @@ class gameserver:
             # load game overwriting existing game
             #
             # Like, newGame check for permission.
-            # Input? Would be an entire xml game
+            # Input? Would be an entire JSON game
             # We should probably do some kind of validation but
-            # this would just be pulling in the xml and
+            # this would just be pulling in the JSON and
             # translating it to the dict.
             #
             # Warn/Error if current game hasn't been saved (is dirty)

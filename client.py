@@ -16,8 +16,8 @@ class comThrd(threading.Thread):
     # PURPOSE: Called for class construction
     # RETURNS: none
     def __init__(self, ip, port):
-        self.Q = Q.Queue()
-        self.hGUI = Q.Queue()
+        self.sendQ = Q.Queue()
+        self.rcvQ = Q.Queue()
         self.ip = ip
         self.port = port
         threading.Thread.__init__(self, name="ClientComThrd")
@@ -27,20 +27,20 @@ class comThrd(threading.Thread):
     #    send a msg via our Q for our thread to handle
     # RETURNS: none
     def sendCmd(self, msg):
-        self.Q.put("send")
-        self.Q.put(msg)
+        self.sendQ.put("send")
+        self.sendQ.put(msg)
 
     # PURPOSE: For external parties to send a "quit" message
     #    send a msg via our Q for our thread to handle
     # RETURNS: none
     def quitCmd(self):
-        self.Q.put("quit")
+        self.sendQ.put("quit")
 
     # PURPOSE: Get items from the Q
     # RETURNS: return a string
     def pull(self):
-        if (not self.hGUI.empty()):
-            return self.hGUI.get()
+        if (not self.rcvQ.empty()):
+            return self.rcvQ.get()
         return None
 
     # PURPOSE: wait for a response in Q
@@ -65,7 +65,7 @@ class comThrd(threading.Thread):
     #    Send a message and wait for a response
     # RETURNS: none
     def handleSend(self):
-        msg = self.Q.get()
+        msg = self.sendQ.get()
         returnMe = None
         print("client ", self.ip, self.port, msg, "\n")
         try:
@@ -73,10 +73,10 @@ class comThrd(threading.Thread):
             s.connect((self.ip, self.port))
             s.send(msg.encode())
             cmd = s.recv(4096)
-            xmlStr = cmd.decode()
-            print("client received (", len(xmlStr), "):\n")
-            # print(xmlStr)
-            self.hGUI.put(xmlStr)
+            jsonStr = cmd.decode()
+            print("client received (", len(jsonStr), "):\n")
+            # print(jsonStr)
+            self.rcvQ.put(jsonStr)
         except Exception as error:
             returnMe = error
             print("Socket error: ", error, "\n")
@@ -93,7 +93,7 @@ class comThrd(threading.Thread):
     # RETURNS: none
     def run(self):
         while True:
-            cmd = self.Q.get()
+            cmd = self.sendQ.get()
             if cmd == "send":
                 self.handleSend()
             elif cmd == "quit":

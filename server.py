@@ -37,9 +37,9 @@ class srvrThrd(threading.Thread):
             s = socket.socket()
             s.connect( (self.ipAddr, self.port) )
             tmp = warpWarCmds()
-            sendXml = tmp.quitGame()
+            sendJson = tmp.quitGame()
 
-            s.send(sendXml.encode())
+            s.send(sendJson.encode())
             s.close()
         except:
             print("server: Socket error. Only GUI closes")
@@ -64,7 +64,7 @@ class srvrThrd(threading.Thread):
            self.serverContinue = self.gameserver.gameOn()
 
            # Send client the state of the game
-           c.send(self.gameserver.gameXml().encode())
+           c.send(self.gameserver.gameJson().encode())
            c.close()
 
         print("server: socket listen exiting")

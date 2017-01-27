@@ -42,18 +42,16 @@ def connectServer(tkRoot):
 def newGame(tkRoot):
     print("newGame")
     if (tkRoot.hCon is not None):
-        sendXml = warpWarCmds().newGame("foo")
-        print(" main sending: ", sendXml)
-        tkRoot.hCon.sendCmd(sendXml)
+        sendJson = warpWarCmds().newGame("foo")
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
 
-    root = json.loads(resp)
-    print("root")
-    print(root)
+    tkRoot.game = json.loads(resp)
 
     # not the right place to update.
     # Send message? And that updates?
-    updateMap(tkRoot, tkRoot.hexMap, root)
+    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 
 # I don't like these. They don't seem very objecty
@@ -111,20 +109,23 @@ def main():
     addMenus(tkRoot)
 
     tkRoot.game = sampleGame
-    tkRoot.hexMap = initMap(tkRoot, sampleGame)
+    tkRoot.hexMap = initMap(tkRoot,
+                            tkRoot.game['map']['width'],
+                            tkRoot.game['map']['height'])
 
     # Create a quit button (obviously to exit the program)
-    quit = Button(tkRoot, text = "Quit", command = lambda :exitProgram(tkRoot))
-
     # Locate the button on the tkinter "grid"
+    quit = Button(tkRoot, text = "Quit", command = lambda :exitProgram(tkRoot))
     quit.grid(row=1, column=0)
     
-    updateMap(tkRoot, tkRoot.hexMap, sampleGame)
+    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
     setupMovement(tkRoot.hexMap, tkRoot)
+
+    # at the moment this does nothing valuable
     foo = GameInfo(tkRoot.hexMap.grid_width,
                    tkRoot.hexMap.grid_height,
-                   sampleGame['playerList'])
+                   tkRoot.game['playerList'])
 
     # Let tkinter main loop run forever and handle input events
     tkRoot.mainloop()

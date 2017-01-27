@@ -40,19 +40,19 @@ class myWindow(threading.Thread):
     def ping(self):
         # print(self.ip, self.port, self.msg)
         tmp = warpWarCmds()
-        sendXml = tmp.ping()
-        print(" client sending: ", sendXml)
-        self.hCOM.sendCmd(sendXml)
+        sendJson = tmp.ping()
+        print(" client sending: ", sendJson)
+        self.hCOM.sendCmd(sendJson)
 
     # PURPOSE: Send the new game command
     # RETURNS: none
     def newGame(self):
         # print(self.ip, self.port, self.msg)
         tmp = warpWarCmds()
-        sendXml = tmp.newGame("foo")
-        print(" client sending: ", sendXml)
+        sendJson = tmp.newGame("foo")
+        print(" client sending: ", sendJson)
         self.hCOM = comThrd(self.ip.get(), int(self.port.get()))
-        self.hCOM.sendCmd(sendXml)
+        self.hCOM.sendCmd(sendJson)
        
        
     # PURPOSE: Construct all the GUI junk
