@@ -58,6 +58,7 @@ class srvrThrd(threading.Thread):
            c, addr = s.accept()
 
            cmd = c.recv(1024)
+           print("Rcvd:", cmd.decode())
            self.hGUI.displayAddr(addr)
            self.hGUI.displayMsg(cmd.decode())
            self.gameserver.parseCmd(cmd.decode())

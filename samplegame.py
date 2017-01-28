@@ -6,6 +6,16 @@ class eCmd(Enum):
     eStart = 1
     eBuild = 2
 
+class ePhase(Enum):
+    eNil             = 1
+    eCreating        = 2
+    eBuild           = 3
+    eMovement        = 4
+    eCombat          = 5
+    eBattle          = 6
+    eDamageSelection = 7
+    eWinnerBoard     = 8
+
 # Sample dictionary data game
 sampleGame = {
     'options': {
@@ -16,6 +26,7 @@ sampleGame = {
     },
     'state': {
         'turnNumber': 0,
+        'phase': "creating",
         'activePlayer': "dad",
     },
     'map': {'width':10, 'height':10},

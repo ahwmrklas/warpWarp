@@ -47,11 +47,23 @@ def newGame(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
+        print(" main: ", tkRoot.game)
 
         # not the right place to update.
         # Send message? And that updates?
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
+# PURPOSE:
+# RETURNS:
+def refresh(tkRoot):
+    print("refresh")
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().ping()
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # I don't like these. They don't seem very objecty
 def openGame():
@@ -80,6 +92,8 @@ def addMenus(tkRoot):
     fileMenu.add_command(label="New", command=lambda:newGame(tkRoot))
     fileMenu.add_command(label="Open", command=openGame)
     fileMenu.add_command(label="Save", command=saveGame)
+    fileMenu.add_separator()
+    fileMenu.add_command(label="Refresh", command=lambda:refresh(tkRoot))
     fileMenu.add_separator()
     fileMenu.add_command(label="Exit", command=lambda:exitProgram(tkRoot))
 

@@ -53,9 +53,9 @@ class comThrd(threading.Thread):
                 print("Failed to connect")
                 return ""
             tooMany -= 1
-            resp = self.pull()
             print("sleeping")
-            time.sleep(2)
+            time.sleep(1)
+            resp = self.pull()
 
         print("RESP:", len(resp))
         return resp

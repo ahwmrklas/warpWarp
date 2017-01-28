@@ -82,8 +82,15 @@ class warpWarCmds():
 
     # PURPOSE: Create the XXX string
     # RETURNS: string with json
-    def moveShip(self):
-        cmd  = { 'cmd' : {'cmd': "moveship"} }
+    def moveShip(self, name, x, y):
+        cmd  = { 'cmd' : {'cmd':"moveship", 'name':name, 'x':x, 'y':y} }
+        jsonStr = json.dumps(cmd, ensure_ascii=False)
+        return jsonStr
+
+    # PURPOSE: Create the endmove string
+    # RETURNS: string with json
+    def endMove(self, name, x, y):
+        cmd  = { 'cmd' : {'cmd':"endmove", 'player':name} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 

@@ -10,13 +10,22 @@ from dataModel import *
 from mapUtil import *
 from ijk import *
 from cmds import warpWarCmds
+import json
 
 class menuMover:
     def __init__(self, private, x, y, shipMove):
+
+        # This only happened when server got corrupted
+        # but it was really annoying
+        if (shipMove < 0):
+            print("Error: move < zero:", shipMove)
+            shipMove = 0
+
         self.private = private
         self.hexGrid = private[2]
         self.startX = x
         self.startY = y
+
         self.movement = shipMove
 
     def __call__(self):
@@ -49,13 +58,13 @@ def setupMovement(hexGrid, tkRoot):
         for ship in tkRoot.game['objects']['shipList']:
             if ship['location']['x'] == hex_x and ship['location']['y'] == hex_y:
                 labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
-                                                             ship['PD']['cur'],
-                                                             ship['PD']['max'])
+                                                             ship['moves']['cur'],
+                                                             ship['PD']['cur'])
                 private[1] = ship['name']
                 moveCommand = menuMover(private,
                                         ship['location']['x'],
                                         ship['location']['y'],
-                                        ship['PD']['cur'])
+                                        ship['moves']['cur'])
                 popup.add_command(label=labelString, command=moveCommand)
         try:
             #disable left click
@@ -76,7 +85,7 @@ def moveOnClick(private, x, y):
     for ship in tkRoot.game['objects']['shipList']:
         if ship['name'] == shipName:
             #can we move there?
-            moveLeft = ship['PD']['cur']
+            moveLeft = ship['moves']['cur']
             cur_x = ship['location']['x']
             cur_y = ship['location']['y']
 
@@ -87,10 +96,19 @@ def moveOnClick(private, x, y):
                 ship['location']['x'] = x
                 ship['location']['y'] = y
                 #find the ijk stuff for decrementing the right number of moves
-                ship['PD']['cur'] = ship['PD']['cur'] - delta
-                print("Movement updates the game data. Send msg to server")
-                sendJson = warpWarCmds().moveShip()
-                tkRoot.hCon.sendCmd(sendJson)
+                ship['moves']['cur'] = ship['moves']['cur'] - delta
+
+                # Send the move command to the server
+                # We could also Queue up all the move commands
+                # and play them out to the server later.
+                # That would permit the user to change their
+                # mind about a move and cancel it before it is
+                # parmanent
+                if (tkRoot.hCon is not None):
+                    sendJson = warpWarCmds().moveShip(shipName, x, y)
+                    tkRoot.hCon.sendCmd(sendJson)
+                    resp = tkRoot.hCon.waitFor(5)
+                    tkRoot.game = json.loads(resp)
 
                 updateMap(tkRoot, hexGrid, tkRoot.game)
 

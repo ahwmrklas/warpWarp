@@ -1,11 +1,38 @@
 # class to handle game commands
+# Game state goes from:
+# Nil
+# Game created and ready for players
+# Players join? Select starting locations?
+# Building phase,
+# Check finished building, Waiting for other players to finish building
+# Movement phase,
+# Check finished movement, wait for other players to finish moving
+# Combat phase
+#   Choose battles? Battles chosen
+#   Make combat plans,
+#   submit combat plans, wait for oppoent to finish combat plans
+#   Results of battle reported
+#   Select damage,
+#   submit damage selection, wait for opponent to finish damage selections
+#   All battles finished? On to next battle.
+#
+# Done? Back to Build phase
+
 
 import sys
 sys.path.append("/home/ahw/views/warpWar/test")
 
 import json
-#from samplegame import sampleGame
 import samplegame
+import ijk
+
+# PURPOSE: look up ship name in game ship list
+# RETURNS: entry of ship
+def findShip(game, shipName):
+   for ship in game['objects']['shipList']:
+        if ship['name'] == shipName:
+            return ship
+   return None
 
 # class to handle game commands
 class gameserver:
@@ -128,7 +155,29 @@ class gameserver:
             # map? Currently in combat? Does move cause combat? (meaning ship
             # halts immediately))
             # Deduct movement from ship
-            print("moveShip")
+            name = cmd['name']
+            x = cmd['x']
+            y = cmd['y']
+
+            ship = findShip(self.game, name)
+            if (ship is None):
+                print("error: Ship not found", name)
+                return False
+
+            si,sj,sk = ijk.XYtoIJK(x, y)
+            fi,fj,fk = ijk.XYtoIJK(ship['location']['x'], ship['location']['y'])
+            delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+
+            print(" delta", delta, ship['location']['x'] , x, ship['location']['y'] , y)
+            ship['location']['x'] = x
+            ship['location']['y'] = y
+            ship['moves']['cur'] = ship['moves']['cur'] -delta 
+
+        elif cmdStr == 'endmove':
+            # Movement phase is over for given player
+            # The phase of the turn changes to start combat or whatever
+            print("endMove")
+
         elif cmdStr == 'combatorders': # Per ship? All ships?
             # A combat instruction
             # Check for proper state. Are there existing orders?
@@ -136,12 +185,14 @@ class gameserver:
             # Have all opponents ships in *this* combat been given orders?
             # Input? ShipID, combat command (fire, move, shields ...)
             print("combatOrders")
+
         elif cmdStr == 'acceptdamage':
             # Deduct combat damage
             # Input? ShipID, damage deducted from each component
             # Did they deduct enough damage?
             # Do they have more ships with damage to deduct?
             print("acceptDamage")
+
         else:
             print("Not a legal command '", cmdStr, "'")
             return False
