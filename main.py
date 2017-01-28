@@ -46,12 +46,11 @@ def newGame(tkRoot):
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
 
-    tkRoot.game = json.loads(resp)
-
-    # not the right place to update.
-    # Send message? And that updates?
-    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+        # not the right place to update.
+        # Send message? And that updates?
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 
 # I don't like these. They don't seem very objecty

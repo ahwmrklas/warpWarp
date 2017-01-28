@@ -1,7 +1,6 @@
 from tkinter import *
 from xbm import TileContent
 from xbm import TileFiles
-from ijk import *
 
 # HexaCanvas inherits from Canvas
 class HexaCanvas(Canvas):
@@ -103,7 +102,7 @@ class HexagonalGrid(HexaCanvas):
         self.clickCallBack = None
 
         HexaCanvas.__init__(self, master, background='white', width=width, height=height, *args, **kwargs)
-        self.bind("<Button-1>", self.clickCallback)
+        self.bind("<Button-1>", self.leftClickCallback)
         self.bind("<Button-3>", self.rightClickCallback)
         # self.bind("<Motion>", self.motion)
         self.setHexaSize(scale)
@@ -158,35 +157,32 @@ class HexagonalGrid(HexaCanvas):
         pix_y = int(pix_y)
         return [pix_x, pix_y]
 
-    def setPrivateCallBack(self, func, private):
-        self.externalCallBack = func
-        self.externalPrivateData = private
+    def setLeftPrivateCallBack(self, func, private):
+        self.leftExternalCallBack = func
+        self.leftExternalPrivateData = private
 
-    def getPrivateCallBack(self):
-        return self.externalCallBack, self.externalPrivateData
+    def getLeftPrivateCallBack(self):
+        return self.leftExternalCallBack, self.leftExternalPrivateData
 
-    def setRightPrivateCallBack(self, func, private, needsRoot = False):
-        self.externalRightCallBack = func
-        self.externalRightPrivateData = private
-        self.rightClickNeedsRoot = needsRoot
+    def setRightPrivateCallBack(self, func, private):
+        self.rightExternalCallBack = func
+        self.rightExternalPrivateData = private
 
     #placeholder for canvas onclick listener
-    def clickCallback(self, event):
+    def leftClickCallback(self, event):
         x,y = self.getHexForPix(event.x, event.y)
         if x >= 0 and y >= 0: 
-            if (self.externalCallBack is not None):
-                self.externalCallBack(self.externalPrivateData, x, y)
+            if (self.leftExternalCallBack is not None):
+                self.leftExternalCallBack(self.leftExternalPrivateData, x, y)
 
     #placeholder for canvas onclick listener
     def rightClickCallback(self, event):
         x,y = self.getHexForPix(event.x, event.y)
-        i,j,k = XYtoIJK(x,y)
         if x >= 0 and y >= 0: 
-            if (self.externalRightCallBack is not None):
-                if (self.rightClickNeedsRoot):
-                    self.externalRightCallBack(self.externalRightPrivateData, event.x_root, event.y_root, x, y)
-                else:
-                    self.externalRightCallBack(self.externalRightPrivateData, x, y)
+            if (self.rightExternalCallBack is not None):
+                self.rightExternalCallBack(self.rightExternalPrivateData,
+                                           event.x_root, event.y_root,
+                                           x, y)
 
     def getHexForPix(self, x, y):
             print ("clicked at", x, y)

@@ -21,7 +21,7 @@ def initMap(tkRoot, width, height):
     hexMap = HexagonalGrid(tkRoot, scale = 20, grid_width=width,
                            grid_height=height)
 
-    hexMap.setPrivateCallBack(clickHex, tkRoot)
+    hexMap.setLeftPrivateCallBack(clickHex, tkRoot)
 
     # Locate the hexmap on the tkinter "grid"
     hexMap.grid(row=0, column=0, padx=10, pady=10)
