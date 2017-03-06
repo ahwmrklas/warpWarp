@@ -39,6 +39,14 @@ def connectServer(tkRoot):
     if (tmp is not None):
         tkRoot.hCon = tmp.result
 
+        sendJson = warpWarCmds().newPlayer(tkRoot.playerName)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+
+# PURPOSE:
+# RETURNS:
 def newGame(tkRoot):
     print("newGame")
     if (tkRoot.hCon is not None):
@@ -47,10 +55,26 @@ def newGame(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
-        print(" main: ", tkRoot.game)
 
         # not the right place to update.
         # Send message? And that updates?
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+# PURPOSE:
+# RETURNS:
+def sendReady(tkRoot):
+    print("readyMenu")
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().ready(tkRoot.playerName)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        # not the right place to update.
+        # Send message? And that updates?
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE:
@@ -63,7 +87,26 @@ def refresh(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+# PURPOSE:
+# RETURNS:
+def popupPlayers(tkRoot):
+    popup = Menu(tkRoot, tearoff=0)
+    for player in tkRoot.game['playerList'] :
+        popup.add_command(label = player['name'] +
+                           " " + player['phase'])
+        print("player",
+              player['name'],
+              player['phase'],
+             )
+
+    try:
+        popup.post(tkRoot.winfo_pointerx(), tkRoot.winfo_pointery())
+    finally:
+        popup.grab_set()
+        pass
 
 # I don't like these. They don't seem very objecty
 def openGame():
@@ -81,12 +124,46 @@ def aboutHelp():
 def helpHelp():
     print("helpHelp")
 
+# PURPOSE: Delete previous and set new, phase menu
+# RETURNS: none
+def phaseMenu(tkRoot, phase):
+    print("Phase:", phase)
+    menuBar = tkRoot.cget("menu")
+    print("bar ", menuBar)
+    print("")
+    menuBar = tkRoot.nametowidget(menuBar)
+    if (len(menuBar.children.items()) > 2):
+        menuBar.delete(3)
+
+    phaseMenu = Menu(menuBar)
+
+    if (phase == 'nil'):
+        phaseMenu.add_command(label="New",
+                              command=lambda:newGame(tkRoot))
+        phaseMenu.add_command(label="Open",
+                              command=openGame)
+    elif (phase == 'creating'):
+        phaseMenu.add_command(label="Ready",
+                              command=lambda:sendReady(tkRoot))
+    elif (phase == 'build'):
+        phaseMenu.add_command(label="Ready",
+                              command=lambda:sendReady(tkRoot))
+    else:
+        print("BAD PHASE", phase)
+        phase = ""
+        phaseMenu.add_command(label="Connect",
+                              command=lambda:connectServer(tkRoot))
+
+    menuBar.add_cascade(label="Phase " + phase, menu=phaseMenu)
+
 # PURPOSE: Create menu GUI elements
 # RETURNS: none
 def addMenus(tkRoot):
     menuBar = Menu(tkRoot)
+    print("winfo", menuBar.winfo_id())
 
     fileMenu = Menu(menuBar)
+    print("filemenu", fileMenu)
 
     fileMenu.add_command(label="Connect", command=lambda:connectServer(tkRoot))
     fileMenu.add_command(label="New", command=lambda:newGame(tkRoot))
@@ -102,6 +179,7 @@ def addMenus(tkRoot):
     helpMenu = Menu(menuBar)
     helpMenu.add_command(label="About", command=aboutHelp)
     helpMenu.add_command(label="Help", command=helpHelp)
+    print("helpMenu", helpMenu)
 
     menuBar.add_cascade(label="Help", menu=helpMenu)
 
@@ -114,22 +192,38 @@ def main():
 
     # Instance of tkinter to do GUI stuff
     tkRoot = Tk()
+    tkRoot.title("WarpWar")
     tkRoot.hCon = None
     tkRoot.hexMap = None
     tkRoot.game = None
+    tkRoot.playerName = 'dad' # fill this in programatically
+
+    tkRoot.game = sampleGame
 
     # menu bar
     addMenus(tkRoot)
+    phaseMenu(tkRoot, None)
 
-    tkRoot.game = sampleGame
+    tkRoot.mapFrame = Frame(tkRoot)
     tkRoot.hexMap = initMap(tkRoot,
                             tkRoot.game['map']['width'],
                             tkRoot.game['map']['height'])
+    tkRoot.mapFrame.pack()
 
+    tkRoot.buttonFrame = Frame(tkRoot)
     # Create a quit button (obviously to exit the program)
     # Locate the button on the tkinter "grid"
-    quit = Button(tkRoot, text = "Quit", command = lambda :exitProgram(tkRoot))
-    quit.grid(row=1, column=0)
+    tkRoot.quitButton = Button(tkRoot.buttonFrame, text = "Quit",
+                  command = lambda :exitProgram(tkRoot))
+    #tkRoot.quitButton.grid(row=1, column=0)
+    tkRoot.quitButton.pack(side="left")
+
+    tkRoot.playersButton = Button(tkRoot.buttonFrame, text = "Players",
+                                  command = lambda :popupPlayers(tkRoot))
+    #tkRoot.playersButton.grid(row=1, column=1)
+    tkRoot.playersButton.pack(side="right")
+
+    tkRoot.buttonFrame.pack()
     
     updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 

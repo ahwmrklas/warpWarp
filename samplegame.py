@@ -7,14 +7,14 @@ class eCmd(Enum):
     eBuild = 2
 
 class ePhase(Enum):
-    eNil             = 1
-    eCreating        = 2
-    eBuild           = 3
-    eMovement        = 4
-    eCombat          = 5
-    eBattle          = 6
-    eDamageSelection = 7
-    eWinnerBoard     = 8
+    eNil             = 1 # Can only create game (or ping)
+    eCreating        = 2 # join game, Say ready/done, Start game (or quit, ping)
+    eBuild           = 3 # build ship, Say ready/done
+    eMovement        = 4 # Move, Say ready
+    eCombat          = 5 # ? select a first battle?
+    eBattle          = 6 # Provide ship orders
+    eDamageSelection = 7 # Provide damage allocation
+    eWinnerBoard     = 8 # Nothing? Look at results? Add name to high scores?
 
 # Sample dictionary data game
 sampleGame = {
@@ -26,13 +26,13 @@ sampleGame = {
     },
     'state': {
         'turnNumber': 0,
-        'phase': "creating",
+        'phase': "nil",
         'activePlayer': "dad",
     },
     'map': {'width':10, 'height':10},
     'playerList': [
-        {'name': "dad"},
-        {'name': "Alex"},
+        {'name': "dad",  'phase': "nil"},
+        {'name': "Alex", 'phase': "nil"},
     ],
     'objects': {
         'starList': [

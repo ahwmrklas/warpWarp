@@ -17,6 +17,16 @@
 #   All battles finished? On to next battle.
 #
 # Done? Back to Build phase
+#
+#
+# PHASE:
+# nil
+# creating
+# build
+# move
+# combat
+# battle
+# damageselection
 
 
 import sys
@@ -64,13 +74,44 @@ class gameserver:
 
         cmd = root['cmd']
         cmdStr = cmd['cmd']
+        print("CMD:", cmdStr, "PHASE:", self.game['state']['phase'])
 
         if cmdStr == 'quit':
             print("quitCommandRecieved")
+
+            # This cmd doesn't save anything. Call save if you want to save
+            self.game['state']['phase'] = "nil"
             self.gameContinues = False
+
         elif cmdStr == 'ping':
             # simple test to see if server responds. So print and respond
             print("ping")
+
+        elif cmdStr == 'newplayer':
+            # New player requests to join.
+            # I guess we would look at the game state? Hmmm
+            # What about a player joining a previously saved game?
+            # Input? Player name and potentially player specific options
+            # What player specific options? IP:port?
+            assert( (self.game['state']['phase'] == "nil") or
+                    (self.game['state']['phase'] == "creating")
+                  )
+            newPlayer = cmd['name']
+            print("newPlayer", newPlayer)
+            playerFound = False
+            for player in self.game['playerList'] :
+                if (player['name'] == newPlayer):
+                    playerFound = True
+                    print("player already exists!", player)
+                    break
+
+            if playerFound:
+                assert(player['phase'] == "nil")
+                player['phase'] = "creating"
+            else:
+                self.game['playerList'].append({'name':  newPlayer,
+                                                'phase': "creating"})
+
         elif cmdStr == 'newgame':
             # What to do? Offer to save current game? NO! this is the server,
             # do as commanded
@@ -82,7 +123,124 @@ class gameserver:
             #
             # Need to be given the name of the game?
             # Warn/Error if current game hasn't been saved (is dirty)
-            print("newGame")
+            gameName = cmd['name']
+            assert(self.game['state']['phase'] == "nil")
+            self.game['state']['phase'] = "creating"
+            # TODO probably need things like game options???
+            # TODO lots of options, right?
+
+        elif cmdStr == 'start':
+            # Basically just change state so players can begin building
+            # and playing
+            assert(self.game['state']['phase'] == "creating")
+            self.game['state']['phase'] = "build"
+
+        elif cmdStr == 'buildship':
+            # Now we get to fun stuff
+            # Check for proper state to see if player permitted to build.
+            # Validate a legal build. Does player have the money?
+            # Input? ... this is a lot... The entire ship? We would have
+            # to calculate the cost based on the options and validate it.
+            # We would have to deduct the cost from the players total.
+            # Of course need to see if it is a valid ship to begin with
+            # TODO lots of parameters!
+            assert(self.game['state']['phase'] == "build")
+
+        elif cmdStr == 'ready':
+            # A generic cmd used to end several phases
+            playerName = cmd['name']
+            print("player", playerName, "done with phase", self.game['state']['phase'])
+
+            # Based on current phase what do we do?
+            if (self.game['state']['phase'] == "creating"):
+                # Record ready for given player
+                print("Player creating. What phase is next?")
+                for player in self.game['playerList'] :
+                    if (player['name'] == playerName):
+                        assert(player['phase'] == "creating")
+                        player['phase'] = "build"
+
+                # If all players are in build then the game phase is build
+                playerFound = False
+                for player in self.game['playerList'] :
+                    if (player['phase'] != "build") and (player['phase'] != "nil"):
+                        playerFound = True
+                        break;
+
+                if not playerFound:
+                    self.game['state']['phase'] = "build"
+
+            elif (self.game['state']['phase'] == "build"):
+                # Given player can no longer build and must wait
+                # When all players ready AUTO move to move phase
+                self.game['state']['phase'] = "move"
+            elif (self.game['state']['phase'] == "move"):
+                # Given player can no longer move and must wait
+                # When all players ready AUTO move to combat phase
+                self.game['state']['phase'] = "combat"
+            elif (self.game['state']['phase'] == "combat"):
+                # Given player must wait for other players to be ready?
+                # When all players ready AUTO move to battle phase
+                self.game['state']['phase'] = "battle"
+                # What if there is no combat? Probably go on to build
+                self.game['state']['phase'] = "build"
+            elif (self.game['state']['phase'] == "battle"):
+                # Given player can no longer give orders and must wait
+                # When all players ready AUTO move to damageSelection phase
+                # or resolve combat phase? Is there such a phase?
+                self.game['state']['phase'] = "damageselection"
+            else:
+                print("Invalid phase for 'ready'")
+                assert(False)
+
+        elif cmdStr == 'moveship':
+            # Input? ShipID, new location of ship? Movement vector?
+            # Is it legal to move? (Proper turn sequence. Valid location on
+            # map? Currently in combat? Does move cause combat? (meaning ship
+            # halts immediately))
+            # Deduct movement from ship
+            name = cmd['name']
+            x = cmd['x']
+            y = cmd['y']
+
+            assert(self.game['state']['phase'] == "move")
+
+            ship = findShip(self.game, name)
+            if (ship is None):
+                print("error: Ship not found", name)
+                return False
+
+            si,sj,sk = ijk.XYtoIJK(x, y)
+            fi,fj,fk = ijk.XYtoIJK(ship['location']['x'], ship['location']['y'])
+            delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+
+            print(" delta", delta, ship['location']['x'], ship['location']['y'],
+                                   x, y)
+            ship['location']['x'] = x
+            ship['location']['y'] = y
+            ship['moves']['cur'] = ship['moves']['cur'] -delta 
+
+        elif cmdStr == 'combatorders': # Per ship? All ships?
+            # A combat instruction
+            # Check for proper state. Are there existing orders?
+            # Have all ships in combat been given orders?
+            # Have all opponents ships in *this* combat been given orders?
+            # Input? ShipID, combat command (fire, move, shields ...)
+            # TODO many more parameters
+            assert(self.game['state']['phase'] == "battle")
+
+            # When all damage has been selected ... by all players ...
+            # move to battle .... or retreat ... or combat over ... or next
+            # battle?
+
+        elif cmdStr == 'acceptdamage':
+            # Deduct combat damage
+            # Input? ShipID, damage deducted from each component
+            # Did they deduct enough damage?
+            # Do they have more ships with damage to deduct?
+            # TODO many more parameters
+            assert(self.game['state']['phase'] == "damageselection")
+
         elif cmdStr == 'savegame':
             # Write file ... who is responsible for game save?
             # I Don't want to load/restore game that is stored on the server
@@ -127,71 +285,12 @@ class gameserver:
             #
             # Warn/Error if current game hasn't been saved (is dirty)
             print("loadGame")
-        elif cmdStr == 'newplayer':
-            # New player requests to join.
-            # I guess we would look at the game state? Hmmm
-            # What about a player joining a previously saved game?
-            # Input? Player name and potentially player specific options
-            # What player specific options? IP:port?
-            print("newPlayer")
         elif cmdStr == 'playerleave':
             # Player is quiting
             # We could check for permission but I don't think so.
             # This is informational
             # Input? Player name? Some unique player key code for security?
             print("playerLeaving")
-        elif cmdStr == 'buildship':
-            # Now we get to fun stuff
-            # Check for proper state to see if player permitted to build.
-            # Validate a legal build. Does player have the money?
-            # Input? ... this is a lot... The entire ship? We would have
-            # to calculate the cost based on the options and validate it.
-            # We would have to deduct the cost from the players total.
-            # Of course need to see if it is a valid ship to begin with
-            print("buildShip")
-        elif cmdStr == 'moveship':
-            # Input? ShipID, new location of ship? Movement vector?
-            # Is it legal to move? (Proper turn sequence. Valid location on
-            # map? Currently in combat? Does move cause combat? (meaning ship
-            # halts immediately))
-            # Deduct movement from ship
-            name = cmd['name']
-            x = cmd['x']
-            y = cmd['y']
-
-            ship = findShip(self.game, name)
-            if (ship is None):
-                print("error: Ship not found", name)
-                return False
-
-            si,sj,sk = ijk.XYtoIJK(x, y)
-            fi,fj,fk = ijk.XYtoIJK(ship['location']['x'], ship['location']['y'])
-            delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
-
-            print(" delta", delta, ship['location']['x'] , x, ship['location']['y'] , y)
-            ship['location']['x'] = x
-            ship['location']['y'] = y
-            ship['moves']['cur'] = ship['moves']['cur'] -delta 
-
-        elif cmdStr == 'endmove':
-            # Movement phase is over for given player
-            # The phase of the turn changes to start combat or whatever
-            print("endMove")
-
-        elif cmdStr == 'combatorders': # Per ship? All ships?
-            # A combat instruction
-            # Check for proper state. Are there existing orders?
-            # Have all ships in combat been given orders?
-            # Have all opponents ships in *this* combat been given orders?
-            # Input? ShipID, combat command (fire, move, shields ...)
-            print("combatOrders")
-
-        elif cmdStr == 'acceptdamage':
-            # Deduct combat damage
-            # Input? ShipID, damage deducted from each component
-            # Did they deduct enough damage?
-            # Do they have more ships with damage to deduct?
-            print("acceptDamage")
 
         else:
             print("Not a legal command '", cmdStr, "'")

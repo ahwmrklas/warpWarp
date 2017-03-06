@@ -18,7 +18,7 @@ def findObjectsAt(objList, x, y):
 def initMap(tkRoot, width, height):
 
     # create a hex map that is the basis of our game display
-    hexMap = HexagonalGrid(tkRoot, scale = 20, grid_width=width,
+    hexMap = HexagonalGrid(tkRoot.mapFrame, scale = 20, grid_width=width,
                            grid_height=height)
 
     hexMap.setLeftPrivateCallBack(clickHex, tkRoot)
@@ -66,4 +66,4 @@ def clickHex(tkRoot, x, y):
     xyList.extend(findObjectsAt(shipList, x, y))
     xyList.extend(findObjectsAt(starBaseList, x, y))
 
-    hexInfo(tkRoot, xyList)
+    hexInfo(tkRoot.mapFrame, xyList)
