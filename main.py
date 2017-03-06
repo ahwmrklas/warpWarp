@@ -142,12 +142,20 @@ def phaseMenu(tkRoot, phase):
                               command=lambda:newGame(tkRoot))
         phaseMenu.add_command(label="Open",
                               command=openGame)
+        tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'creating'):
         phaseMenu.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
+        tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'build'):
         phaseMenu.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
+        tkRoot.hexMap.setRightPrivateCallBack(None, None)
+    elif (phase == 'move'):
+        phaseMenu.add_command(label="Ready",
+                              command=lambda:sendReady(tkRoot))
+        #enable the move right click stuff.
+        setupMovement(tkRoot.hexMap, tkRoot)
     else:
         print("BAD PHASE", phase)
         phase = ""
@@ -184,6 +192,7 @@ def addMenus(tkRoot):
     menuBar.add_cascade(label="Help", menu=helpMenu)
 
     tkRoot.config(menu=menuBar)
+    phaseMenu(tkRoot, None)
 
 # PURPOSE: Just make a function out of the main code. It doesn't
 #          seem right without that.
@@ -202,7 +211,6 @@ def main():
 
     # menu bar
     addMenus(tkRoot)
-    phaseMenu(tkRoot, None)
 
     tkRoot.mapFrame = Frame(tkRoot)
     tkRoot.hexMap = initMap(tkRoot,
@@ -227,7 +235,6 @@ def main():
     
     updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
-    setupMovement(tkRoot.hexMap, tkRoot)
 
     # at the moment this does nothing valuable
     foo = GameInfo(tkRoot.hexMap.grid_width,
