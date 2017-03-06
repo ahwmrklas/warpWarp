@@ -174,6 +174,12 @@ class gameserver:
                 # Given player can no longer build and must wait
                 # When all players ready AUTO move to move phase
                 self.game['state']['phase'] = "move"
+                # Record ready for given player
+                print("Player finished building. What phase is next?")
+                for player in self.game['playerList'] :
+                    if (player['name'] == playerName):
+                        assert(player['phase'] == "build")
+                        player['phase'] = "move"
             elif (self.game['state']['phase'] == "move"):
                 # Given player can no longer move and must wait
                 # When all players ready AUTO move to combat phase
