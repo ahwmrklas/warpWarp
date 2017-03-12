@@ -17,6 +17,7 @@ from mapUtil import *
 from connect import *
 from cmds import warpWarCmds
 import json
+import getpass
 
 
 # PURPOSE: Button handler. The Quit button
@@ -35,9 +36,11 @@ def connectServer(tkRoot):
     print("connectServer")
     if (tkRoot.hCon is not None):
         tkRoot.hCon.quitCmd()
-    tmp = connect(tkRoot, "silver", "12345")
+
+    tmp = connect(tkRoot, tkRoot.playerName, "silver", "12345")
     if (tmp is not None):
         tkRoot.hCon = tmp.result
+        tkRoot.playerName = tmp.playerName
 
         sendJson = warpWarCmds().newPlayer(tkRoot.playerName)
         tkRoot.hCon.sendCmd(sendJson)
@@ -225,7 +228,7 @@ def main():
     tkRoot.hCon = None
     tkRoot.hexMap = None
     tkRoot.game = None
-    tkRoot.playerName = 'dad' # fill this in programatically
+    tkRoot.playerName = getpass.getuser()
 
     tkRoot.game = sampleGame
 

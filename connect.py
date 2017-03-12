@@ -10,7 +10,9 @@ class connect(Dialog):
 
     # PURPOSE:
     # RETURNS:
-    def __init__(self, master, defaultIP, defaultPort):
+    def __init__(self, master, defaultName, defaultIP, defaultPort):
+        self.name = StringVar()
+        self.name.set(defaultName)
         self.ip = StringVar()
         self.ip.set(defaultIP)
         self.port = IntVar()
@@ -23,6 +25,12 @@ class connect(Dialog):
     def body(self, master):
 
         master.pack(fill=BOTH, expand=1)
+
+        tmp = Label(master, text="PlayerName")
+        tmp.pack()
+
+        tmp = tk.Entry(master, textvariable=self.name)
+        tmp.pack()
 
         tmp = Label(master, text="SeverIP")
         tmp.pack()
@@ -59,3 +67,4 @@ class connect(Dialog):
     def apply(self):
         print("return the client")
         self.result = self.client
+        self.playerName = self.name.get()

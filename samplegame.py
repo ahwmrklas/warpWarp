@@ -27,12 +27,12 @@ sampleGame = {
     'state': {
         'turnNumber': 0,
         'phase': "nil",
-        'activePlayer': "dad",
+        'activePlayer': "ahw",
     },
     'map': {'width':10, 'height':10},
     'playerList': [
-        {'name': "dad",  'phase': "nil"},
-        {'name': "Alex", 'phase': "nil"},
+        {'name': "ahw",  'phase': "nil"},
+        {'name': "bearda", 'phase': "nil"},
     ],
     'objects': {
         'starList': [
@@ -40,10 +40,10 @@ sampleGame = {
              'type': "star",
              'location': {'x':1, 'y':3},
              'image':"alpha.png",
-             'owner':"dad",
+             'owner':"ahw",
              'valueBP':3,
-             'visibility':[ {'player':"dad",  'percent':100},
-                            {'player':"alex", 'percent':30},
+             'visibility':[ {'player':"ahw",  'percent':100},
+                            {'player':"bearda", 'percent':30},
                           ],
             },
         ],
@@ -54,8 +54,8 @@ sampleGame = {
              'image':"relic.png",
              'owner':"none",
              'valueBP':0,
-             'visibility':[ {'player':"dad",  'percent':100},
-                            {'player':"alex", 'percent':30},
+             'visibility':[ {'player':"ahw",  'percent':100},
+                            {'player':"bearda", 'percent':30},
                           ],
             },
         ],
@@ -64,7 +64,7 @@ sampleGame = {
              'type': "ship",
              'location': {'x':4, 'y':3},
              'image':"warpship.png",
-             'owner':"dad",
+             'owner':"ahw",
              'techLevel': 1,
              'moves': {'cur':3},   # relates to PowerDrive
              'PD':{'max':5, 'cur':5},       # PowerDrive
@@ -80,8 +80,8 @@ sampleGame = {
              'SR':{'max':3, 'cur':3},       # System Ship Racks
              'H': {'max':1, 'cur':1},       # Holds (New)
              'R': {'max':1, 'cur':1},       # Repair Bays (New)
-             'visibility':[ {'player':"dad",  'percent':100},
-                            {'player':"alex", 'percent':30},
+             'visibility':[ {'player':"ahw",  'percent':100},
+                            {'player':"bearda", 'percent':30},
                           ],
             },
         ],
@@ -90,7 +90,7 @@ sampleGame = {
              'type': "base",
              'location': {'x':4, 'y':8},
              'image': "b_5.png",
-             'owner': "Alex",
+             'owner': "bearda",
              'stockpile': 15,
             },
         ],
@@ -100,7 +100,7 @@ sampleGame = {
         ],
     },
     'history': [
-        {'cmd':"start", 'player':"dad"},
-        {'cmd':"build", 'player':"dad"},
+        {'cmd':"start", 'player':"ahw"},
+        {'cmd':"build", 'player':"ahw"},
     ],
 }
