@@ -124,6 +124,10 @@ def aboutHelp():
 def helpHelp():
     print("helpHelp")
 
+def updateMenu(tkRoot):
+    #for the moment, we just call phasemenu
+    phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+
 # PURPOSE: Delete previous and set new, phase menu
 # RETURNS: none
 def phaseMenu(tkRoot, phase):
@@ -135,34 +139,50 @@ def phaseMenu(tkRoot, phase):
     if (len(menuBar.children.items()) > 2):
         menuBar.delete(3)
 
-    phaseMenu = Menu(menuBar)
+    phaseMenuObject = Menu(menuBar)
 
     if (phase == 'nil'):
-        phaseMenu.add_command(label="New",
+        phaseMenuObject.add_command(label="New",
                               command=lambda:newGame(tkRoot))
-        phaseMenu.add_command(label="Open",
+        phaseMenuObject.add_command(label="Open",
                               command=openGame)
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'creating'):
-        phaseMenu.add_command(label="Ready",
+        phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'build'):
-        phaseMenu.add_command(label="Ready",
+        phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'move'):
-        phaseMenu.add_command(label="Ready",
+        phaseMenuObject.add_command(label="Ships you own:")
+        private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack()]
+        for ship in tkRoot.game['objects']['shipList']:
+            labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
+                                                         ship['moves']['cur'],
+                                                         ship['PD']['cur'])
+            private[1] = ship['name']
+            moveCommand = menuMover(private,
+                                    ship['location']['x'],
+                                    ship['location']['y'],
+                                    ship['moves']['cur'])
+            phaseMenuObject.add_command(label=labelString, command=moveCommand)
+        phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
         #enable the move right click stuff.
         setupMovement(tkRoot.hexMap, tkRoot)
     else:
         print("BAD PHASE", phase)
         phase = ""
-        phaseMenu.add_command(label="Connect",
+        phaseMenuObject.add_command(label="Connect",
                               command=lambda:connectServer(tkRoot))
 
-    menuBar.add_cascade(label="Phase " + phase, menu=phaseMenu)
+    menuBar.add_cascade(label="Phase " + phase, menu=phaseMenuObject)
+
+    #bind event
+    tkRoot.bind("<<updateMenu>>", 
+            lambda event:phaseMenu(tkRoot, phase))
 
 # PURPOSE: Create menu GUI elements
 # RETURNS: none

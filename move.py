@@ -114,3 +114,7 @@ def moveOnClick(private, x, y):
 
                 #replace the old call back
                 hexGrid.setLeftPrivateCallBack(private[3][0], private[3][1])
+                #send event
+                print ("sending event!")
+                tkRoot.event_generate("<<updateMenu>>", when='tail')
+                print ("sent event!")
