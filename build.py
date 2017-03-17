@@ -11,6 +11,8 @@ class build(Dialog):
         self.remaining = self.base['stockpile']
         Dialog.__init__(self, master)
 
+    # PURPOSE:
+    # RETURNS:
     def makeHeader(self, headerFrame):
         headerFrame.grid(columnspan=2)
         totalFrame = Frame(headerFrame, relief=RIDGE, bd=10)
@@ -28,6 +30,8 @@ class build(Dialog):
         self.remainingW.grid()
         remainingFrame.grid(row=0,column=3)
 
+    # PURPOSE:
+    # RETURNS:
     def makeSpinners(self, spinFrame):
         self.spinList = []
 
@@ -105,6 +109,8 @@ class build(Dialog):
 
         spinFrame.grid()
 
+    # PURPOSE:
+    # RETURNS:
     def updateSpinners(self):
         used = 0
         for spinner in self.spinList:
@@ -120,10 +126,48 @@ class build(Dialog):
         self.spentW.config(text="Used BP:%d" % used)
         self.remainingW.config(text="Remaining BP:%d" % (self.base['stockpile'] - used))
 
+    # PURPOSE:
+    # RETURNS:
     def body(self, master):
         #have a bunch of spinboxes and checkboxes
         statusFrame = Frame(master)
         self.makeHeader(statusFrame)
         spinFrame = Frame(master)
         self.makeSpinners(spinFrame)
+
+    # PURPOSE:
+    # RETURNS:
+    def validate(self):
+        print("validate build")
+        return True
+
+    # PURPOSE:
+    # RETURNS:
+    def apply(self):
+        print("apply build")
+        self.ship =  {
+             'name': "built",
+             'type': "ship",
+             'location': {'x':4, 'y':3},
+             'image':"warpship.png",
+             'owner':"ahw",
+             'techLevel': 1,
+             'moves': {'cur':3},   # relates to PowerDrive
+             'PD':{'max':5, 'cur':5},       # PowerDrive
+             'WG':{'max':True, 'cur':True}, # Warp Generator
+             'B': {'max':3, 'cur':3},       # Beams
+             'S': {'max':2, 'cur':2},       # Screens (Shields)
+             'E': {'max':2, 'cur':2},       # Electronic Counter Measures (New)
+             'T': {'max':3, 'cur':3},       # Tubes
+             'M': {'max':7, 'cur':7},       # Missiles
+             'A': {'max':2, 'cur':2},       # Armor (New)
+             'C': {'max':1, 'cur':1},       # Cannons (New)
+             'SH':{'max':2, 'cur':2},       # Shells (New)
+             'SR':{'max':3, 'cur':3},       # System Ship Racks
+             'H': {'max':1, 'cur':1},       # Holds (New)
+             'R': {'max':1, 'cur':1},       # Repair Bays (New)
+             'visibility':[ {'player':"ahw",  'percent':100},
+                            {'player':"bearda", 'percent':30},
+                          ],
+            }
 

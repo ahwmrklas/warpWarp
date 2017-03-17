@@ -16,6 +16,7 @@ from move import *
 from mapUtil import *
 from connect import *
 from cmds import warpWarCmds
+from build import build
 import json
 import getpass
 
@@ -79,6 +80,16 @@ def sendReady(tkRoot):
         # Send message? And that updates?
         phaseMenu(tkRoot, tkRoot.game['state']['phase'])
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+# PURPOSE:
+# RETURNS:
+def buildShip(tkRoot, base):
+    print("buildShip")
+    print("Should call ship build dialog")
+    tmp = build(tkRoot, base)
+    print("done")
+    print("ship")
+    print(tmp.ship)
 
 # PURPOSE:
 # RETURNS:
@@ -155,9 +166,18 @@ def phaseMenu(tkRoot, phase):
                               command=lambda:sendReady(tkRoot))
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'build'):
+        tkRoot.hexMap.setRightPrivateCallBack(None, None)
+
+        phaseMenuObject.add_command(label="Bases you own:")
+        for base in tkRoot.game['objects']['starBaseList']:
+            labelString = "'%s'    BP left: %d/%d" % (base['name'],
+                                                      base['stockpile'],
+                                                      base['stockpile'])
+            phaseMenuObject.add_command(label=labelString,
+                                        command=lambda:buildShip(tkRoot, base))
+
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
-        tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'move'):
         phaseMenuObject.add_command(label="Ships you own:")
         private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack()]
