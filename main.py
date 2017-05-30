@@ -38,7 +38,7 @@ def connectServer(tkRoot):
     if (tkRoot.hCon is not None):
         tkRoot.hCon.quitCmd()
 
-    tmp = connect(tkRoot, tkRoot.playerName, "silver", "12345")
+    tmp = connect(tkRoot, tkRoot.playerName, "127.0.1.1", "12345")
     if (tmp is not None):
         tkRoot.hCon = tmp.result
         tkRoot.playerName = tmp.playerName
