@@ -157,7 +157,8 @@ class gameserver:
                 print("Player creating. What phase is next?")
                 for player in self.game['playerList'] :
                     if (player['name'] == playerName):
-                        assert(player['phase'] == "creating")
+                        #We don'w want this. What if a player sends ready twice?
+                        #assert(player['phase'] == "creating") 
                         player['phase'] = "build"
 
                 # If all players are in build then the game phase is build
@@ -178,7 +179,8 @@ class gameserver:
                 print("Player finished building. What phase is next?")
                 for player in self.game['playerList'] :
                     if (player['name'] == playerName):
-                        assert(player['phase'] == "build")
+                        #We don'w want this. What if a player sends ready twice?
+                        #assert(player['phase'] == "build")
                         player['phase'] = "move"
             elif (self.game['state']['phase'] == "move"):
                 # Given player can no longer move and must wait
