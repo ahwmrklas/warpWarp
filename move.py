@@ -57,15 +57,16 @@ def setupMovement(hexGrid, tkRoot):
         popup.add_command(label="Ships in this sector:")
         for ship in tkRoot.game['objects']['shipList']:
             if ship['location']['x'] == hex_x and ship['location']['y'] == hex_y:
-                labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
-                                                             ship['moves']['cur'],
-                                                             ship['PD']['cur'])
-                private[1] = ship['name']
-                moveCommand = menuMover(private,
-                                        ship['location']['x'],
-                                        ship['location']['y'],
-                                        ship['moves']['cur'])
-                popup.add_command(label=labelString, command=moveCommand)
+                if (ship['owner'] == tkRoot.playerName):
+                    labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
+                                                                 ship['moves']['cur'],
+                                                                 ship['PD']['cur'])
+                    private[1] = ship['name']
+                    moveCommand = menuMover(private,
+                                            ship['location']['x'],
+                                            ship['location']['y'],
+                                            ship['moves']['cur'])
+                    popup.add_command(label=labelString, command=moveCommand)
         try:
             #disable left click
             popup.post(pixel_X, pixel_Y)
