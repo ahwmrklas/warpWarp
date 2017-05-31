@@ -44,6 +44,16 @@ def findShip(game, shipName):
             return ship
    return None
 
+#PURPOSE: look to see if all players are in a given phase
+#RETURNS: true iff all players in game are in phase
+def playerPhaseCheck(game, phase):
+    #check to see if all players are in a given phase
+    for player in game['playerList'] :
+        if (player['phase'] != phase) and (player['phase'] != "nil"):
+            return False
+    return True
+
+
 # class to handle game commands
 class gameserver:
 
@@ -161,20 +171,12 @@ class gameserver:
                         #assert(player['phase'] == "creating") 
                         player['phase'] = "build"
 
-                # If all players are in build then the game phase is build
-                playerFound = False
-                for player in self.game['playerList'] :
-                    if (player['phase'] != "build") and (player['phase'] != "nil"):
-                        playerFound = True
-                        break;
-
-                if not playerFound:
+                if playerPhaseCheck(self.game, "build"):
                     self.game['state']['phase'] = "build"
 
             elif (self.game['state']['phase'] == "build"):
                 # Given player can no longer build and must wait
                 # When all players ready AUTO move to move phase
-                self.game['state']['phase'] = "move"
                 # Record ready for given player
                 print("Player finished building. What phase is next?")
                 for player in self.game['playerList'] :
@@ -182,10 +184,28 @@ class gameserver:
                         #We don'w want this. What if a player sends ready twice?
                         #assert(player['phase'] == "build")
                         player['phase'] = "move"
+                if playerPhaseCheck(self.game, "move"):
+                    self.game['state']['phase'] = "move"
+                    #the second player has to wait until the first player sends a ready.
+                    self.game['playerList'][1]['phase'] = "wait"
+
             elif (self.game['state']['phase'] == "move"):
-                # Given player can no longer move and must wait
+                #if they are waiting, ignore them.
+                for player in self.game['playerList'] :
+                    if (player['name'] == playerName):
+                        if player['phase'] == "wait":
+                            pass
+                        else:
+                            # Given player can no longer move and must wait
+                            player['phase'] = "moved"
+                            if self.game['playerList'][1]['phase'] == "wait":
+                                self.game['playerList'][1]['phase'] = "move"
                 # When all players ready AUTO move to combat phase
-                self.game['state']['phase'] = "combat"
+                if playerPhaseCheck(self.game, "moved"):
+                    self.game['state']['phase'] = "combat"
+                    for player in self.game['playerList'] :
+                        player['phase'] = "combat"
+
             elif (self.game['state']['phase'] == "combat"):
                 # Given player must wait for other players to be ready?
                 # When all players ready AUTO move to battle phase
