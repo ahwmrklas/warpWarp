@@ -171,3 +171,12 @@ class build(Dialog):
                           ],
             }
 
+class menuBuilder:
+    def __init__(self, tkRoot, base):
+
+        self.base = base
+        self.tkRoot = tkRoot
+
+    def __call__(self):
+        build(self.tkRoot, self.base)
+
