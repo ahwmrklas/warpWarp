@@ -68,8 +68,8 @@ class warpWarCmds():
     # PURPOSE: Create the build ship string
     #       TODO    This is going to have many arguments!
     # RETURNS: string with json
-    def buildShip(self):
-        cmd  = { 'cmd' : {'cmd': "buildship"} }
+    def buildShip(self, ship, base):
+        cmd  = { 'cmd' : {'cmd': "buildship", 'ship': ship, 'base': base} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
