@@ -68,7 +68,7 @@ sampleGame = {
              'techLevel': 1,
              'moves': {'cur':3},   # relates to PowerDrive
              'PD':{'max':5, 'cur':5},       # PowerDrive
-             'WG':{'max':True, 'cur':True}, # Warp Generator
+             'WG': True,                    # Warp Generator
              'B': {'max':3, 'cur':3},       # Beams
              'S': {'max':2, 'cur':2},       # Screens (Shields)
              'E': {'max':2, 'cur':2},       # Electronic Counter Measures (New)

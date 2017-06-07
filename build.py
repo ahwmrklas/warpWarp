@@ -112,6 +112,11 @@ class build(Dialog):
         self.rpSpn.grid(row=13, column=1)
         #self.spinList.append(self.rpSpn) we treat this one special
 
+        tmpLbl = Label(spinFrame, text="WARP GENERATOR")
+        tmpLbl.grid(row=14, column=0)
+        self.warpSpn = Spinbox(spinFrame, from_=0, to=1, state="readonly", command=self.updateSpinners)
+        self.warpSpn.grid(row=14, column=1)
+
         spinFrame.grid()
 
     # PURPOSE:
@@ -122,6 +127,7 @@ class build(Dialog):
             used = used + int(spinner.get())
 
         used = used + 5 * int(self.rpSpn.get())
+        used = used + 5 * int(self.warpSpn.get())
 
         for spinner in self.spinList:
             spinner.config(to=self.base['stockpile'] - used + int(spinner.get()))
@@ -158,31 +164,21 @@ class build(Dialog):
              'owner': self.base['owner'],
              'techLevel': 1,
              'moves': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},   # relates to PowerDrive
-             'PD':{'max':5, 'cur':5},       # PowerDrive
-             'WG':{'max':True, 'cur':True}, # Warp Generator
-             'B': {'max':3, 'cur':3},       # Beams
-             'S': {'max':2, 'cur':2},       # Screens (Shields)
-             'E': {'max':2, 'cur':2},       # Electronic Counter Measures (New)
-             'T': {'max':3, 'cur':3},       # Tubes
-             'M': {'max':7, 'cur':7},       # Missiles
-             'A': {'max':2, 'cur':2},       # Armor (New)
-             'C': {'max':1, 'cur':1},       # Cannons (New)
-             'SH':{'max':2, 'cur':2},       # Shells (New)
-             'SR':{'max':3, 'cur':3},       # System Ship Racks
-             'H': {'max':1, 'cur':1},       # Holds (New)
-             'R': {'max':1, 'cur':1},       # Repair Bays (New)
-             'visibility':[ {'player':"ahw",  'percent':100},
-                            {'player':"bearda", 'percent':30},
-                          ],
+             'PD': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},       # PowerDrive
+             'WG': (True if self.warpSpn.get() == 1 else False), # Warp Generator
+             'B': {'max':self.beamSpn.get(), 'cur':self.beamSpn.get()},       # Beams
+             'S': {'max':self.screenSpn.get(), 'cur':self.screenSpn.get()},       # Screens (Shields)
+             'E': {'max':self.ecmSpn.get(), 'cur':self.ecmSpn.get()},       # Electronic Counter Measures (New)
+             'T': {'max':self.tubeSpn.get(), 'cur':self.tubeSpn.get()},       # Tubes
+             'M': {'max':self.mslSpn.get(), 'cur':self.mslSpn.get()},       # Missiles
+             'A': {'max':self.armorSpn.get(), 'cur':self.armorSpn.get()},       # Armor (New)
+             'C': {'max':self.cannonSpn.get(), 'cur':self.cannonSpn.get()},       # Cannons (New)
+             'SH':{'max':self.shellSpn.get(), 'cur':self.shellSpn.get()},       # Shells (New)
+             'SR':{'max':self.srSpn.get(), 'cur':self.srSpn.get()},       # System Ship Racks
+             'H': {'max':self.holdSpn.get(), 'cur':self.holdSpn.get()},       # Holds (New)
+             'R': {'max':self.rpSpn.get(), 'cur':self.rpSpn.get()},       # Repair Bays (New)
+             'visibility':[ {'player':self.base['owner'],  'percent':10}],
             }
         print (self.ship)
 
-class menuBuilder:
-    def __init__(self, tkRoot, base):
-
-        self.base = base
-        self.tkRoot = tkRoot
-
-    def __call__(self):
-        build(self.tkRoot, self.base)
 

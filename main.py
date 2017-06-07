@@ -12,7 +12,7 @@ from dataModel import *
 from samplegame import sampleGame
 from overlay import *
 from hexinfo import *
-from build import menuBuilder
+from build import *
 from move import *
 from mapUtil import *
 from connect import *
@@ -20,6 +20,18 @@ from cmds import warpWarCmds
 import json
 import getpass
 
+
+#PURPOSE: create the build button
+class menuBuilder:
+    def __init__(self, tkRoot, base):
+
+        self.base = base
+        self.tkRoot = tkRoot
+
+    def __call__(self):
+        buildResult = build(self.tkRoot, self.base)
+        self.tkRoot.game['objects']['shipList'].append(buildResult.ship)
+        updateMap(self.tkRoot, self.tkRoot.hexMap, self.tkRoot.game)
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
