@@ -158,10 +158,43 @@ class gameserver:
             #lets do this the lazy way first. just append the ship to the list!
             print("ship to append:")
             print(cmd['ship'])
-            print("shiplist beforehand:")
-            self.game['objects']['shipList'].append(cmd['ship'])
-            print("shiplist afterwards:")
-            print(self.game['objects']['shipList'])
+            #How much will this ship cost?
+            ship = cmd['ship']
+            cost = 0
+            cost += ship['PD']['max']
+            cost += ship['B']['max']
+            cost += ship['S']['max']
+            cost += ship['E']['max']
+            cost += ship['T']['max']
+            cost += ship['M']['max'] / 3
+            cost += ship['A']['max'] / 2
+            cost += ship['C']['max']
+            cost += ship['SH']['max'] / 6
+            cost += ship['SR']['max']
+            cost += ship['H']['max']
+            cost += ship['R']['max'] * 5
+            if ship['WG']['max'] == True:
+                cost += 5
+
+            print (cost)
+
+            #TODO: This next section is bad. we don't check to see if the player
+            #who sent the command owns the base, or is in the right spot.
+            #what we should really do is have this command only take the ship,
+            #and have the base we work with just be any base on the ship's hex
+            #owned by the right player
+
+            #does the base have enough to pay for the ship?
+            if cmd['base']['stockpile'] >= cost:
+                #find the base in the game
+                for base in self.game['objects']['starBaseList']:
+                    if base['name'] == cmd['base']['name']:
+                        #subtract the cost...
+                        print (base)
+                        base['stockpile'] -= cost
+                        print (base)
+                        #and build the ship!
+                        self.game['objects']['shipList'].append(cmd['ship'])
 
         elif cmdStr == 'ready':
             # A generic cmd used to end several phases

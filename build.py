@@ -165,18 +165,18 @@ class build(Dialog):
              'techLevel': 1,
              'moves': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},   # relates to PowerDrive
              'PD': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},       # PowerDrive
-             'WG': {'max': True if self.warpSpn.get() == 1 else False, 'cur': True if self.warpSpn.get() == 1 else False}, # Warp Generator
-             'B': {'max':self.beamSpn.get(), 'cur':self.beamSpn.get()},       # Beams
-             'S': {'max':self.screenSpn.get(), 'cur':self.screenSpn.get()},       # Screens (Shields)
-             'E': {'max':self.ecmSpn.get(), 'cur':self.ecmSpn.get()},       # Electronic Counter Measures (New)
-             'T': {'max':self.tubeSpn.get(), 'cur':self.tubeSpn.get()},       # Tubes
-             'M': {'max':self.mslSpn.get(), 'cur':self.mslSpn.get()},       # Missiles
-             'A': {'max':self.armorSpn.get(), 'cur':self.armorSpn.get()},       # Armor (New)
-             'C': {'max':self.cannonSpn.get(), 'cur':self.cannonSpn.get()},       # Cannons (New)
-             'SH':{'max':self.shellSpn.get(), 'cur':self.shellSpn.get()},       # Shells (New)
-             'SR':{'max':self.srSpn.get(), 'cur':self.srSpn.get()},       # System Ship Racks
-             'H': {'max':self.holdSpn.get(), 'cur':self.holdSpn.get()},       # Holds (New)
-             'R': {'max':self.rpSpn.get(), 'cur':self.rpSpn.get()},       # Repair Bays (New)
+             'WG': {'max': True if int(self.warpSpn.get()) == 1 else False, 'cur': True if int(self.warpSpn.get()) == 1 else False}, # Warp Generator
+             'B': {'max':int(self.beamSpn.get()), 'cur':int(self.beamSpn.get())},       # Beams
+             'S': {'max':int(self.screenSpn.get()), 'cur':int(self.screenSpn.get())},       # Screens (Shields)
+             'E': {'max':int(self.ecmSpn.get()), 'cur':int(self.ecmSpn.get())},       # Electronic Counter Measures (New)
+             'T': {'max':int(self.tubeSpn.get()), 'cur':int(self.tubeSpn.get())},       # Tubes
+             'M': {'max':int(self.mslSpn.get()) * 3, 'cur':int(self.mslSpn.get()) * 3},       # Missiles
+             'A': {'max':int(self.armorSpn.get()), 'cur':int(self.armorSpn.get())},       # Armor (New)
+             'C': {'max':int(self.cannonSpn.get()), 'cur':int(self.cannonSpn.get())},       # Cannons (New)
+             'SH':{'max':int(self.shellSpn.get()) * 6, 'cur':int(self.shellSpn.get()) * 6},       # Shells (New)
+             'SR':{'max':int(self.srSpn.get()), 'cur':int(self.srSpn.get())},       # System Ship Racks
+             'H': {'max':int(self.holdSpn.get()), 'cur':int(self.holdSpn.get())},       # Holds (New)
+             'R': {'max':int(self.rpSpn.get()), 'cur':int(self.rpSpn.get())},       # Repair Bays (New)
              'visibility':[ {'player':self.base['owner'],  'percent':10}],
             }
         print (self.ship)

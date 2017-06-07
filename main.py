@@ -38,6 +38,9 @@ class menuBuilder:
             resp = self.tkRoot.hCon.waitFor(5)
             self.tkRoot.game = json.loads(resp)
 
+            phaseMenu(self.tkRoot, self.tkRoot.game['state']['phase'])
+            updateMap(self.tkRoot, self.tkRoot.hexMap, self.tkRoot.game)
+
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
 # RETURNS: I don't know.
