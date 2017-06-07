@@ -30,8 +30,13 @@ class menuBuilder:
 
     def __call__(self):
         buildResult = build(self.tkRoot, self.base)
-        self.tkRoot.game['objects']['shipList'].append(buildResult.ship)
-        updateMap(self.tkRoot, self.tkRoot.hexMap, self.tkRoot.game)
+        if (self.tkRoot.hCon is not None):
+            sendJson = warpWarCmds().buildShip(buildResult.ship, self.base)
+            print ("Sending build command:")
+            print (sendJson)
+            self.tkRoot.hCon.sendCmd(sendJson)
+            resp = self.tkRoot.hCon.waitFor(5)
+            self.tkRoot.game = json.loads(resp)
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
@@ -80,6 +85,22 @@ def newGame(tkRoot):
 # PURPOSE:
 # RETURNS:
 def sendReady(tkRoot):
+    print("readyMenu")
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().ready(tkRoot.playerName)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        # not the right place to update.
+        # Send message? And that updates?
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+# PURPOSE:
+# RETURNS:
+def sendBuild(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
         sendJson = warpWarCmds().ready(tkRoot.playerName)

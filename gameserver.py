@@ -155,6 +155,13 @@ class gameserver:
             # Of course need to see if it is a valid ship to begin with
             # TODO lots of parameters!
             assert(self.game['state']['phase'] == "build")
+            #lets do this the lazy way first. just append the ship to the list!
+            print("ship to append:")
+            print(cmd['ship'])
+            print("shiplist beforehand:")
+            self.game['objects']['shipList'].append(cmd['ship'])
+            print("shiplist afterwards:")
+            print(self.game['objects']['shipList'])
 
         elif cmdStr == 'ready':
             # A generic cmd used to end several phases

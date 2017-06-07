@@ -165,7 +165,7 @@ class build(Dialog):
              'techLevel': 1,
              'moves': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},   # relates to PowerDrive
              'PD': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},       # PowerDrive
-             'WG': (True if self.warpSpn.get() == 1 else False), # Warp Generator
+             'WG': {'max': True if self.warpSpn.get() == 1 else False, 'cur': True if self.warpSpn.get() == 1 else False}, # Warp Generator
              'B': {'max':self.beamSpn.get(), 'cur':self.beamSpn.get()},       # Beams
              'S': {'max':self.screenSpn.get(), 'cur':self.screenSpn.get()},       # Screens (Shields)
              'E': {'max':self.ecmSpn.get(), 'cur':self.ecmSpn.get()},       # Electronic Counter Measures (New)
