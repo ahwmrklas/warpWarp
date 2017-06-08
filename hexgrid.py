@@ -99,7 +99,7 @@ class HexagonalGrid(HexaCanvas):
         Δx     = (scale**2 - (scale/2.0)**2)**0.5
         width  = 2 * Δx * grid_width + Δx
         height = 1.5 * scale * grid_height + 0.5 * scale
-        self.clickCallBack = None
+        self.rightExternalCallBack = None
 
         HexaCanvas.__init__(self, master, background='white', width=width, height=height, *args, **kwargs)
         self.bind("<Button-1>", self.leftClickCallback)
