@@ -44,14 +44,26 @@ def findShip(game, shipName):
             return ship
    return None
 
-#PURPOSE: look to see if all players are in a given phase
-#RETURNS: true iff all players in game are in phase
-def playerPhaseCheck(game, phase):
+# PURPOSE: look to see if all players are in a given phase
+# RETURNS: true iff all players in game are in phase
+def areAllPlayersInPhase(game, phase):
     #check to see if all players are in a given phase
     for player in game['playerList'] :
-        if (player['phase'] != phase) and (player['phase'] != "nil"):
+        if (player['phase'] != phase):
             return False
     return True
+
+# PURPOSE: Change given player from startphase to finishphase
+# RETURNS: true if successfully moved
+def changePlayerPhase(game, playerName, start, finish):
+    print(playerName, " moving from ", start, " to ", finish)
+    for player in game['playerList'] :
+        if (player['name'] == playerName):
+            assert(player['phase'] == start)
+            player['phase'] = finish
+            return True
+
+    return False
 
 
 # class to handle game commands
@@ -205,26 +217,18 @@ class gameserver:
             if (self.game['state']['phase'] == "creating"):
                 # Record ready for given player
                 print("Player creating. What phase is next?")
-                for player in self.game['playerList'] :
-                    if (player['name'] == playerName):
-                        #We don'w want this. What if a player sends ready twice?
-                        #assert(player['phase'] == "creating") 
-                        player['phase'] = "build"
+                changePlayerPhase(self.game, playerName, "creating", "build")
 
-                if playerPhaseCheck(self.game, "build"):
+                if areAllPlayersInPhase(self.game, "build"):
                     self.game['state']['phase'] = "build"
 
             elif (self.game['state']['phase'] == "build"):
                 # Given player can no longer build and must wait
                 # When all players ready AUTO move to move phase
                 # Record ready for given player
-                print("Player finished building. What phase is next?")
-                for player in self.game['playerList'] :
-                    if (player['name'] == playerName):
-                        #We don'w want this. What if a player sends ready twice?
-                        #assert(player['phase'] == "build")
-                        player['phase'] = "move"
-                if playerPhaseCheck(self.game, "move"):
+                changePlayerPhase(self.game, playerName, "build", "move")
+
+                if areAllPlayersInPhase(self.game, "move"):
                     self.game['state']['phase'] = "move"
                     #the second player has to wait until the first player sends a ready.
                     self.game['playerList'][1]['phase'] = "wait"
@@ -241,7 +245,7 @@ class gameserver:
                             if self.game['playerList'][1]['phase'] == "wait":
                                 self.game['playerList'][1]['phase'] = "move"
                 # When all players ready AUTO move to combat phase
-                if playerPhaseCheck(self.game, "moved"):
+                if areAllPlayersInPhase(self.game, "moved"):
                     self.game['state']['phase'] = "combat"
                     for player in self.game['playerList'] :
                         player['phase'] = "combat"
