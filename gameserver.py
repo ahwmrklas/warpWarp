@@ -216,7 +216,6 @@ class gameserver:
             # Based on current phase what do we do?
             if (self.game['state']['phase'] == "creating"):
                 # Record ready for given player
-                print("Player creating. What phase is next?")
                 changePlayerPhase(self.game, playerName, "creating", "build")
 
                 if areAllPlayersInPhase(self.game, "build"):

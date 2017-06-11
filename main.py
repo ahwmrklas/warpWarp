@@ -21,26 +21,6 @@ import json
 import getpass
 
 
-#PURPOSE: create the build button
-class menuBuilder:
-    def __init__(self, tkRoot, base):
-
-        self.base = base
-        self.tkRoot = tkRoot
-
-    def __call__(self):
-        buildResult = build(self.tkRoot, self.base)
-        if (self.tkRoot.hCon is not None):
-            sendJson = warpWarCmds().buildShip(buildResult.ship, self.base)
-            print ("Sending build command:")
-            print (sendJson)
-            self.tkRoot.hCon.sendCmd(sendJson)
-            resp = self.tkRoot.hCon.waitFor(5)
-            self.tkRoot.game = json.loads(resp)
-
-            phaseMenu(self.tkRoot, self.tkRoot.game['state']['phase'])
-            updateMap(self.tkRoot, self.tkRoot.hexMap, self.tkRoot.game)
-
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
 # RETURNS: I don't know.
@@ -103,10 +83,14 @@ def sendReady(tkRoot):
 
 # PURPOSE:
 # RETURNS:
-def sendBuild(tkRoot):
-    print("readyMenu")
+def buildShip(tkRoot, base):
+    print("buildMenu")
+    buildResult = build(tkRoot, base)
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ready(tkRoot.playerName)
+        buildResult = build(tkRoot, base)
+
+    if (buildResult is not None):
+        sendJson = warpWarCmds().buildShip(buildResult.ship, base)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -193,15 +177,12 @@ def phaseMenu(tkRoot, phase):
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (phase == 'build'):
         phaseMenuObject.add_command(label="Bases you own:")
-        private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack()]
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['stockpile'])
-                private[1] = base['name']
-                buildCommand = menuBuilder(tkRoot,base)
                 phaseMenuObject.add_command(label=labelString, 
-                        command=buildCommand)
+                                            command=lambda:buildShip(tkRoot, base))
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
