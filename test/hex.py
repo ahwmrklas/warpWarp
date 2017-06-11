@@ -53,7 +53,7 @@ def draw(w=None, h=None):
                   linewidth=size/2, fill=cols[size])
 
 def click(event):
-    print 'click!', canvas.winfo_containing(event.x, event.y)
+    print( 'click!', canvas.winfo_containing(event.x, event.y))
 
 def resize(event):
     canvas.delete(ALL)
