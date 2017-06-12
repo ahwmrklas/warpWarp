@@ -6,6 +6,7 @@
 # Imports
 # server thread for sending data to and fro
 from server import srvrThrd
+from playerAi import playerAiThrd
 import socket
 import tkinter as tk
 import threading
@@ -19,6 +20,7 @@ class MyTkApp(threading.Thread):
     def __init__(self):
         self.Q = Q.Queue()
         self.hNET = None
+        self.hPlayerAi = None
         threading.Thread.__init__(self, name="ServerMyTkApp")
         self.start()
         
@@ -31,6 +33,8 @@ class MyTkApp(threading.Thread):
             self.hNET.quit()
         if (self.root is not None) :
             self.root.quit()
+        if (self.hPlayerAi is not None) :
+            self.hPlayerAi.quit()
         print("Server Gui exit")
 
     # PURPOSE: Start the network server thread
@@ -38,6 +42,14 @@ class MyTkApp(threading.Thread):
     def startServer(self):
         print("start server")
         self.hNET = srvrThrd(self.host.get(), int(self.port.get()), self)
+
+    # PURPOSE: Start the AI Player
+    # RETURNS: nothing
+    def startAI(self):
+        print("start server")
+        self.hPlayerAi = playerAiThrd(self.player2Name.get(),
+                                      self.host.get(),
+                                      int(self.port.get()))
 
     # PURPOSE: Construct all the GUI junk
     # RETURNS: nothing
@@ -60,6 +72,18 @@ class MyTkApp(threading.Thread):
         self.port.set(port)
         self.portEntry = tk.Entry(self.root, textvariable=self.port)
         self.portEntry.grid(row=1, column=2)
+
+        # for starting the AI player
+        tmp = tk.Label(self.root, text="AI Name: ")
+        tmp.grid(row=2, column=0)
+        self.player2Name = tk.StringVar()
+        self.player2Name.set("bearda")
+        self.player2Entry = tk.Entry(self.root, textvariable=self.player2Name)
+        self.player2Entry.grid(row=2, column=1)
+        # Create a Start button
+        self.startAIBtn = tk.Button(text = "StartAI",
+                                 command = lambda :self.startAI())
+        self.startAIBtn.grid(row=2, column=2)
 
         tmp = tk.Label(self.root, text="Send Msg: ")
         tmp.grid(row=3, column=0)
