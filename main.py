@@ -47,7 +47,11 @@ def connectServer(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE:
 # RETURNS:
@@ -62,7 +66,9 @@ def newGame(tkRoot):
 
         # not the right place to update.
         # Send message? And that updates?
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE:
@@ -78,14 +84,15 @@ def sendReady(tkRoot):
 
         # not the right place to update.
         # Send message? And that updates?
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE:
 # RETURNS:
 def buildShip(tkRoot, base):
     print("buildMenu")
-    buildResult = build(tkRoot, base)
     if (tkRoot.hCon is not None):
         buildResult = build(tkRoot, base)
 
@@ -98,7 +105,9 @@ def buildShip(tkRoot, base):
 
         # not the right place to update.
         # Send message? And that updates?
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE:
@@ -111,7 +120,9 @@ def refresh(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE:
@@ -150,12 +161,14 @@ def helpHelp():
 
 def updateMenu(tkRoot):
     #for the moment, we just call phasemenu
-    phaseMenu(tkRoot, tkRoot.game['state']['phase'])
+    pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+    assert(pt)
+    phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
 
 # PURPOSE: Delete previous and set new, phase menu
 # RETURNS: none
-def phaseMenu(tkRoot, phase):
-    print("Phase:", phase)
+def phaseMenu(tkRoot, gamePhase, playerPhase):
+    print("Phase:", gamePhase, ", PlayerPhase:", playerPhase)
     menuBar = tkRoot.cget("menu")
     print("bar ", menuBar)
     print("")
@@ -165,17 +178,20 @@ def phaseMenu(tkRoot, phase):
 
     phaseMenuObject = Menu(menuBar)
 
-    if (phase == 'nil'):
+    if (playerPhase == 'waiting'):
+        # Player is waiting on opponent. All they can do is refresh.
+        phaseMenuObject.add_command(label="WAITING on opponent")
+    elif (gamePhase == 'nil'):
         phaseMenuObject.add_command(label="New",
                               command=lambda:newGame(tkRoot))
         phaseMenuObject.add_command(label="Open",
                               command=openGame)
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
-    elif (phase == 'creating'):
+    elif (gamePhase == 'creating'):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
-    elif (phase == 'build'):
+    elif (gamePhase == 'build'):
         phaseMenuObject.add_command(label="Bases you own:")
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
@@ -188,7 +204,7 @@ def phaseMenu(tkRoot, phase):
                               command=lambda:sendReady(tkRoot))
         #TODO: enable the move right click stuff.
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
-    elif (phase == 'move'):
+    elif (gamePhase == 'move'):
         #we also need to determine if it is our turn to move
         for player in tkRoot.game['playerList']:
             if player['name'] == tkRoot.playerName:
@@ -213,16 +229,19 @@ def phaseMenu(tkRoot, phase):
                 else:
                     tkRoot.hexMap.setRightPrivateCallBack(None, None)
     else:
-        print("BAD PHASE", phase)
-        phase = ""
+        print("BAD PHASE", gamePhase)
+        gamePhase = ""
         phaseMenuObject.add_command(label="Connect",
                               command=lambda:connectServer(tkRoot))
 
-    menuBar.add_cascade(label="Phase " + phase, menu=phaseMenuObject)
+    phaseMenuObject.add_separator()
+    phaseMenuObject.add_command(label="Refresh", command=lambda:refresh(tkRoot))
+
+    menuBar.add_cascade(label="Phase " + gamePhase, menu=phaseMenuObject)
 
     #bind event
     tkRoot.bind("<<updateMenu>>", 
-            lambda event:phaseMenu(tkRoot, phase))
+            lambda event:phaseMenu(tkRoot, gamePhase, playerPhase))
 
 # PURPOSE: Create menu GUI elements
 # RETURNS: none
@@ -252,7 +271,7 @@ def addMenus(tkRoot):
     menuBar.add_cascade(label="Help", menu=helpMenu)
 
     tkRoot.config(menu=menuBar)
-    phaseMenu(tkRoot, None)
+    phaseMenu(tkRoot, None, None)
 
 # PURPOSE: Just make a function out of the main code. It doesn't
 #          seem right without that.

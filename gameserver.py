@@ -35,6 +35,7 @@ sys.path.append("/home/ahw/views/warpWar/test")
 import json
 import samplegame
 import ijk
+from dataModel import *
 
 # PURPOSE: look up ship name in game ship list
 # RETURNS: entry of ship
@@ -64,6 +65,17 @@ def changePlayerPhase(game, playerName, start, finish):
             return True
 
     return False
+
+# PURPOSE: Change All players from startphase to finishphase
+# I think this will only be used to change *out* of "waiting"
+# RETURNS: true if successfully moved
+def changeAllPlayerPhase(game, start, finish):
+    print("moving ALL from ", start, " to ", finish)
+    for player in game['playerList'] :
+        assert(player['phase'] == start)
+        player['phase'] = finish
+
+    return True
 
 
 # class to handle game commands
@@ -120,19 +132,19 @@ class gameserver:
                   )
             newPlayer = cmd['name']
             print("newPlayer", newPlayer)
-            playerFound = False
-            for player in self.game['playerList'] :
-                if (player['name'] == newPlayer):
-                    playerFound = True
-                    print("player already exists!", player)
-                    break
 
-            if playerFound:
-                assert(player['phase'] == "nil")
-                player['phase'] = "creating"
-            else:
+            player = playerTableGet(self.game, newPlayer)
+
+            if player is None:
                 self.game['playerList'].append({'name':  newPlayer,
                                                 'phase': "creating"})
+            else:
+                # Normally the player shouldn't exist! But they do for the
+                # sample game (or if reconnecting to a game)
+                if (player['phase'] == "nil"):
+                    player['phase'] = "creating"
+                else:
+                    print("player", player, "must be rejoining game???!!!")
 
         elif cmdStr == 'newgame':
             # What to do? Offer to save current game? NO! this is the server,
@@ -216,38 +228,30 @@ class gameserver:
             # Based on current phase what do we do?
             if (self.game['state']['phase'] == "creating"):
                 # Record ready for given player
-                changePlayerPhase(self.game, playerName, "creating", "build")
+                changePlayerPhase(self.game, playerName, "creating", "waiting")
 
-                if areAllPlayersInPhase(self.game, "build"):
+                if areAllPlayersInPhase(self.game, "waiting"):
                     self.game['state']['phase'] = "build"
+                    changeAllPlayerPhase(self.game, "waiting", "build")
 
             elif (self.game['state']['phase'] == "build"):
                 # Given player can no longer build and must wait
                 # When all players ready AUTO move to move phase
                 # Record ready for given player
-                changePlayerPhase(self.game, playerName, "build", "move")
+                changePlayerPhase(self.game, playerName, "build", "waiting")
 
-                if areAllPlayersInPhase(self.game, "move"):
+                if areAllPlayersInPhase(self.game, "waiting"):
                     self.game['state']['phase'] = "move"
-                    #the second player has to wait until the first player sends a ready.
-                    self.game['playerList'][1]['phase'] = "wait"
+                    changeAllPlayerPhase(self.game, "waiting", "move")
 
             elif (self.game['state']['phase'] == "move"):
-                #if they are waiting, ignore them.
-                for player in self.game['playerList'] :
-                    if (player['name'] == playerName):
-                        if player['phase'] == "wait":
-                            pass
-                        else:
-                            # Given player can no longer move and must wait
-                            player['phase'] = "moved"
-                            if self.game['playerList'][1]['phase'] == "wait":
-                                self.game['playerList'][1]['phase'] = "move"
+                # Given player can no longer move and must wait
+                changePlayerPhase(self.game, playerName, "move", "waiting")
+
                 # When all players ready AUTO move to combat phase
-                if areAllPlayersInPhase(self.game, "moved"):
+                if areAllPlayersInPhase(self.game, "waiting"):
                     self.game['state']['phase'] = "combat"
-                    for player in self.game['playerList'] :
-                        player['phase'] = "combat"
+                    changeAllPlayerPhase(self.game, "waiting", "combat")
 
             elif (self.game['state']['phase'] == "combat"):
                 # Given player must wait for other players to be ready?

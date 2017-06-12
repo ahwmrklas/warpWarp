@@ -100,3 +100,19 @@ class Player():
         self.shipList = ships
         self.baseList = bases
 
+
+#
+# (as of 06/11/17 above functions aren't doing anything useful)
+# Collect "game" accessor functions here ... Maybe this isn't the correct
+# location either but they are here now.
+#
+
+# PURPOSE: Return the player structure from the game
+# RETURNS: player table
+def playerTableGet(game, playerName):
+    assert(game and playerName)
+    for player in game['playerList'] :
+        if (player['name'] == playerName):
+            return player
+
+    return None
