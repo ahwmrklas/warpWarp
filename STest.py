@@ -29,25 +29,25 @@ class MyTkApp(threading.Thread):
     #          call this when "Quit" button clicked
     # RETURNS: I don't know.
     def quitCB(self):
-        print("quiting?")
+        print("STest: quiting?")
         if (self.hNET is not None) :
             self.hNET.quit()
         if (self.root is not None) :
             self.root.quit()
         if (self.hPlayerAi is not None) :
             self.hPlayerAi.quit()
-        print("Server Gui exit")
+        print("STest: Server Gui exit")
 
     # PURPOSE: Start the network server thread
     # RETURNS: nothing
     def startServer(self):
-        print("start server")
+        print("STest: start server")
         self.hNET = srvrThrd(self.host.get(), int(self.port.get()), self)
 
     # PURPOSE: Start the AI Player
     # RETURNS: nothing
     def startAI(self):
-        print("start server")
+        print("STest: start AI")
         self.hPlayerAi = playerAiThrd(self.player2Name.get(),
                                       self.host.get(),
                                       int(self.port.get()))
@@ -175,7 +175,7 @@ class MyTkApp(threading.Thread):
     def run(self):
         self.initGui()
         self.poll()
-        print("POLL is done?")
+        print("STest: POLL is done?")
         self.root.mainloop()
 
 
@@ -183,7 +183,7 @@ class MyTkApp(threading.Thread):
 # RETURNS: none?
 def main():
     hGui = MyTkApp()
-    print("two threads created. Main program exiting")
+    print("STest: two threads created. Main program exiting")
 
 # Start the main function
 if __name__ == "__main__":

@@ -40,7 +40,7 @@ class myWindow(threading.Thread):
     def ping(self):
         # print(self.ip, self.port, self.msg)
         tmp = warpWarCmds()
-        sendJson = tmp.ping()
+        sendJson = tmp.ping("CTest")
         print(" client sending: ", sendJson)
         self.hCOM.sendCmd(sendJson)
 
@@ -49,7 +49,7 @@ class myWindow(threading.Thread):
     def newGame(self):
         # print(self.ip, self.port, self.msg)
         tmp = warpWarCmds()
-        sendJson = tmp.newGame("foo")
+        sendJson = tmp.newGame("CTest", "foo")
         print(" client sending: ", sendJson)
         self.hCOM = comThrd(self.ip.get(), int(self.port.get()))
         self.hCOM.sendCmd(sendJson)

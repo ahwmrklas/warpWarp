@@ -44,7 +44,7 @@ def connectServer(tkRoot):
         tkRoot.hCon = tmp.result
         tkRoot.playerName = tmp.playerName
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.playerName)
+        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
@@ -59,7 +59,7 @@ def connectServer(tkRoot):
 def newGame(tkRoot):
     print("newGame")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().newGame("foo")
+        sendJson = warpWarCmds().newGame(tkRoot.playerName, "foo")
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -77,7 +77,7 @@ def newGame(tkRoot):
 def sendReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ready(tkRoot.playerName)
+        sendJson = warpWarCmds().ready(tkRoot.playerName, tkRoot.playerName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -98,7 +98,7 @@ def buildShip(tkRoot, base):
         buildResult = build(tkRoot, base)
 
     if (buildResult is not None):
-        sendJson = warpWarCmds().buildShip(buildResult.ship, base)
+        sendJson = warpWarCmds().buildShip(tkRoot.playerName, buildResult.ship, base)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -116,7 +116,7 @@ def buildShip(tkRoot, base):
 def refresh(tkRoot):
     print("refresh")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ping()
+        sendJson = warpWarCmds().ping(tkRoot.playerName)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
@@ -159,7 +159,7 @@ def loadGame(tkRoot):
     gameDict = json.loads(gameString)
 
     #send the game to the server.
-    sendJson = warpWarCmds().restoreGame(gameDict)
+    sendJson = warpWarCmds().restoreGame(tkRoot.playerName, gameDict)
     print (sendJson)
     tkRoot.hCon.sendCmd(sendJson)
     resp = tkRoot.hCon.waitFor(5)

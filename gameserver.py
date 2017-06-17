@@ -57,7 +57,7 @@ def areAllPlayersInPhase(game, phase):
 # PURPOSE: Change given player from startphase to finishphase
 # RETURNS: true if successfully moved
 def changePlayerPhase(game, playerName, start, finish):
-    print(playerName, " moving from ", start, " to ", finish)
+    print("GServer:", playerName, " moving from ", start, " to ", finish)
     for player in game['playerList'] :
         if (player['name'] == playerName):
             assert(player['phase'] == start)
@@ -70,7 +70,7 @@ def changePlayerPhase(game, playerName, start, finish):
 # I think this will only be used to change *out* of "waiting"
 # RETURNS: true if successfully moved
 def changeAllPlayerPhase(game, start, finish):
-    print("moving ALL from ", start, " to ", finish)
+    print("GServer:", "moving ALL from ", start, " to ", finish)
     for player in game['playerList'] :
         assert(player['phase'] == start)
         player['phase'] = finish
@@ -106,17 +106,17 @@ class gameserver:
         try:
             root = json.loads(jsonStr)
         except Exception as error:
-            print("JSON parse error for ", jsonStr, "\n")
+            print("GServer:", "JSON parse error for ", jsonStr, "\n")
             return False
 
         cmd = root['cmd']
         cmdStr = cmd['cmd']
         if (self.cmdStr != cmdStr):
-            print("CMD:", cmdStr, "PHASE:", self.game['state']['phase'])
+            print("GServer: (%s) CMD: %s PHASE: %s" % (cmd['plid'], cmdStr, self.game['state']['phase']))
         self.cmdStr = cmdStr
 
         if cmdStr == 'quit':
-            print("quitCommandRecieved")
+            print("GServer:", "quitCommandRecieved")
 
             # This cmd doesn't save anything. Call save if you want to save
             self.game['state']['phase'] = "nil"
@@ -124,7 +124,7 @@ class gameserver:
 
         elif cmdStr == 'ping':
             # simple test to see if server responds. So print and respond
-            # print("ping")
+            # print("GServer:", "ping")
             pass
 
         elif cmdStr == 'newplayer':
@@ -137,7 +137,7 @@ class gameserver:
                     (self.game['state']['phase'] == "creating")
                   )
             newPlayer = cmd['name']
-            print("newPlayer", newPlayer)
+            print("GServer:", "newPlayer", newPlayer)
 
             player = playerTableGet(self.game, newPlayer)
 
@@ -150,7 +150,7 @@ class gameserver:
                 if (player['phase'] == "nil"):
                     player['phase'] = "creating"
                 else:
-                    print("player", player, "must be rejoining game???!!!")
+                    print("GServer:", "player", player, "must be rejoining game???!!!")
 
         elif cmdStr == 'newgame':
             # What to do? Offer to save current game? NO! this is the server,
@@ -186,7 +186,7 @@ class gameserver:
             # TODO lots of parameters!
             assert(self.game['state']['phase'] == "build")
             #lets do this the lazy way first. just append the ship to the list!
-            print("ship to append:")
+            print("GServer:", "ship to append:")
             print(cmd['ship'])
             #How much will this ship cost?
             ship = cmd['ship']
@@ -206,7 +206,7 @@ class gameserver:
             if ship['WG']['max'] == True:
                 cost += 5
 
-            print (cost)
+            print ("GServer:", cost)
 
             #TODO: This next section is bad. we don't check to see if the player
             #who sent the command owns the base, or is in the right spot.
@@ -229,7 +229,7 @@ class gameserver:
         elif cmdStr == 'ready':
             # A generic cmd used to end several phases
             playerName = cmd['name']
-            print("player", playerName, "done with phase", self.game['state']['phase'])
+            print("GServer:", "player", playerName, "done with phase", self.game['state']['phase'])
 
             # Based on current phase what do we do?
             if (self.game['state']['phase'] == "creating"):
@@ -271,7 +271,7 @@ class gameserver:
                 # or resolve combat phase? Is there such a phase?
                 self.game['state']['phase'] = "damageselection"
             else:
-                print("Invalid phase for 'ready'")
+                print("GServer:", "Invalid phase for 'ready'")
                 assert(False)
 
         elif cmdStr == 'moveship':
@@ -288,14 +288,14 @@ class gameserver:
 
             ship = findShip(self.game, name)
             if (ship is None):
-                print("error: Ship not found", name)
+                print("GServer:", "error: Ship not found", name)
                 return False
 
             si,sj,sk = ijk.XYtoIJK(x, y)
             fi,fj,fk = ijk.XYtoIJK(ship['location']['x'], ship['location']['y'])
             delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
 
-            print(" delta", delta, ship['location']['x'], ship['location']['y'],
+            print("GServer:", " delta", delta, ship['location']['x'], ship['location']['y'],
                                    x, y)
             ship['location']['x'] = x
             ship['location']['y'] = y
@@ -338,7 +338,7 @@ class gameserver:
             # the name.
             #
             # Server does nothing with saveGame. The client must save the game
-            print("saveGame")
+            print("GServer:", "saveGame")
         elif cmdStr == 'restoregame':
             # Because games are saved/restored on client ...
             # This would do nothing. Just like saveGame
@@ -346,14 +346,14 @@ class gameserver:
             # Given the name of a file/game.
             # restore that game overwriting the current game
             # Warn/Error if current game hasn't been saved (is dirty)
-            print("restoreGame")
+            print("GServer:", "restoreGame")
             self.game = cmd['game']
         elif cmdStr == 'listgames':
             # Because games are saved/restored on client ...
             # This would do nothing. Just like saveGame
             #
             # List all of the saved games
-            print("listGames")
+            print("GServer:", "listGames")
         elif cmdStr == 'loadgame':
             # Offer to save current game?
             # Bring up selection dialog
@@ -366,16 +366,16 @@ class gameserver:
             # translating it to the dict.
             #
             # Warn/Error if current game hasn't been saved (is dirty)
-            print("loadGame")
+            print("GServer:", "loadGame")
         elif cmdStr == 'playerleave':
             # Player is quiting
             # We could check for permission but I don't think so.
             # This is informational
             # Input? Player name? Some unique player key code for security?
-            print("playerLeaving")
+            print("GServer:", "playerLeaving")
 
         else:
-            print("Not a legal command '", cmdStr, "'")
+            print("GServer:", "Not a legal command '", cmdStr, "'")
             return False
 
         return True

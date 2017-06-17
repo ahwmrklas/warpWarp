@@ -37,7 +37,7 @@ class srvrThrd(threading.Thread):
             s = socket.socket()
             s.connect( (self.ipAddr, self.port) )
             tmp = warpWarCmds()
-            sendJson = tmp.quitGame()
+            sendJson = tmp.quitGame('STest')
 
             s.send(sendJson.encode())
             s.close()

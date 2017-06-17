@@ -48,7 +48,7 @@ class menuMover:
 #set the new onclick listener
 def setupMovement(hexGrid, tkRoot):
     #set the on click listener
-    private = [tkRoot, "", hexGrid, hexGrid.getLeftPrivateCallBack()]
+    private = [tkRoot, "", hexGrid, hexGrid.getLeftPrivateCallBack(), tkRoot.playerName]
 
     # create a menu
     def do_popup(private, pixel_X, pixel_Y, hex_x, hex_y):
@@ -81,6 +81,7 @@ def moveOnClick(private, x, y):
     tkRoot = private[0]
     shipName = private[1]
     hexGrid = private[2]
+    id = private[4]
     #write the ship where it should be.
     print("Left Click to Move")
     for ship in tkRoot.game['objects']['shipList']:
@@ -106,7 +107,7 @@ def moveOnClick(private, x, y):
                 # mind about a move and cancel it before it is
                 # parmanent
                 if (tkRoot.hCon is not None):
-                    sendJson = warpWarCmds().moveShip(shipName, x, y)
+                    sendJson = warpWarCmds().moveShip(id, shipName, x, y)
                     tkRoot.hCon.sendCmd(sendJson)
                     resp = tkRoot.hCon.waitFor(5)
                     tkRoot.game = json.loads(resp)

@@ -20,24 +20,24 @@ class warpWarCmds():
 
     # PURPOSE: test for server connectivity
     # RETURNS: string with json
-    def ping(self):
-        cmd  = { 'cmd' : {'cmd': "ping"} }
+    def ping(self, plid):
+        cmd  = { 'cmd' : {'cmd': "ping", 'plid': plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create a new game string
     #          (moves to creating phase)
     # RETURNS: string with json
-    def newGame(self, name):
-        cmd  = { 'cmd' : {'cmd': "newgame", 'name': name} }
+    def newGame(self, plid, name):
+        cmd  = { 'cmd' : {'cmd': "newgame", 'plid':plid, 'name': name} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: join an existing game with player name
     #          "gameName" is probably ignored right now
     # RETURNS: string with json
-    def join(self, gameName, playerName):
-        cmd  = { 'cmd' : {'cmd': "join",
+    def join(self, plid, gameName, playerName):
+        cmd  = { 'cmd' : {'cmd': "join", 'plid':plid,
                           'game': gameName, 'player': playerName} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
@@ -45,47 +45,47 @@ class warpWarCmds():
     # PURPOSE: Create the new player string
     #    DUPLICATE TODO FIXME XXX 
     # RETURNS: string with json
-    def newPlayer(self, name):
-        cmd  = { 'cmd' : {'cmd': "newplayer", 'name': name} }
+    def newPlayer(self, plid, name):
+        cmd  = { 'cmd' : {'cmd': "newplayer", 'plid':plid, 'name': name} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Generic ready command.
     #          Given player is ready for next phase
     # RETURNS: string with json
-    def ready(self, player):
-        cmd  = { 'cmd' : {'cmd': "ready", 'name': player} }
+    def ready(self, plid, player):
+        cmd  = { 'cmd' : {'cmd': "ready", 'plid':plid, 'name': player} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Start the game
     #          (moves to build phase)
     # RETURNS: string with json
-    def start(self):
-        cmd  = { 'cmd' : {'cmd': "start"} }
+    def start(self, plid):
+        cmd  = { 'cmd' : {'cmd': "start", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the build ship string
     #       TODO    This is going to have many arguments!
     # RETURNS: string with json
-    def buildShip(self, ship, base):
-        cmd  = { 'cmd' : {'cmd': "buildship", 'ship': ship, 'base': base} }
+    def buildShip(self, plid, ship, base):
+        cmd  = { 'cmd' : {'cmd': "buildship", 'plid':plid, 'ship': ship, 'base': base} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the move ship string
     # RETURNS: string with json
-    def moveShip(self, name, x, y):
-        cmd  = { 'cmd' : {'cmd':"moveship", 'name':name, 'x':x, 'y':y} }
+    def moveShip(self, plid, name, x, y):
+        cmd  = { 'cmd' : {'cmd':"moveship", 'plid':plid, 'name':name, 'x':x, 'y':y} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the endmove string
     #    FIXME TODO -- duplicate of ready?
     # RETURNS: string with json
-    def endMove(self, name, x, y):
-        cmd  = { 'cmd' : {'cmd':"endmove", 'player':name} }
+    def endMove(self, plid, name, x, y):
+        cmd  = { 'cmd' : {'cmd':"endmove", 'plid':plid, 'player':name} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
@@ -93,8 +93,8 @@ class warpWarCmds():
     #       TODO    This is going to have many arguments!
     #       TODO    For all involved ships?
     # RETURNS: string with json
-    def combatOrders(self):
-        cmd  = { 'cmd' : {'cmd': "combatorders"} }
+    def combatOrders(self, plid):
+        cmd  = { 'cmd' : {'cmd': "combatorders", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
@@ -105,15 +105,15 @@ class warpWarCmds():
     # command. It will be a trigger to know a player is done
     # with a battle and ready for the next one.
     # RETURNS: string with json
-    def acceptDamage(self):
-        cmd  = { 'cmd' : {'cmd': "acceptdamage"} }
+    def acceptDamage(self, plid):
+        cmd  = { 'cmd' : {'cmd': "acceptdamage", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the quit string
     # RETURNS: string with json
-    def quitGame(self):
-        cmd  = { 'cmd' : {'cmd': "quit"} }
+    def quitGame(self, plid):
+        cmd  = { 'cmd' : {'cmd': "quit", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
@@ -122,35 +122,35 @@ class warpWarCmds():
     # PURPOSE: Create the XXX string
     #    TODO This is like quiting
     # RETURNS: string with json
-    def playerLeave(self):
-        cmd  = { 'cmd' : {'cmd': "playerleave"} }
+    def playerLeave(self, plid):
+        cmd  = { 'cmd' : {'cmd': "playerleave", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the save string
     # RETURNS: string with json
-    def saveGame(self):
-        cmd  = { 'cmd' : {'cmd': "savegame"} }
+    def saveGame(self, plid):
+        cmd  = { 'cmd' : {'cmd': "savegame", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the XXX string
     # RETURNS: string with json
-    def restoreGame(self, game):
-        cmd  = { 'cmd' : {'cmd': "restoregame", 'game' : game}}
+    def restoreGame(self, plid, game):
+        cmd  = { 'cmd' : {'cmd': "restoregame", 'plid':plid, 'game' : game}}
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the XXX string
     # RETURNS: string with json
-    def listGames(self):
-        cmd  = { 'cmd' : {'cmd': "listgames"} }
+    def listGames(self, plid):
+        cmd  = { 'cmd' : {'cmd': "listgames", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Create the XXX string
     # RETURNS: string with json
-    def loadGame(self):
-        cmd  = { 'cmd' : {'cmd': "loadgame"} }
+    def loadGame(self, plid):
+        cmd  = { 'cmd' : {'cmd': "loadgame", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr

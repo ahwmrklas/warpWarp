@@ -41,7 +41,7 @@ class playerAiThrd(threading.Thread):
     # PURPOSE: Simple ping to the server to read game state
     # RETURNS: game object
     def ping(self):
-        sendJson = warpWarCmds().ping()
+        sendJson = warpWarCmds().ping(self.playerName)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
@@ -51,7 +51,7 @@ class playerAiThrd(threading.Thread):
     # RETURNS: game object
     def newPlayer(self, name):
         print("playerAi: newPlayer")
-        sendJson = warpWarCmds().newPlayer(name)
+        sendJson = warpWarCmds().newPlayer(self.playerName, name)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
@@ -62,7 +62,7 @@ class playerAiThrd(threading.Thread):
     # RETURNS: game object
     def ready(self, name):
         print("playerAi: ready")
-        sendJson = warpWarCmds().ready(name)
+        sendJson = warpWarCmds().ready(self.playerName, name)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)

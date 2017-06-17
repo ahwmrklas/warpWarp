@@ -51,7 +51,7 @@ class connect(Dialog):
     def validate(self):
         print("IP   ", self.ip.get())
         print("PORT ", self.port.get())
-        tmp = warpWarCmds().ping()
+        tmp = warpWarCmds().ping('connectDlg')
         self.client = comThrd(self.ip.get(), self.port.get())
         self.client.sendCmd(tmp)
         resp = self.client.waitFor(5)
