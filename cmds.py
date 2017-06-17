@@ -15,7 +15,8 @@ class warpWarCmds():
     # PURPOSE: Called for class construction
     # RETURNS: none
     def __init__(self):
-        print("create Cmd ... thingy")
+        # print("create Cmd ... thingy")
+        pass
 
     # PURPOSE: test for server connectivity
     # RETURNS: string with json

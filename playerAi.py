@@ -13,7 +13,9 @@ import threading
 from client import comThrd
 import queue as Q
 import gameserver
+import json
 from cmds import warpWarCmds
+from dataModel import *
 
 # thread for the player
 class playerAiThrd(threading.Thread):
@@ -30,27 +32,81 @@ class playerAiThrd(threading.Thread):
         self.start()
 
     # PURPOSE: For anyone to kill the thread
+    #   called by external parties
     # RETURNS: none
     def quit(self):
-        print("playerAiThread: quiting")
+        print("playerAi: quiting")
         self.threadContinue = False
+
+    # PURPOSE: Simple ping to the server to read game state
+    # RETURNS: game object
+    def ping(self):
+        sendJson = warpWarCmds().ping()
+        self.hCon.sendCmd(sendJson)
+        resp = self.hCon.waitFor(5)
+        game = json.loads(resp)
+        return game
+
+    # PURPOSE: 
+    # RETURNS: game object
+    def newPlayer(self, name):
+        print("playerAi: newPlayer")
+        sendJson = warpWarCmds().newPlayer(name)
+        self.hCon.sendCmd(sendJson)
+        resp = self.hCon.waitFor(5)
+        game = json.loads(resp)
+        print("playerAi:RESP:", len(resp))
+        return game
+
+    # PURPOSE: 
+    # RETURNS: game object
+    def ready(self, name):
+        print("playerAi: ready")
+        sendJson = warpWarCmds().ready(name)
+        self.hCon.sendCmd(sendJson)
+        resp = self.hCon.waitFor(5)
+        game = json.loads(resp)
+        print("playerAi:RESP:", len(resp))
+        return game
 
     # PURPOSE: automatically called by base thread class, right?
     #   Waits for clients to send us requests.
     # RETURNS: none
     def run(self):
 
-        tmp = warpWarCmds().ping()
-        self.client = comThrd(self.ipAddr, self.port)
-        self.client.sendCmd(tmp)
-        resp = self.client.waitFor(5)
+        gamePhase = None
+        playerPhase = None
 
-        print("playerAiRESP:", len(resp))
-        if (len(resp) > 0):
-            print("playerAiRESP: good len")
-        else:
-            print("playerAiRESP: bad len")
+        self.hCon = comThrd(self.ipAddr, self.port)
 
-        self.client.quitCmd()
+        while (self.threadContinue):
+            # Ping
+            game = self.ping()
 
-        print("playerAiThread: socket listen exiting")
+            playerMe = playerTableGet(game, self.playerName)
+
+            # What is the current game state and player state?
+            if ( (gamePhase == game['state']['phase']) and
+                 (playerPhase == playerMe['phase']) ):
+                 continue
+
+            gamePhase   = game['state']['phase']
+            playerPhase = playerMe['phase']
+
+            # Do something with that state
+            print("playerAi:GP ", gamePhase, " PP ", playerPhase)
+            if (gamePhase == "creating"):
+                if ( (playerPhase is None) or (playerPhase == "nil")):
+                    self.newPlayer(self.playerName)
+                elif (playerPhase == "creating"):
+                    self.ready(self.playerName)
+            elif (gamePhase == "build"):
+                if (playerPhase == "build"):
+                    self.ready(self.playerName)
+            elif (gamePhase == "move"):
+                if (playerPhase == "move"):
+                    self.ready(self.playerName)
+
+        self.hCon.quitCmd()
+
+        print("playerAi:run: exiting")

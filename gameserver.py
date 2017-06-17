@@ -87,6 +87,9 @@ class gameserver:
         self.gameContinues = True
         self.game = samplegame.sampleGame
 
+        # This is used for debug
+        self.cmdStr = None
+
     # PURPOSE: Have we received the quit command
     # RETURNS: true if no quit command yet
     def gameOn(self):
@@ -108,7 +111,9 @@ class gameserver:
 
         cmd = root['cmd']
         cmdStr = cmd['cmd']
-        print("CMD:", cmdStr, "PHASE:", self.game['state']['phase'])
+        if (self.cmdStr != cmdStr):
+            print("CMD:", cmdStr, "PHASE:", self.game['state']['phase'])
+        self.cmdStr = cmdStr
 
         if cmdStr == 'quit':
             print("quitCommandRecieved")
@@ -119,7 +124,8 @@ class gameserver:
 
         elif cmdStr == 'ping':
             # simple test to see if server responds. So print and respond
-            print("ping")
+            # print("ping")
+            pass
 
         elif cmdStr == 'newplayer':
             # New player requests to join.

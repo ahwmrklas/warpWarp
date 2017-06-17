@@ -53,11 +53,11 @@ class comThrd(threading.Thread):
                 print("Failed to connect")
                 return ""
             tooMany -= 1
-            print("sleeping")
+            # print("sleeping")
             time.sleep(1)
             resp = self.pull()
 
-        print("RESP:", len(resp))
+        # print("RESP:", len(resp))
         return resp
 
 
@@ -67,14 +67,14 @@ class comThrd(threading.Thread):
     def handleSend(self):
         msg = self.sendQ.get()
         returnMe = None
-        print("client ", self.ip, self.port, msg, "\n")
+        # print("client ", self.ip, self.port, msg, "\n")
         try:
             s = socket.socket()
             s.connect((self.ip, self.port))
             s.send(msg.encode())
             cmd = s.recv(4096)
             jsonStr = cmd.decode()
-            print("client received (", len(jsonStr), "):\n")
+            # print("client received (", len(jsonStr), "):\n")
             # print(jsonStr)
             self.rcvQ.put(jsonStr)
         except Exception as error:
