@@ -2,3 +2,15 @@ __pycache__/
 tags
 *.pyc
 *.swp
+bs.py
+built.wwr
+draw.py
+guiStuff.py
+moved.wwr
+random.wwr
+resource/images/Sirius_A_and_B_artwork.gif
+resource/images/Sirius_A_and_B_artwork.jpg
+resource/images/b_5.jpg
+resource/images/warpship.jpeg
+test/testX.xbm
+tkSimpleDialog.py
