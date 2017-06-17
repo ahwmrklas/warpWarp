@@ -347,6 +347,7 @@ class gameserver:
             # restore that game overwriting the current game
             # Warn/Error if current game hasn't been saved (is dirty)
             print("restoreGame")
+            self.game = cmd['game']
         elif cmdStr == 'listgames':
             # Because games are saved/restored on client ...
             # This would do nothing. Just like saveGame

@@ -136,8 +136,8 @@ class warpWarCmds():
 
     # PURPOSE: Create the XXX string
     # RETURNS: string with json
-    def restoreGame(self):
-        cmd  = { 'cmd' : {'cmd': "restoregame"} }
+    def restoreGame(self, game):
+        cmd  = { 'cmd' : {'cmd': "restoregame", 'game' : game}}
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 

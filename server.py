@@ -57,7 +57,7 @@ class srvrThrd(threading.Thread):
         while self.serverContinue:
            c, addr = s.accept()
 
-           cmd = c.recv(1024)
+           cmd = c.recv(8096)
            #print("Rcvd:", cmd.decode())
            self.hGUI.displayAddr(addr)
            self.hGUI.displayMsg(cmd.decode())

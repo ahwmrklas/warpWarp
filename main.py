@@ -8,6 +8,7 @@
 # imports
 from hexgrid import *
 from tkinter import *
+from tkinter import filedialog
 from dataModel import *
 from samplegame import sampleGame
 from overlay import *
@@ -144,12 +145,43 @@ def popupPlayers(tkRoot):
         pass
 
 # I don't like these. They don't seem very objecty
-def openGame():
-    print("openGame")
+
+#Do we want restrictions on when this can be called?
+def loadGame(tkRoot):
+    print("loadGame")
+    #so we need to open a file select menu, filtering for .wwr
+    #then we just parse the string to our dict.
+    loadFileName = filedialog.askopenfilename(title = "Select file",filetypes = (("warpWar files","*.wwr"),("all files","*.*")))
+    print (loadFileName)
+    loadFile = open(loadFileName, 'r')
+    gameString = loadFile.read()
+    loadFile.close()
+    gameDict = json.loads(gameString)
+
+    #send the game to the server.
+    sendJson = warpWarCmds().restoreGame(gameDict)
+    print (sendJson)
+    tkRoot.hCon.sendCmd(sendJson)
+    resp = tkRoot.hCon.waitFor(5)
+    tkRoot.game = json.loads(resp)
+
+    pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+    assert(pt)
+    phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
+    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # I don't like these. They don't seem very objecty
-def saveGame():
+def saveGame(game):
     print("saveGame")
+    #convert to a string, the same way we send it.
+    #write to a .wwr file
+    saveString = json.dumps(game, ensure_ascii=False)
+    saveFileName = filedialog.asksaveasfilename(title = "Select file",filetypes = (("warpWar files","*.wwr"),("all files","*.*")))
+    print (saveFileName)
+    saveFile = open (saveFileName, 'w')
+    saveFile.write(saveString)
+    saveFile.close()
+
 
 # I don't like these. They don't seem very objecty
 def aboutHelp():
@@ -185,7 +217,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="New",
                               command=lambda:newGame(tkRoot))
         phaseMenuObject.add_command(label="Open",
-                              command=openGame)
+                              command=lambda:loadGame(tkRoot))
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'creating'):
         phaseMenuObject.add_command(label="Ready",
@@ -254,8 +286,8 @@ def addMenus(tkRoot):
 
     fileMenu.add_command(label="Connect", command=lambda:connectServer(tkRoot))
     fileMenu.add_command(label="New", command=lambda:newGame(tkRoot))
-    fileMenu.add_command(label="Open", command=openGame)
-    fileMenu.add_command(label="Save", command=saveGame)
+    fileMenu.add_command(label="Open", command=lambda:loadGame(tkRoot))
+    fileMenu.add_command(label="Save", command=lambda:saveGame(tkRoot.game))
     fileMenu.add_separator()
     fileMenu.add_command(label="Refresh", command=lambda:refresh(tkRoot))
     fileMenu.add_separator()
