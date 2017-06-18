@@ -116,3 +116,69 @@ def playerTableGet(game, playerName):
             return player
 
     return None
+
+# PURPOSE: create and return an empty game
+#    FIXME TODO
+#    I don't think this actually insantiates a new object.
+# RETURNS: new empty game
+def emptyGame():
+    sampleGame = {
+        'options': {
+            'serverIp'  : "192.168.1.5",
+            'mapSize'   : {'width':10, 'height':10},
+            'startingBP': 20,
+            'perTurnBP' :  5,
+        },
+        'state': {
+            'turnNumber': 0,
+            'phase': "nil",
+            'activePlayer': "nil",
+        },
+        'map': {'width':10, 'height':10},
+        'playerList': [
+        ],
+        'objects': {
+            'starList': [
+                {'name':"Alpha",
+                 'type': "star",
+                 'location': {'x':1, 'y':3},
+                 'image':"alpha.png",
+                 'owner':"nil",
+                 'valueBP':3,
+                 'visibility':[ {'player':"ahw",  'percent':100},
+                                {'player':"bearda", 'percent':30},
+                              ],
+                },
+            ],
+            'thingList': [
+                {'name':"AncientRelic",
+                 'type': "special",
+                 'location': {'x':4, 'y':7},
+                 'image':"relic.png",
+                 'owner':"nil",
+                 'valueBP':0,
+                 'visibility':[ {'player':"ahw",  'percent':100},
+                                {'player':"bearda", 'percent':30},
+                              ],
+                },
+            ],
+            'shipList': [
+            ],
+            'starBaseList': [
+                {'name': "Babylon 5",
+                 'type': "base",
+                 'location': {'x':4, 'y':8},
+                 'image': "b_5.png",
+                 'owner': "nil",
+                 'stockpile': 15,
+                },
+            ],
+            'warpLineList': [
+                {'start': "Alpha", 'end': "Beta"},
+                {'start': "Beta",  'end': "Alpha"},
+            ],
+        },
+        'history': [
+        ],
+    }
+    return sampleGame

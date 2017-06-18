@@ -35,6 +35,9 @@ def initMap(tkRoot, width, height):
 # RETURN: none
 def updateMap(tkRoot, hexMap, game):
 
+    if (game is None):
+        return
+
     hexMap.drawGrid('blue')
     dim = game['map']
     lists = game['objects']

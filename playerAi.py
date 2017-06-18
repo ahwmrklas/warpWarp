@@ -84,6 +84,8 @@ class playerAiThrd(threading.Thread):
             game = self.ping()
 
             playerMe = playerTableGet(game, self.playerName)
+            if (playerMe is None):
+                playerMe = {'phase':None}
 
             # What is the current game state and player state?
             if ( (gamePhase == game['state']['phase']) and

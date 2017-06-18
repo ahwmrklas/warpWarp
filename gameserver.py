@@ -33,9 +33,8 @@ import sys
 sys.path.append("/home/ahw/views/warpWar/test")
 
 import json
-import samplegame
 import ijk
-from dataModel import *
+import dataModel
 
 # PURPOSE: look up ship name in game ship list
 # RETURNS: entry of ship
@@ -85,7 +84,7 @@ class gameserver:
     # RETURNS: none
     def __init__(self):
         self.gameContinues = True
-        self.game = samplegame.sampleGame
+        self.game = dataModel.emptyGame()
 
         # This is used for debug
         self.cmdStr = None
@@ -139,7 +138,7 @@ class gameserver:
             newPlayer = cmd['name']
             print("GServer:", "newPlayer", newPlayer)
 
-            player = playerTableGet(self.game, newPlayer)
+            player = dataModel.playerTableGet(self.game, newPlayer)
 
             if player is None:
                 self.game['playerList'].append({'name':  newPlayer,
@@ -164,6 +163,7 @@ class gameserver:
             # Need to be given the name of the game?
             # Warn/Error if current game hasn't been saved (is dirty)
             gameName = cmd['name']
+            self.game = dataModel.emptyGame()
             assert(self.game['state']['phase'] == "nil")
             self.game['state']['phase'] = "creating"
             # TODO probably need things like game options???
@@ -339,6 +339,7 @@ class gameserver:
             #
             # Server does nothing with saveGame. The client must save the game
             print("GServer:", "saveGame")
+
         elif cmdStr == 'restoregame':
             # Because games are saved/restored on client ...
             # This would do nothing. Just like saveGame
@@ -348,12 +349,14 @@ class gameserver:
             # Warn/Error if current game hasn't been saved (is dirty)
             print("GServer:", "restoreGame")
             self.game = cmd['game']
+
         elif cmdStr == 'listgames':
             # Because games are saved/restored on client ...
             # This would do nothing. Just like saveGame
             #
             # List all of the saved games
             print("GServer:", "listGames")
+
         elif cmdStr == 'loadgame':
             # Offer to save current game?
             # Bring up selection dialog
@@ -367,6 +370,7 @@ class gameserver:
             #
             # Warn/Error if current game hasn't been saved (is dirty)
             print("GServer:", "loadGame")
+
         elif cmdStr == 'playerleave':
             # Player is quiting
             # We could check for permission but I don't think so.

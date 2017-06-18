@@ -10,7 +10,6 @@ from hexgrid import *
 from tkinter import *
 from tkinter import filedialog
 from dataModel import *
-from samplegame import sampleGame
 from overlay import *
 from hexinfo import *
 from build import *
@@ -67,9 +66,7 @@ def newGame(tkRoot):
 
         # not the right place to update.
         # Send message? And that updates?
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], "nil")
         updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE:
@@ -318,15 +315,12 @@ def main():
     tkRoot.game = None
     tkRoot.playerName = getpass.getuser()
 
-    tkRoot.game = sampleGame
 
     # menu bar
     addMenus(tkRoot)
 
     tkRoot.mapFrame = Frame(tkRoot)
-    tkRoot.hexMap = initMap(tkRoot,
-                            tkRoot.game['map']['width'],
-                            tkRoot.game['map']['height'])
+    tkRoot.hexMap = initMap(tkRoot, 10, 10)
     tkRoot.mapFrame.pack()
 
     tkRoot.buttonFrame = Frame(tkRoot)
@@ -348,9 +342,9 @@ def main():
 
 
     # at the moment this does nothing valuable
-    foo = GameInfo(tkRoot.hexMap.grid_width,
-                   tkRoot.hexMap.grid_height,
-                   tkRoot.game['playerList'])
+    #foo = GameInfo(tkRoot.hexMap.grid_width,
+                   #tkRoot.hexMap.grid_height,
+                   #tkRoot.game['playerList'])
 
     # Let tkinter main loop run forever and handle input events
     tkRoot.mainloop()
