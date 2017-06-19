@@ -235,28 +235,59 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'move'):
         #we also need to determine if it is our turn to move
-        for player in tkRoot.game['playerList']:
-            if player['name'] == tkRoot.playerName:
-                if player['phase'] == "move":
-                    phaseMenuObject.add_command(label="Ships you own:")
-                    private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack()]
-                    for ship in tkRoot.game['objects']['shipList']:
-                        if (ship['owner'] == tkRoot.playerName):
-                            labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
-                                                                         ship['moves']['cur'],
-                                                                         ship['PD']['cur'])
-                            private[1] = ship['name']
-                            moveCommand = menuMover(private,
-                                                    ship['location']['x'],
-                                                    ship['location']['y'],
-                                                    ship['moves']['cur'])
-                            phaseMenuObject.add_command(label=labelString, command=moveCommand)
-                    phaseMenuObject.add_command(label="Ready",
-                                          command=lambda:sendReady(tkRoot))
-                    #enable the move right click stuff.
-                    setupMovement(tkRoot.hexMap, tkRoot)
-                else:
-                    tkRoot.hexMap.setRightPrivateCallBack(None, None)
+        player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        if player['name'] == tkRoot.playerName:
+            if player['phase'] == "move":
+                phaseMenuObject.add_command(label="Ships you own:")
+                private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack()]
+                for ship in tkRoot.game['objects']['shipList']:
+                    if (ship['owner'] == tkRoot.playerName):
+                        labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
+                                                                     ship['moves']['cur'],
+                                                                     ship['PD']['cur'])
+                        private[1] = ship['name']
+                        moveCommand = menuMover(private,
+                                                ship['location']['x'],
+                                                ship['location']['y'],
+                                                ship['moves']['cur'])
+                        phaseMenuObject.add_command(label=labelString, command=moveCommand)
+                phaseMenuObject.add_command(label="Ready",
+                                      command=lambda:sendReady(tkRoot))
+                #enable the move right click stuff.
+                setupMovement(tkRoot.hexMap, tkRoot)
+            else:
+                tkRoot.hexMap.setRightPrivateCallBack(None, None)
+    elif (gamePhase == 'combat'):
+        # Find all locations with "combat". That is all locations that
+        # have ships (or bases, or stars or things) that are owned by
+        # multiple players (unowned could be considered another player?)
+
+        # Now that we have a list of all locations for combat ....
+        # We need a list of each thing involved in combat at each location
+        # (So an array of locations each with a list of "things" involved)
+
+        # I want to display each battle location in the phase menu and
+        # highlight the location in red. Like red outline the hex
+        # The user can select any location and that will take them to
+        # a battle screen. We should set the left (or right) click
+        # on the location so it brings up the battle screen.
+        
+        # They make their choices and submit orders.
+        # The user will still need to select all the other locations and
+        # give orders. Then they will have to wait for results. (That
+        # requires a response from the other user)
+        #
+        # Should they make commands for each location and submit all
+        # at once or can they do them piecemeal? All at once makes
+        # the code easier. So instead of a "ready" menu command there should
+        # be a "submitOrders" command? We'll then need to store up all their
+        # orders from each battle screen? Combine them for sending and
+        # prevent them from submitting multiple orders for the same ship
+        # ... I guess for initial implementation if they have multiple orders
+        # for the same ship we assert (or just use the first one? Or just
+        # let them?)
+        #
+        print("combat phase menu not set up")
     else:
         print("BAD PHASE", gamePhase)
         gamePhase = ""
