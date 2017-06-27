@@ -301,6 +301,17 @@ class gameserver:
             ship['location']['y'] = y
             ship['moves']['cur'] = ship['moves']['cur'] -delta 
 
+            #now we start a battle, if we can.
+            #Is there anything here that can trigger a battle?
+            for otherShip in self.game['objects']['shipList']:
+                if otherShip['name'] != name:
+                    if otherShip['location']['x'] == x and otherShip['location']['y'] == y:
+                        if otherShip['owner'] != ship['owner']:
+                            ship['moves']['cur'] = 0
+                            #if we want wierd simultaneous movement, both ships stop
+                            otherShip['moves']['cur'] = 0
+                            #set a flag, or have everyone else figure it out for themselves?
+
         elif cmdStr == 'combatorders': # Per ship? All ships?
             # A combat instruction
             # Check for proper state. Are there existing orders?
