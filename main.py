@@ -239,7 +239,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         if player['name'] == tkRoot.playerName:
             if player['phase'] == "move":
                 phaseMenuObject.add_command(label="Ships you own:")
-                private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack()]
+                private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack(), tkRoot.playerName]
                 for ship in tkRoot.game['objects']['shipList']:
                     if (ship['owner'] == tkRoot.playerName):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
