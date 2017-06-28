@@ -117,6 +117,53 @@ def playerTableGet(game, playerName):
 
     return None
 
+# PURPOSE:for sorted() key function
+# RETURNS: key for sorting (only works for 100x100 map or less
+def myCmp(obj):
+    assert(obj)
+    location = obj['location']
+    return location['x']*100 + location['y']
+
+# PURPOSE: Search lists of objects for items on the
+#   same location but owned by different owners.
+#   "none/nil" should count as a different owner
+# RETURNS: An array of Lists of all those conflicted ownership locations
+# Example:
+#   conflicts[0] = Ship1, Ship2, StarBase3
+#   conflicts[1] = Ship4, StarBase5
+def getConflictList(objects):
+    assert(objects)
+    starList     = objects['starList']
+    thingList    = objects['thingList']
+    shipList     = objects['shipList']
+    starBaseList = objects['starBaseList']
+    assert(starList and thingList and shipList and starBaseList)
+
+    allList = starList + thingList + shipList + starBaseList
+    sortedList = sorted(allList, key=myCmp)
+    if (sortedList):
+        last = sortedList[0]
+    conflicts = []
+    listOfLists = []
+    for obj in sortedList:
+        if last['location'] == obj['location']:
+            if (conflicts):
+                # There is already a conflict here. That means everyone
+                # is in conflict
+                conflicts.append(obj)
+                continue
+            if last['owner'] != obj['owner']:
+                print("conflict")
+                # what about "last"?
+                conflicts.append(last)
+                conflicts.append(obj)
+        else:
+            if (conflicts):
+                listOfLists.append(conflicts)
+                conflicts = []
+        last = obj
+    return listOfLists
+
 # PURPOSE: create and return an empty game
 #    FIXME TODO
 #    I don't think this actually insantiates a new object.

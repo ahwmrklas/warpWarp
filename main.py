@@ -261,6 +261,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # Find all locations with "combat". That is all locations that
         # have ships (or bases, or stars or things) that are owned by
         # multiple players (unowned could be considered another player?)
+        conflictList = getConflictList(tkRoot.game['objects'])
+        print(conflictList)
 
         # Now that we have a list of all locations for combat ....
         # We need a list of each thing involved in combat at each location
