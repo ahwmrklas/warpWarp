@@ -2,6 +2,7 @@ from hexgrid import *
 from tkinter import *
 from overlay import *
 from hexinfo import *
+from dataModel import getConflictList
 
 # PURPOSE:
 # RETURNS: list of objects at x,y
@@ -39,6 +40,16 @@ def updateMap(tkRoot, hexMap, game):
         return
 
     hexMap.drawGrid('blue')
+
+    #super annoying bit of complexity here. if we are in combat, we need to 
+    #draw red borders around all combat hexes. We will have to find the
+    #combat list again, even though we already found it in update phase menu.
+    if tkRoot.game['state']['phase'] == 'combat':
+        conflictList = getConflictList(tkRoot.game['objects'])
+        for conflict in conflictList:
+            tkRoot.hexMap.setBorders(int(conflict[0]['location']['x']),
+                    int(conflict[0]['location']['y']), 'Red')
+
     dim = game['map']
     lists = game['objects']
     starList = lists['starList']
