@@ -216,3 +216,13 @@ class HexagonalGrid(HexaCanvas):
     #placeholder for canvas motion listener
     def motion(self, event):
         print ("moved ", event.x, event.y)
+
+    def setBorders(self, x, y, color):
+                        self.setCell(x, y,
+                                            fill=None,
+                                            color1=color,
+                                            color2=color,
+                                            color3=color,
+                                            color4=color,
+                                            color5=color,
+                                            color6=color)

@@ -36,14 +36,7 @@ class menuMover:
                 for k in range(-self.movement, self.movement + 1):
                     if i+j+k==0:
                         x,y = IJKtoXY(startI + i, startJ + j, startK + k)
-                        self.hexGrid.setCell(x, y,
-                                            fill=None,
-                                            color1='Green',
-                                            color2='Green',
-                                            color3='Green',
-                                            color4='Green',
-                                            color5='Green',
-                                            color6='Green')
+                        self.hexGrid.setBorders(x, y, 'Green')
 
 #set the new onclick listener
 def setupMovement(hexGrid, tkRoot):
