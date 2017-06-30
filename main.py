@@ -14,6 +14,7 @@ from overlay import *
 from hexinfo import *
 from build import *
 from move import *
+from combat import *
 from mapUtil import *
 from connect import *
 from cmds import warpWarCmds
@@ -290,6 +291,22 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # let them?)
         #
         print("combat phase menu not set up")
+        print("This is a place holder")
+        for conflict in conflictList:
+            conflictDict = organizeConflict(conflict)
+            print(tkRoot.playerName)
+            print(conflictDict)
+            #who am I,and who is my enemy?
+            friendlyShips = conflictDict[tkRoot.playerName]
+            enemyShips = []
+            for key in conflictDict:
+                if key != tkRoot.playerName:
+                    for ship in conflictDict[key]:
+                        enemyShips.append(ship)
+            print (enemyShips)
+            combat(tkRoot, friendlyShips, enemyShips)
+            #do a combat!
+
     else:
         print("BAD PHASE", gamePhase)
         gamePhase = ""

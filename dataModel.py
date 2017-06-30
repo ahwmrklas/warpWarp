@@ -164,6 +164,27 @@ def getConflictList(objects):
         last = obj
     return listOfLists
 
+# PURPOSE: turn a conflict  into a list of ships on each side
+# RETURNS: A dict of ships on each side
+# Example:
+#   {
+#       "alex" : [alexShip1]
+#       "Rex"  : [RexShip1, rexShip2]
+#       "bob"  : [bobShip1, bobShip2]
+#   }
+def organizeConflict(conflict):
+    conflictDict = {}
+    for thing in conflict:
+        print ("here is the thing!")
+        print (thing)
+        print ("the things type:")
+        print (thing['type'])
+        if thing['type'] == 'ship':
+            if thing['owner'] not in conflictDict.keys():
+                conflictDict[thing['owner']] = []
+            conflictDict[thing['owner']].append(thing)
+    return conflictDict
+
 # PURPOSE: create and return an empty game
 #    FIXME TODO
 #    I don't think this actually insantiates a new object.
