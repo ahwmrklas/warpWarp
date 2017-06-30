@@ -14,6 +14,7 @@ class combat(Dialog):
     def __init__(self, master, friendlyList, enemyList):
         self.friendlyList = friendlyList
         self.enemyList = enemyList
+        self.targetDict = {}
         Dialog.__init__(self, master)
 
     # PURPOSE:
@@ -152,7 +153,7 @@ class combat(Dialog):
 
     # PURPOSE:
     # RETURNS:
-    def targetList(self, shipFrame, enemyList):
+    def targetList(self, shipFrame, enemyList, key=None):
         targetList = []
         for ship in enemyList:
             targetList.append(ship["name"])
@@ -167,6 +168,8 @@ class combat(Dialog):
         # target selector is which. (which tube? or beam?)
         # So this will probably change. This is really just
         # a reminder return
+        if key != None:
+            self.targetDict[key] = targetVar
         return target
 
     # PURPOSE:
@@ -267,10 +270,10 @@ class combat(Dialog):
                       )
         self.Move.grid(row=2, column=1)
 
-        tacticVar = StringVar(self.powerFrame)
-        tacticVar.set("tactic")
+        self.tacticVar = StringVar(self.powerFrame)
+        self.tacticVar.set("tactic")
         tacticList = ["attack", "dodge", "retreat"]
-        tactic = OptionMenu(self.powerFrame, tacticVar, *tacticList)
+        tactic = OptionMenu(self.powerFrame, self.tacticVar, *tacticList)
         tactic.grid(row=2, column=2)
 
         self.energyFrame = LabelFrame(shipFrame,
@@ -291,7 +294,7 @@ class combat(Dialog):
                             )
         self.Beams.grid(row=3, column=1)
 
-        target = self.targetList(self.energyFrame, enemyList)
+        target = self.targetList(self.energyFrame, enemyList, 'beam')
         target.grid(row=3, column=2)
 
         self.screenVar = IntVar(self.energyFrame)
@@ -390,3 +393,12 @@ class combat(Dialog):
     # RETURNS:
     def apply(self):
         print("nothing to apply")
+
+        #lets print out all the energy we are using!
+        combatOrder =   {
+                        'moves'   : [self.tacticVar.get(), self.moveVar.get()],
+                        'beams'   : [self.targetDict['beam'].get() ,self.beamVar.get()],
+                        'screens' : self.screenVar.get(),
+                        'missiles' : [["TODO: fix this nonsense", tube.var.get()] for tube in self.Tubes]
+                }
+        print (combatOrder)
