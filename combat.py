@@ -334,7 +334,7 @@ class combat(Dialog):
             tmp.trace("w", self.allUpdate)
             self.Tubes[i].var = tmp
 
-            tmp = self.targetList(self.missleFrame, enemyList)
+            tmp = self.targetList(self.missleFrame, enemyList, 'tube' + str(i))
             tmp.grid(row=i, column=2)
             self.Tubes[i].target = tmp
 
@@ -399,6 +399,6 @@ class combat(Dialog):
                         'moves'   : [self.tacticVar.get(), self.moveVar.get()],
                         'beams'   : [self.targetDict['beam'].get() ,self.beamVar.get()],
                         'screens' : self.screenVar.get(),
-                        'missiles' : [["TODO: fix this nonsense", tube.var.get()] for tube in self.Tubes]
+                        'missiles' : [[self.targetDict['tube' + str(i)].get(), self.Tubes[i].var.get()] for i in range(len(self.Tubes))]
                 }
         print (combatOrder)
