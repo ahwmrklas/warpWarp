@@ -93,7 +93,7 @@ def sendReady(tkRoot):
 def sendCombatReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot)
+        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.game['state']['battleOrders'])
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -277,22 +277,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             else:
                 tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'combat'):
-        # Find all locations with "combat". That is all locations that
-        # have ships (or bases, or stars or things) that are owned by
-        # multiple players (unowned could be considered another player?)
-        conflictList = getConflictList(tkRoot.game['objects'])
-        print(conflictList)
 
-        # Now that we have a list of all locations for combat ....
-        # We need a list of each thing involved in combat at each location
-        # (So an array of locations each with a list of "things" involved)
-
-        # I want to display each battle location in the phase menu and
-        # highlight the location in red. Like red outline the hex
-        # The user can select any location and that will take them to
-        # a battle screen. We should set the left (or right) click
-        # on the location so it brings up the battle screen.
-        
         # They make their choices and submit orders.
         # The user will still need to select all the other locations and
         # give orders. Then they will have to wait for results. (That
@@ -308,8 +293,21 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # for the same ship we assert (or just use the first one? Or just
         # let them?)
         #
-        print("combat phase menu not set up")
 
+        # Find all locations with "combat". That is all locations that
+        # have ships (or bases, or stars or things) that are owned by
+        # multiple players (unowned could be considered another player?)
+        # Now that we have a list of all locations for combat ....
+        # We need a list of each thing involved in combat at each location
+        # (So an array of locations each with a list of "things" involved)
+        conflictList = getConflictList(tkRoot.game['objects'])
+        print(conflictList)
+
+        # I want to display each battle location in the phase menu and
+        # highlight the location in red. Like red outline the hex
+        # The user can select any location and that will take them to
+        # a battle screen. We should set the left (or right) click
+        # on the location so it brings up the battle screen.
         phaseMenuObject.add_command(label="Conflicts:")
         for conflict in conflictList:
             conflictDict = organizeConflict(conflict)
@@ -328,7 +326,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendCombatReady(tkRoot))
-        print("This is a place holder")
 
     else:
         print("BAD PHASE", gamePhase)
