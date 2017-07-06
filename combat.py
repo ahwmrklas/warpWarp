@@ -14,7 +14,6 @@ class combat(Dialog):
     def __init__(self, master, friendlyList, enemyList):
         self.friendlyList = friendlyList
         self.enemyList = enemyList
-        self.tkRoot = master
         Dialog.__init__(self, master)
 
     # PURPOSE:
@@ -158,9 +157,8 @@ class combat(Dialog):
         for ship in enemyList:
             targetList.append(ship["name"])
 
-        if (len(targetList) > 0):
-            targetVar.set("target")
-            target = OptionMenu(shipFrame, targetVar, *targetList)
+        targetVar.set("target")
+        target = OptionMenu(shipFrame, targetVar, *targetList if targetList else "<NoEnemies>")
 
         return target
 
@@ -397,8 +395,5 @@ class combat(Dialog):
                         'missiles' : [ [self.Tubes[i].targetVar.get(), self.Tubes[i].var.get()] for i in range(len(self.Tubes)) ]
                 }
 
-        if 'combatOrders' not in self.tkRoot.game['state']:
-            self.tkRoot.game['state']['battleOrders'] = {}
-        self.tkRoot.game['state']['battleOrders'][self.friendlyList[0]['name']] = self.combatOrder
         print (self.combatOrder)
 

@@ -90,10 +90,24 @@ def sendReady(tkRoot):
 
 # PURPOSE:
 # RETURNS:
+def combatAtLocation(tkRoot, friendlyShips, enemyShips):
+    print("combatAtLocationMenu")
+    if (tkRoot.hCon is not None):
+        combatResult = combat(tkRoot, friendlyShips, enemyShips)
+
+    if (combatResult is not None):
+        print (combatResult.combatOrder)
+
+        if not hasattr(tkRoot, 'battleOrders'):
+            tkRoot.battleOrders = {}
+        tkRoot.battleOrders[friendlyShips[0]['name']] = combatResult.combatOrder
+
+# PURPOSE:
+# RETURNS:
 def sendCombatReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.game['state']['battleOrders'])
+        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.battleOrders)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -322,7 +336,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         enemyShips.append(ship)
 
             labelString = "%d of Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
-            phaseMenuObject.add_command(label=labelString, command=lambda:combat(tkRoot, friendlyShips, enemyShips))
+            phaseMenuObject.add_command(label=labelString, command=lambda:combatAtLocation(tkRoot, friendlyShips, enemyShips))
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendCombatReady(tkRoot))
