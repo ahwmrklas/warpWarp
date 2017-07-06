@@ -319,7 +319,28 @@ class gameserver:
             # Have all opponents ships in *this* combat been given orders?
             # Input? ShipID, combat command (fire, move, shields ...)
             # TODO many more parameters
-            assert(self.game['state']['phase'] == "battle")
+            assert(self.game['state']['phase'] == "combat")
+
+            #Every player gives a list of orders, for all ships involved in a
+            #Conflict. Once both players have sent orders, we start processing.
+            #This stuff should go in game state.
+            if 'orders' not in self.game['state']:
+                self.game['state']['orders'] = {}
+
+            self.game['state']['orders'][cmd['plid']] = cmd['battleOrders']
+
+            #has everyone submitted an order?
+            allOrders = True
+            for player in self.game['playerList']:
+                if player['name'] not in self.game['state']['orders']:
+                    print (player['name'] + " has not submitted orders" )
+                    allOrders = False
+                else:
+                    print (player['name'] + " has submitted orders" )
+
+
+            if allOrders:
+                print("all orders are in!")
 
             # When all damage has been selected ... by all players ...
             # move to battle .... or retreat ... or combat over ... or next

@@ -90,6 +90,24 @@ def sendReady(tkRoot):
 
 # PURPOSE:
 # RETURNS:
+def sendCombatReady(tkRoot):
+    print("readyMenu")
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        # not the right place to update.
+        # Send message? And that updates?
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+# PURPOSE:
+# RETURNS:
 def buildShip(tkRoot, base):
     print("buildMenu")
     if (tkRoot.hCon is not None):
@@ -291,7 +309,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # let them?)
         #
         print("combat phase menu not set up")
-        print("This is a place holder")
+
+        phaseMenuObject.add_command(label="Conflicts:")
         for conflict in conflictList:
             conflictDict = organizeConflict(conflict)
             print(tkRoot.playerName)
@@ -303,9 +322,13 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 if key != tkRoot.playerName:
                     for ship in conflictDict[key]:
                         enemyShips.append(ship)
-            print (enemyShips)
-            combat(tkRoot, friendlyShips, enemyShips)
-            #do a combat!
+
+            labelString = "%d of Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
+            phaseMenuObject.add_command(label=labelString, command=lambda:combat(tkRoot, friendlyShips, enemyShips))
+
+        phaseMenuObject.add_command(label="Ready",
+                              command=lambda:sendCombatReady(tkRoot))
+        print("This is a place holder")
 
     else:
         print("BAD PHASE", gamePhase)
