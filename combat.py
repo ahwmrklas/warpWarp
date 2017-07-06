@@ -14,7 +14,6 @@ class combat(Dialog):
     def __init__(self, master, friendlyList, enemyList):
         self.friendlyList = friendlyList
         self.enemyList = enemyList
-        self.targetDict = {}
         Dialog.__init__(self, master)
 
     # PURPOSE:
@@ -151,25 +150,17 @@ class combat(Dialog):
 
             self.enableBeamAndScreen()
 
-    # PURPOSE:
-    # RETURNS:
-    def targetList(self, shipFrame, enemyList, key=None):
+    # PURPOSE: Create drop down list of potential targets
+    # RETURNS: Return handle to created drop down list
+    def createTargetList(self, shipFrame, enemyList, targetVar):
         targetList = []
         for ship in enemyList:
             targetList.append(ship["name"])
 
         if (len(targetList) > 0):
-            targetVar = StringVar(shipFrame)
             targetVar.set("target")
             target = OptionMenu(shipFrame, targetVar, *targetList)
 
-        # since this is called multiple times I assume I need
-        # to record something so I know which
-        # target selector is which. (which tube? or beam?)
-        # So this will probably change. This is really just
-        # a reminder return
-        if key != None:
-            self.targetDict[key] = targetVar
         return target
 
     # PURPOSE:
@@ -294,7 +285,8 @@ class combat(Dialog):
                             )
         self.Beams.grid(row=3, column=1)
 
-        target = self.targetList(self.energyFrame, enemyList, 'beam')
+        self.beamTargetVar = StringVar(self.energyFrame)
+        target = self.createTargetList(self.energyFrame, enemyList, self.beamTargetVar)
         target.grid(row=3, column=2)
 
         self.screenVar = IntVar(self.energyFrame)
@@ -334,7 +326,8 @@ class combat(Dialog):
             tmp.trace("w", self.allUpdate)
             self.Tubes[i].var = tmp
 
-            tmp = self.targetList(self.missleFrame, enemyList, 'tube' + str(i))
+            self.Tubes[i].targetVar = StringVar(self.missleFrame)
+            tmp = self.createTargetList(self.missleFrame, enemyList, self.Tubes[i].targetVar)
             tmp.grid(row=i, column=2)
             self.Tubes[i].target = tmp
 
@@ -397,8 +390,8 @@ class combat(Dialog):
         #lets print out all the energy we are using!
         combatOrder =   {
                         'moves'   : [self.tacticVar.get(), self.moveVar.get()],
-                        'beams'   : [self.targetDict['beam'].get() ,self.beamVar.get()],
+                        'beams'   : [self.beamTargetVar.get(),self.beamVar.get()],
                         'screens' : self.screenVar.get(),
-                        'missiles' : [[self.targetDict['tube' + str(i)].get(), self.Tubes[i].var.get()] for i in range(len(self.Tubes))]
+                        'missiles' : [ [self.Tubes[i].targetVar.get(), self.Tubes[i].var.get()] for i in range(len(self.Tubes)) ]
                 }
         print (combatOrder)
