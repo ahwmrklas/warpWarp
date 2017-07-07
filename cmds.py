@@ -93,8 +93,8 @@ class warpWarCmds():
     #       TODO    This is going to have many arguments!
     #       TODO    For all involved ships?
     # RETURNS: string with json
-    def combatOrders(self, plid, battleOrders):
-        cmd  = { 'cmd' : {'cmd': "combatorders", 'plid': plid, 'battleOrders': battleOrders} }
+    def combatOrders(self, plid, player, battleOrders):
+        cmd  = { 'cmd' : {'cmd': "combatorders", 'plid': plid, 'name': player, 'battleOrders': battleOrders} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 

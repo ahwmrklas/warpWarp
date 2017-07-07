@@ -320,6 +320,7 @@ class gameserver:
             # Input? ShipID, combat command (fire, move, shields ...)
             # TODO many more parameters
             assert(self.game['state']['phase'] == "combat")
+            changePlayerPhase(self.game, cmd['name'], "combat", "waiting")
 
             #Every player gives a list of orders, for all ships involved in a
             #Conflict. Once both players have sent orders, we start processing.

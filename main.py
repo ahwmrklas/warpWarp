@@ -107,7 +107,7 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
 def sendCombatReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.battleOrders)
+        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.playerName, tkRoot.battleOrders)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
