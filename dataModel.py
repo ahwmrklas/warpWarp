@@ -194,14 +194,14 @@ def emptyGame():
         'options': {
             'serverIp'  : "192.168.1.5",
             'mapSize'   : {'width':10, 'height':10},
-            'startingBP': 20,
-            'perTurnBP' :  5,
         },
         'state': {
             'turnNumber': 0,
             'phase': "nil",
             'activePlayer': "nil",
         },
+        'orders': [
+        ],
         'map': {'width':10, 'height':10},
         'playerList': [
         ],
@@ -212,7 +212,7 @@ def emptyGame():
                  'location': {'x':1, 'y':3},
                  'image':"alpha.png",
                  'owner':"nil",
-                 'valueBP':3,
+                 'BP': {'perturn':3, 'cur':20},
                  'visibility':[ {'player':"ahw",  'percent':100},
                                 {'player':"bearda", 'percent':30},
                               ],
@@ -224,7 +224,7 @@ def emptyGame():
                  'location': {'x':4, 'y':7},
                  'image':"relic.png",
                  'owner':"nil",
-                 'valueBP':0,
+                 'BP': {'perturn':0, 'cur':15},
                  'visibility':[ {'player':"ahw",  'percent':100},
                                 {'player':"bearda", 'percent':30},
                               ],
@@ -238,7 +238,7 @@ def emptyGame():
                  'location': {'x':4, 'y':8},
                  'image': "b_5.png",
                  'owner': "nil",
-                 'stockpile': 15,
+                 'BP': {'perturn':0, 'cur':10},
                 },
             ],
             'warpLineList': [

@@ -27,6 +27,8 @@
 # combat
 # battle
 # damageselection
+# Official rules have "SystemShipRearrangement". Drop this. It seems redundant
+# victory
 
 
 import sys
@@ -84,6 +86,56 @@ def resolveCombat(game):
     # some points of damage ... eh, just damage all ships :-)
     for ship in game['objects']['shipList']:
         ship['damage'] = 5
+
+# PURPOSE:
+# RETURNS:
+def harvest(game):
+    # For now event unowned locations increase BuildPoints every turn
+    # That will make unowned locations pile up wealth. Is that good
+    # for the game? We could have only "owned" locations do that.
+    for thing in game['objects']['starList']:
+        thing['BP']['cur'] = thing['BP']['cur'] + thing['BP']['perturn']
+    for thing in game['objects']['starBaseList']:
+        thing['BP']['cur'] = thing['BP']['cur'] + thing['BP']['perturn']
+    for thing in game['objects']['thingList']:
+        thing['BP']['cur'] = thing['BP']['cur'] + thing['BP']['perturn']
+
+# PURPOSE:
+# RETURNS: name/plid of winning player or None
+def checkForVictory(game):
+    # Lots of things could cause you to win
+    # (We could even make the victory algorithm selectable?)
+    # For now just the person with the largest owned build points
+    # over a given threshold
+
+    # reset victory points to zero
+    players = {}
+    players['none'] = 0
+    for player in game['playerList']:
+        players[player['name']] = 0
+
+    for thing in game['objects']['starList']:
+        players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
+        print("star: name:", thing['name'], " owner:",thing['owner'])
+    for thing in game['objects']['starBaseList']:
+        players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
+        print("base: name:", thing['name'], " owner:",thing['owner'])
+    for thing in game['objects']['thingList']:
+        players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
+        print("thing: name:", thing['name'], " owner:",thing['owner'])
+
+    # Check everyones victory points. Did anyone win?
+    highest = 0
+    for name, score in players.items():
+        print("name:", name, " score:", score)
+        if (score > highest):
+            highest = score
+            winner = name
+
+    if (highest > 30):
+        return winner
+
+    return None
 
 
 # class to handle game commands
@@ -272,14 +324,46 @@ class gameserver:
                 # Given player finished submitting orders must wait
                 changePlayerPhase(self.game, playerName, "combat", "waiting")
 
-                # When all players ready AUTO move to damage selection phase
+                # When all players ready AUTO move to ... something
+                # damage selection phase if there was combat
+                # end turn if there wasn't
                 if areAllPlayersInPhase(self.game, "waiting"):
-                    resolveCombat(self.game)
-                    self.game['state']['phase'] = "damageselection"
-                    changeAllPlayerPhase(self.game, "waiting", "damageselection")
+                    if (self.game['orders']):
+                        resolveCombat(self.game)
+                        self.game['state']['phase'] = "damageselection"
+                        changeAllPlayerPhase(self.game, "waiting", "damageselection")
+                    else:
+                        # Skip "SystemShipRearrangement"
+                        # Start turn sequence over again
+                        # Collect build points, Check victory conditions
+
+                        harvest(self.game)
+
+                        winner = checkForVictory(self.game)
+                        if (winner):
+                            self.game['state']['phase'] = "victory"
+                            changeAllPlayerPhase(self.game, "waiting", "loser")
+                            changePlayerPhase(self.game, winner, "loser", "winner")
+                        else:
+                            self.game['state']['phase'] = "build"
+                            changeAllPlayerPhase(self.game, "waiting", "build")
 
                 # What if there is no combat? Probably go on to build
                 # self.game['state']['phase'] = "build"
+
+            elif (self.game['state']['phase'] == "damageselection"):
+                # Given player finished allocating damge to ships
+                changePlayerPhase(self.game, playerName, "damageselection", "waiting")
+
+                # When all players ready AUTO move to the next round of combat
+                if areAllPlayersInPhase(self.game, "waiting"):
+                    self.game['state']['phase'] = "combat"
+                    changeAllPlayerPhase(self.game, "waiting", "combat")
+
+                    # Erase any existing orders. They no longer have any use
+                    self.game['orders'] = {}
+
+            # UNUSED? FIXME
             elif (self.game['state']['phase'] == "battle"):
                 # Given player can no longer give orders and must wait
                 # When all players ready AUTO move to damageSelection phase
@@ -337,14 +421,12 @@ class gameserver:
 
             plid = cmd['plid']
             battleOrders = cmd['battleOrders']
+            print("battleOrders:", battleOrders)
 
             assert(self.game['state']['phase'] == "combat")
 
             #Every player gives a list of orders, for all ships involved in a
             #Conflict. Once both players have sent orders, we start processing.
-            #This stuff should go in game state.
-            if 'orders' not in self.game:
-                self.game['orders'] = {}
 
             self.game['orders'][plid] = battleOrders
 

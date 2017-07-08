@@ -98,8 +98,6 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
     if (combatResult is not None):
         print (combatResult.combatOrder)
 
-        if not hasattr(tkRoot, 'battleOrders'):
-            tkRoot.battleOrders = {}
         tkRoot.battleOrders[friendlyShips[0]['name']] = combatResult.combatOrder
 
 # PURPOSE:
@@ -127,11 +125,16 @@ def damageAllocation(tkRoot, shipName):
 def sendCombatReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.playerName, tkRoot.battleOrders)
-        print(" main sending: ", sendJson)
-        tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
+
+        if (tkRoot.battleOrders):
+            sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.playerName, tkRoot.battleOrders)
+            print(" main sending: ", sendJson)
+            tkRoot.hCon.sendCmd(sendJson)
+            resp = tkRoot.hCon.waitFor(5)
+            tkRoot.game = json.loads(resp)
+
+        # We've sent our orders, erase them
+        tkRoot.battleOrders = {}
 
         # Send ready because we are done with this round of combat
         sendJson = warpWarCmds().ready(tkRoot.playerName, tkRoot.playerName)
@@ -382,6 +385,11 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 if (ship['damage'] >= 0):
                     labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
                     phaseMenuObject.add_command(label=labelString, command=lambda:damageAllocation(tkRoot, ship['name']))
+
+        phaseMenuObject.add_command(label="Ready",
+                                      command=lambda:sendReady(tkRoot))
+    elif (gamePhase == 'victory'):
+        gamePhase = "Game Over. You are a " + playerPhase
     else:
         print("BAD PHASE", gamePhase)
         gamePhase = ""
@@ -439,6 +447,7 @@ def main():
     tkRoot.hexMap = None
     tkRoot.game = None
     tkRoot.playerName = getpass.getuser()
+    tkRoot.battleOrders = {}
 
 
     # menu bar

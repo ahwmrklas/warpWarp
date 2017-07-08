@@ -1,0 +1,934 @@
+
+<!-- saved from url=(0063)http://www.contrib.andrew.cmu.edu/usr/gc00/reviews/warpwar.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><title> WarpWar Rules </title>
+</head><body><pre>                    [|]
+            _       [|]     _______  _
+           | |\     [|]    (_______)/ \     }C=K@    WWWWWWWWWW
+           | | %%===[|]====(_______)| |=====X=X=X====HHHHHHHHHH
+           |_|/     [|]    (_______)\_/              MMMMMMMMMM
+                    [|]
+                    [|]                   }C=K@
+
+          |______||______||_____________||________||___________|
+           Fusion   Warp       Fuel/       System   Beam/Screen
+           Drive    Gnrtr      Crew        Ships     Generator
+
+
+      __         __ __     ____   ____ __         __ __     ____
+      \ \ /\    / / \ \   |___ \ |___ \\ \ /\    / / \ \   |___ \
+       \ \\ \  / / __\ \   ___) | ___) |\ \\ \  / / __\ \   ___) |
+        \ \\ \/ / / / \ \ |___ &lt; | ___/  \ \\ \/ / / / \ \ |___ &lt;
+         \ \\  / / /___\ \    | || |      \ \\  / / /___\ \    | |
+          \/ \/ /_________\   |_||_|       \/ \/ /_________\   |_|
+
+
+                   Tactical Spaceship Design and Combat
+
+                               2nd Edition
+
+                      Game Design by Howard Thompson
+                          (c) 1977 by Metagaming
+                   Revised 1994 by WarpWar Design Group
+</pre>
+
+<h2> I. INTRODUCTION </h2>
+
+   WarpWar is a two- or multi-player game of tactical space combat
+suitable for realtime, PBM or PBEM.  Players build their own unique
+ships, move them between stars, and resolve combat without dice.  The
+object of the game is to eliminate the opponent.  Solitaire playability
+is nil. <p>
+   WarpWar simulates a hypothetical future when time for flights between
+stars is huge...but ends in brief but violent combat.  Warpships can
+enter the stressed space channels ("warplines") between stars for nearly
+instantaneous travel.  Nevertheless, wars among the stars last so long
+that huge advances are made in technology.  Older ships are at a
+disadvantage against newer ones. </p><p>
+   The destructive power of weapons technology has become so great that
+space combats have become tactical guessing games between ship
+commanders.  A clear hit will wreck or cripple all but the most powerful
+ships.  The goal, then, is to outguess the enemy - to use your own
+weapons in the optimum manner where his defenses are weakest, while
+avoiding a killing counterblow. </p><p>
+   Battles are fought for control of resource-producing star systems.
+Bases are built on systems to exploit the resources and to construct new
+ships, but the bases have no other defenses.  The battle for a star is
+over when its sky is swept clean of ships; the planetary bases will be
+helpless. </p><p>
+   Are you man enough to accept the challenge of WARPWAR?
+
+</p><h3> II. GAME ELEMENTS </h3>
+
+   To play a game of WarpWar you will need a star map and these rules.
+For playing face-to-face, a set of counters must be created.  Counters
+should be clearly marked to distinguish players' fleets from one
+another, and to distinguish Warpships from Systemships.  A number/letter
+system is the best for this purpose; Warpships can for example be
+identified as W1, W2, W3 etc. and Systemships as S10, S20, S30 and so
+forth. <p>
+   A star map is included at the end of this file.  Guidelines for
+creating new maps can be found in section VII. PBEM.  The map is divided
+into hexes which control movement, and the hexes are numbered to
+identify the hexes.  Hexes are further distinguished by stars and
+warplines </p><p>
+</p><pre>
+  &gt;--&lt;
+ /SUSA\    STAR HEX is the term used for all hexes containing a star.
+(1)*   &gt;   Stars are named and referred to by hex number and name.
+ \1207/    The numbers in parentheses is the star's basic econ. value.
+  &gt;--&lt; 
+
+  &gt;--&lt;
+ /    \  SPACE HEX is the term used for any hex on the map that does
+&lt;      &gt; not contain a star.  If a hex has a warpline in it but no star,
+ \1007/  it is just like any other space hex.  Space hexes are referred
+  &gt;--&lt;   to by their hex number.
+
+             &gt;--&lt;
+            /  * \
+        &gt;--&lt;  //  &gt;
+       /    //   /
+   &gt;--&lt;   // &gt;--&lt;      WARPLINE is the term used for the lines
+  /    \//  /          connecting some stars.
+ &lt;    //&gt;--&lt;
+  \  * /
+   &gt;--&lt;
+</pre>
+<h4> PLAY </h4>
+   In order to set up WarpWar for face to face play, each player must
+select one set of ship counters.  Players then decide who will move
+first; the player moving second chooses which end of the map will be
+his/hers to defend.  The three stars at a player's end of the map are
+his/her starting Base stars.  The two scenarios below differ in
+complexity.  When you are familiar with the game, you may want to design
+your own scenarios.
+
+<h4> BASIC SCENARIO </h4>
+   Each player starts the game with 40 Build Points and receives 8
+Build Points at the start of each turn thereafter.  Each player has only
+one Base, in the middle of his/her end of the map.  The first player to
+destroy the opponent's Base is the winner.  Base construction, Holds,
+Repair Bays and Technology rules are not used.
+
+<h4> ADVANCED SCENARIO </h4>
+   All rules are used.  Each player has three Bases, one on each of the
+three stars at his/her end of the map.  Players get 20 Build Points at
+the start of the first turn and receive Build Points at the start of
+every turn thereafter in accordance with the economics rules.  The first
+player to destroy the opponent's Bases is the winner. <p>
+
+   Players who wish to develop more complicated rules to enhance their
+enjoyment of WarpWar are encouraged to experiment.  WarpWar's modular
+design is easily expandable.  A collection of rule variants is known to
+exist.'
+
+</p><h3> III. SEQUENCE OF GAME EVENTS </h3>
+
+   Play alternates between players in turns.  A game-turn consists of a
+player turn by all players.  A player-turn consists of a player going
+through each of the events described below.  When one player has
+completed his sequence of events, it is the next player's turn.
+<p>
+The sequence of game events for each player-turn is:
+</p><ol>
+<li> Build:
+<ul>
+<li>  (a) Receive new Build Points from owned stars according to the
+      economics rules.  Add to stockpiles and record current base
+      totals.  Load or unload system BPs into Holds.
+</li><li> (b) Scrap old ships at bases and add Build Points to base stockpiles.
+</li><li> (c) Build new ships and Bases, repair and resupply old ships.
+      Subtract expenditures from Base totals  New ships are placed on
+      the Star they were built at.
+</li></ul>
+</li><li> Movement: You may move some, none or all of your Warpships up to the
+maximum movement (in hexes) of which they are capable.  Systemships may
+be picked up or dropped off during this event at a cost of 1 Movement
+Point per pickup or drop off action.
+</li><li> Combat: Combat MUST occur whenever ships from opposing fleets occupy
+the same star hex at the end of a player's movement event.  Combat in
+each star hex is separate, and ends when only one player's or one
+alliance's ship(s) occupy that star hex.  Combat does NOT occur when
+opposing ships occupy the same non-star hex.
+</li><li> Systemship Rearrangement: After all combats on all star hexes are
+resolved, the player whose turn it is can have any Warpship drop off any
+Systemship(s) it carries at the star it occupies, have any Systemship at
+a star hex picked up by a Warpship there that has SRs, or transfer
+Systemships from one Warpship to another at the same star hex.  This
+event is essentially a free shuffling around of Systemships in a star
+hex, and costs no movement.
+</li></ol>
+
+<h3> IV. SHIP BUILDING </h3>
+   During the Build event of a player's turn, he collects BPs on all
+owned systems, defined as systems with a friendly base or ship currently
+stationed on it.  If a friendly Base is present, the player collects
+double the BP value of that system and may stockpile the BPs on that
+Base; if no Base is present, one half the basic BP value is collected
+and the BPs must be immediately stored in a ship's Hold or they are
+lost.  Systems produce BPs for a player beginning on the turn AFTER the
+turn that player took ownership of that system.  For example, if Player
+1 moves thought an unowned star it is now owned by Player 1 and produces
+BPs at the start of Player 1's  next turn. If Player 2 moves through it
+on his turn there are no BPs right away BUT it is now owned by Player 2.
+If Player 1 now moves through it there are still no BPs but it is now
+owned by Player 1.  BPs may not be transferred between Stars except in
+Holds; BPs may not be transferred between ships.  He may use these BPs
+to (a) build new ships, (b) repair old ships, (c) scrap old ships, (d)
+build new Bases, or (e) resupply Missiles and Shells to old ships. A
+player builds or repairs by expending Build Points from Base stockpiles.
+Ships may be built and scrapped only at Bases.  Ships may be resupplied
+and repaired at Bases or by Warpships equipped with Repair Bays.  The
+Build Points are spent as explained below.  IT IS NECESSARY to make a
+written record for each ship built, the damage it takes, and the repairs
+and resupplies it needs.  A written record for each system's economic
+expenditures is also required.
+
+<h5> SCRAPPING SHIPS </h5>
+   Ships may be scrapped for 1/2 their current total BP value.  Ships
+may only be scrapped at Bases during the Build event.
+
+<h4> SHIP ATTRIBUTES </h4>
+   Warpships and Systemships may be built with the following attributes.
+It is NOT necessary for a ship to have all these attributes.  If you
+don't want a ship to have (for instance) Missiles, you just don't build
+any.
+<ul>
+<li> POWER/DRIVE (PD) represents the total effective strength of a ship's
+engines.  During movement, the PD of a Warpship divided by 2 and rounded
+up gives its movement allowance in hexes.  During combat, the PD
+strength of a ship is allotted to its drive and weapons so that those
+may operate.  During combat, a ship may NEVER allocate power from PD in
+excess of the available PD strength.  Each unit of PD strength costs one
+BP to build.
+</li><li> WARP GENERATOR (WG) is the unit that allows a ship to move from star
+to star through space and to jump along Warplines.  A ship with a warp
+generator is a Warpship.  Ships without warp generators are Systemships.
+Warp generators cost 5 BP to build.
+</li><li> BEAMS (B) represent the ability of a ship to project a beam of
+destructive energy at a target.  Each ship may have only one Beam
+projector.  The strength of the projector will vary according to the
+number of Build Points spent on it.  The number of BP spent on the beam
+is the maximum strength at which that ship's beam may be powered during
+combat.
+</li><li> SCREENS (S) represent the ability of a ship to surround itself with a
+protective energy screen.  Screens reduce the number of "hits" damage
+the ship must take when it is struck by an enemy weapon.  Beams and
+Screens are manifestations of the same type of energy projection
+generator.  Beam and Screen may be used simultaneously, but NEITHER may
+be used on the same round that Missiles or Shells are fired.  The number
+of Build Points spent on a Screen is the maximum strength at which that
+Screen may be powered during combat.
+</li><li> ELECTRONIC COUNTERMEASURES (E) cost 1 BP per point of ECM.  The ship
+can allocate PD in combat to ECM, up to the ECM rating with which the
+ship was constructed.  In combat, after orders are revealed, the player
+using ECM allocates his ECM points among the attacking Missiles, and
+then adds or subtracts the difference between the defending ship's tech
+level and each Missile's tech level from the ECM points allocated to
+that Missile.  ECM may be used in the same combat round with all other
+ship systems.
+</li><li> TUBES (T) are used by a ship to launch Missiles.  Each Tube may
+launch one Missile per combat round.  It requires a PD allocation of 1
+to power a Tube for firing.  Each Tube costs 1 BP to build.
+</li><li> MISSILES (M) may be fired through a ship's Tubes at an enemy ship.
+Each Missile does a basic damage of 2 hits if it strikes.  The number of
+hits damage a Missile does may be modified by other factors as per the
+combat rules.  One Build Point will build three Missiles.  A ship may be
+built to carry any number of Missiles, and can never hold more than
+initially specified.  As Missiles are fired, they must be subtracted
+from the ship's Missile stock on that ship's record.  Missiles may not
+be transferred between ships.
+</li><li> ARMOR (A) is ablative hull reinforcement.  1 BP builds (2 + tech
+level) points of Armor.  One point of Armor will absorb one point of
+damage.  Armor is repaired at a cost of 1 BP per 2 points of Armor,
+regardless of tech level.
+</li><li> CANNONS (C) are used by a ship to launch Shells.  Each Cannon may
+fire either one, two or three Shells per combat round.  1 PD is required
+to power a Cannon for one combat round.  Each Cannon costs 1 BP to
+build.  Cannons are treated as Beams as far as combat goes, i.e. ship's
+drive setting is used on CRT, but they may not be used with Beams or
+Screens.  May be used with Missiles.
+</li><li> SHELLS (SH) are fired by Cannons.  Each Shell does a basic 1 point of
+damage if it strikes.  Hit +1 and +2 and TL extra damage is added per
+burst of Shells, not per individual Shell.  1 BP builds 6 shells.
+Shells do not have a drive setting; they are unguided and act like Beams
+in that they hit according to the ship's Drive and Maneuver.  In other
+respects they are treated as Missiles - ship may carry any number, may
+not be transferred between ships.  Shells are not affected by ECM.
+</li><li> SYSTEMSHIP RACKS (SR) let a Warpship carry Systemships.  Systemships
+may not have SRs and may not carry other Systemships.  A Warpship may
+have any number of SRs and may carry one Systemship for each SR it has.
+Each Systemship Rack costs one BP to build.  A Warpship may NOT be
+carried in a Systemship Rack.
+</li><li> HOLDS (H) cost 1 BP per 10 BP capacity.  Holds contain BPs and allow
+Warpships to transport BPs between stars.  When taking damage, 1 point
+of damage will destroy one 10 BP-capacity Hold AND 10 cargo BP, or
+fraction thereof.  When taking damage on a Warpship with more than one
+Hold, the player may choose to damage empty Holds before BP-carrying
+Holds.  BPs may be loaded or unloaded during the Build event only.  BPs
+may not be transferred between ships.  Systemships may not have Holds.
+</li><li> REPAIR BAYS (R) cost 5 BP.  A ship with a Repair Bay may use BPs in
+Hold or from Star to repair itself or any number of other ships present
+on the same star hex during the build/repair event.  BPs mined from
+Baseless Stars may be used immediately to repair by ships with Repair
+Bays.  Repair Bays like Warp Generators do not take damage in combat and
+are destroyed when the Warp Generator is destroyed.
+</li></ul>
+
+   BASES are not ship components.  They are built on stars during the
+Build event.  Each Base costs 30 BP.  These BP need not all be spent in
+the same turn, but they must be brought in Holds to the star on which
+the Base is to be built.  A record must be kept of the progress of Base
+construction on all stars.  If an enemy ship is present unopposed at the
+end of the enemy's turn on the star where there is an incomplete Base,
+that Base is destroyed and all BPs spent are lost.  BP received from a
+star may not be used to build a Base at that star in the turn they were
+received.  A Base doubles the basic BP production of a system.  A Base
+is destroyed automatically when enemy ships are present unopposed on the
+Star hex at the end of the enemy's turn.  One half of all BPs present on
+the destroyed Base can be immediately picked up by ships in the system
+if they have sufficient Hold space.   Any BPs not immediately picked up
+are lost.  Only one Base may be built on each star hex. <p>
+
+   BUILD POINTS (BP) are produced at stars according to the economic
+value of each star.  They are spent to build Warpships, Systemships and
+Bases, to repair ships, and to resupply ships with Missiles and Shells.
+A written record is kept by each player for every ship he builds.
+Players show these records to each other after (but not during) the
+game.  A written record is also kept for each Base, denoting BPs
+accumulated and spent. </p><p>
+</p><pre>    Build Points build ship components according to this schedule:
+1 BP = 1 unit of Power/Drive strength (PD)
+       1 unit of Beam strength (B)
+       1 unit of Screen strength (S)
+       1 Tube for firing Missiles (T)
+       3 Missiles
+       1 unit of ECM capability (E)
+       1 Cannon (C)
+       6 Shells (SH)
+       2 units of Armor (A)
+       1 Hold (H)
+       1 Systemship Rack (H)
+
+5 BP are needed to build a Warp Generator or a Repair Bay.
+</pre>
+
+   WARPSHIPS are ships with warp generators.  Warpships may have any
+ship component.  They may move from hex to hex on the star map and may
+move along the warplines.  Warpships may also engage in combat, carry
+Systemships, have Repair Bays and Holds.  A Warpship may select any
+combat tactic.  Systemships carried by Warpships are noted by their
+numbers on that Warpship's record.  If a Warpship is destroyed, all
+Systemships and cargo it was carrying when destroyed are also destroyed.
+<pre>
+EXAMPLES:
+   W2 is built during turn 3, which means its technological level is 0.
+21 BP are used to construct it.  W2 cannot carry any Systemships (SR=0),
+but does have beams of strength 3, screens of 2, one Tube and 3 Missiles
+to fire, and two points of ECM.  W2 also has a Power/Drive strength of 7
+to use for movement and to allocate to weapons and drive during combat.
+W2's movement allowance is 4.  W2's ship record looks like this:
+   W2: TL0  PD=7 S=2 B=3 T=1 M=3 E=2
+   (This totals 16 BP.  Adding the cost of the warp generator, to make
+   it a Warpship, brings the cost to 21 BP.
+
+   W7 is built during turn 12, which means its technological level is 2.
+23 BP are used to construct it.  It is built to be a freighter and
+repair ship; it can't fight, since it has no Beams, Screens, Missiles or
+Cannons.  W7's record looks like this:
+   W7: TL2  PD=6 A=8 H=2 SR=3 R=1 (the numbers of any Systemships
+carried by W7 would also appear here.)
+
+   SYSTEMSHIPS do not have warp generators.  Systemships may not have
+Holds, Systemship Racks, or Repair Bays.  They may exist only on star
+hexes unless carried by Warpships.  When a Systemship is being carried
+by a Warpship, its number is noted on the Warpship's record sheet, and
+the Systemship's counter does NOT appear on the map.  Systemships may
+NEVER move from one hex to another under their own power.  They must
+always be carried by a Warpship, and may be dropped off at a star hex.
+In combat, a Systemship may never select the RETREAT tactic; it can
+escape from combat only if carried by a Warpship.
+
+EXAMPLES:
+   S20 is built during turn 2 (tech level 0).  It costs 20 BP.  It can
+have no warp generator, Systemship Racks, Holds or Repair Bay.  Its
+record is:
+   S20: TL0  PD=7 B=5 S=5 E=3
+
+   S55 is built during turn 9 (tech level 1).  It costs 4 BP; it is a
+fighter-type gunship, with PD=1 to power the Cannon.  Its record is:
+   S55: TL1  PD=1 C=1 SH=12
+</pre>
+<h4> TECHNOLOGICAL LEVELS </h4>
+   The technological level (TL) for newly built ships increases one
+level every six turns.  Ships always retain their original TL.  Ships
+built on turns 1-6 are TL 0, those built during turns 7-12 are TL 1,
+those built during turns 13-18 are TL 2, and so on. <p>
+   In combat, ships add their TL to the number of hits their Beams,
+Missiles and Shells (per burst) do.  For example, a TL 3 ship would add
+3 hits to its Beam damage, 3 hits to each Missile damage, and 3 hits to
+each burst of Cannon fire, when the weapon actually hit.  ECM is
+affected by tech a little differently:  the player using ECM allocates
+his ECM to incoming Missiles as desired.  The tech level of each Missile
+is then subtracted from the tech level of the target ship, and the
+difference is added to or subtracted from the ECM points allocated
+against that Missile ONLY. </p><p>
+
+   TECHNOLOGY IN COMBAT EXAMPLE: A tech level 2 ship fires with a Beam
+strength of 4 and hits a tech level 1 ship.  The firing ship adds 2 to
+its Beam strength of 4, for a total of 6 hits.  The target ship had
+Screens powered at 3.  It adds its tech level of 1 to the Screen power
+of 3, for a total of 4 hits absorbed by the Screen.  Subtracting 4 hits
+absorbed from 6 inflicted leaves 2 hits the target ship will have to
+take somewhere in its attributes and mark off its ship record before the
+next combat round. 
+</p><h4> REPAIR AND RESUPPLY </h4>
+   Repair and resupply occurs during the Build event.  A ship must be on
+a Base star hex or on a Star hex with a Repair Bay-equipped Warpship
+present in order to be eligible for repair or resupply.  A Systemship
+may be repaired or resupplied even when it is loaded onto a Warpship.
+Build Points are spent for repair and resupply in the same way they are
+spent when a ship is built.  One BP builds just as much for repair as
+for original building, with the exception of Armor, which is repaired at
+a cost of 1 BP per 2 points of Armor, regardless of tech level.  A ship
+can be repaired PARTIALLY or WHOLLY up to its original strength in each
+attribute, BUT NO MORE.  For example, a ship originally built at PD=7
+and damaged so that its new PD is 2, may be repaired all the way up to 7
+-- costing 5 BP -- or repaired to some PD lower than 7.  It can never be
+repaired to over 7.  Its TL remains what it originally was. <p>
+   Resupply of Missiles and Shells allows a player to replace a ship's
+original stock of ammunition after some has been fired or destroyed in
+combat.  One BP replaces up to 3 Missiles or up to 6 Shells.  A ship may
+not be resupplied with more Missiles or Shells than it originally
+carried.  Fractions of BPs left over after resupply are not saved.
+However, one BP CAN be used to resupply (for instance) 3 ships with one
+Missile each.
+
+</p><h3> V. MOVEMENT </h3>
+
+<pre>   During the Move event of a player's turn, he may move some, none, or
+all of his Warpships up to their maximum movement allowance (= 1/2 PD),
+taking any damage into account.  Warpships may pick up or drop
+Systemships during movement, at a cost of one movement point per
+Systemship dropped or picked up.  Ship counters are placed face up on
+the map, with lettering visible.  Systemships are not placed face up on
+the map while being carried by Warpships, but ARE placed on the
+appropriate star hex when not being carried.
+   Warpship movement is governed by the Power/Drive unit.  One half of a
+ship's present PD value, rounded up, is the ship's store of Movement
+Points.  A ship with an undamaged PD = 7 would have 4 Movement Points.
+It costs a Warpship 1 MP to do any of the following:
+   Move from one space or star hex to an adjacent hex
+   Move the full distance along a warpline, from the star hex at one end
+to the star hex at the other
+   Drop off OR pick one Systemship
+
+   A Warpship may NOT stop at any intermediate on the warpline when
+using warpline movement.  Warpships may only enter warplines for
+warpline movement at one end of the warpline, NOT in the middle
+   Warpships must stop movement on any star hex occupied by an enemy
+ship.  This applies to Warpships moving either normally or by warplines.
+   Warpships may freely move through space hexes occupied by enemy
+ships.
+   In 'blind' games where movement is hidden, such as refereed PBEM
+games, players may indicate in advance that they are going to drop
+Systemships when their Warpship arrives at a specific star.  If enemy
+ships are found to be present at that star, the Systemships are dropped
+and available for use on the first round of combat.  If no enemy ships
+are present the Systemships are still dropped.  The Warpship must have
+sufficient movement points remaining to drop the Systemships.
+   Warplines between stars are treated as space hexes for non-warpline
+movement purposes.
+   A Warpship whose PD is reduced to zero may not move.
+   Movement points expended during the move event are not considered
+"lost" or expended during the following combat event.  When combat
+commences, a ship may allocate its full present PD strength.
+   Ships may NOT move onto an enemy Base star during the first turn.
+
+   WARPSHIP MOVEMENT EXAMPLE: W6 starts its movement on space hex 1720
+(starting position is indicated by #, end position by %).  It moves onto
+Umma (1 movement point), moves along the warpline to Girsu (1 movement
+point), moves 3 space hexes to Kish (3 movement points), and stops.  It
+expended 5 movement points.  Had it dropped a Systemship on any one of
+those three stars, it would have expended one additional movement point,
+for a total of six used in that move.
+   Another example: W8 starts on hex 1919 and moves two hexes to 1717 at
+a cost of 2 movement points.  W8 treated hex 1818 like any other space
+hex, even though a warpline passes through 1818.
+
+
+  &gt;--&lt;      &gt;-||      &gt;--&lt;    ||&gt;--&lt;   *(5)--&lt;      &gt;--&lt;  *(3)&gt;--&lt;
+ /    \Sumarra||\1418/    \151||    \1616/    \1715/    \||14/    \
+&lt;      &gt;--&lt;(2)*\ &gt;--&lt;      &gt;--||     &gt;--&lt;      &gt;--&lt;      ||-&lt;      &gt;
+ \1320/    \1419\\   \1518/  ||\1617/    \1716/    \1815/||  \1914/
+  &gt;--&lt;      &gt;--&lt;  \\  &gt;--&lt;   || &gt;--&lt; #W8# &gt;--&lt;      &gt;--&lt;||    &gt;--&lt;
+ /    \1420/    \1519\\   \16||/    \1717/Girsu1816/    ||915/    \
+&lt;      &gt;--&lt;      &gt;--&lt;  \\  &gt;||&lt;      ======*(1)&gt;--&lt;     ||--&lt;      &gt;
+ \1421/    \1520/    \161\\ ||(2)=====   \1817/    \191||    \2015/
+  &gt;--&lt;      &gt;--&lt; #W6# &gt;Umma\*=====-&lt;      &gt;--&lt;      &gt;--||     &gt;--&lt;
+ /    \1521/    \1620/    ||719/    \1818/    \1917/  ||\2016/    \
+&lt;      &gt;--&lt;      &gt;--&lt;     ||--&lt;      &gt;--&lt;      &gt;--&lt;   || &gt;--&lt;      &gt;
+ \1522/Isin\1621/    \172||    \1819/    \1918/    \20||/    \2116/
+  &gt;--&lt;  *(1)&gt;--&lt;      &gt;--||     &gt;--&lt; %W8% &gt;--&lt;      &gt;||&lt;      &gt;--&lt;
+ /    \1\\2/    \1721/  ||\1820/    \1919/    \20Kish%W6%2117/    \
+&lt;      &gt;-\\      &gt;--&lt;   || &gt;--&lt;      &gt;--&lt;      &gt;-====*\\(0)-&lt;      &gt;
+ \1623/  \\\1722/    \1||1/    \1920Akkad\20=====  \2118\\   \2217/
+  &gt;--&lt;    \\&gt;--&lt;      &gt;||&lt;      &gt;--(3)*======&lt;      &gt;--&lt;   \\ &gt;--&lt;
+
+
+</pre>
+<h2> VI. COMBAT </h2>
+<pre>   Combat MUST occur when ships of opposing sides occupy the same star
+hex at the end of a player's movement.  Each contested star hex is
+treated as a separate combat and is resolved separately.  The player
+whose turn it is decides in which order he will resolve combats on
+contested star hexes.  The combat on one star hex is resolved before
+combat on the next star hex is begun.  The combat event of a player's
+turn is over when combat on all contested star hexes has been resolved.
+
+COMBAT ROUND SEQUENCE:
+   1. Each player writes an order for each of his ships at that star
+hex, keeping it concealed from his opponent.  Each order must include:
+     (a) A combat tactic from the Combat Results Table (Attack, Dodge or
+         Retreat)
+     (b) A target enemy ship for Beam fire, if any
+     (c) A target enemy ship for Cannon fire, if any
+     (d) A target enemy ship for each Missile fired, if any, and each
+         Missile's drive setting
+     (e) A power allocation from PD to Beams, Screens, Drive (PD), ECM
+         and Tubes (if Missiles are fired).  The sum of these
+         allocations may not exceed the ship's total current PD.
+     (f) Which Systemships, if any, the ship (if a Warpship) is to pick
+         up or drop.
+   2. When both players finish writing their orders, they show them to
+each other.  Reading the Combat Results Table, in conjunction with the
+ship orders, the players determine the result for each weapon fired.
+   3. Players apply the results of weapon hits to the ships.  Any damage
+a ship receives is immediately marked off its ship record.  Any ship
+that has received enough hits to reduce all its attributes to zero,
+except for the warp generator and repair bay, is destroyed.  Counters
+representing destroyed ships are removed.
+   4. Ships that successfully retreat are moved to any hex adjacent to
+the star hex.
+   5. If both players still have ships on that star hex, a new round of
+combat is begun on that hex.  Writing, revealing and applying one set of
+orders constitutes one combat round.
+   6. Combat ends on a star hex when:
+     (a) All of one player's ships there have been destroyed, or
+     (b) All of one player's ships there have successfully retreated off
+         that hex, or
+     (c) Three consecutive combat rounds pass in which no ships take any
+         damage not absorbed by Screens.  In that case, the player whose
+         turn it is must withdraw all his ships from that star hex to
+         any hex(es) adjacent to that star hex.  Systemships are assumed
+         picked up by any Warpship the retreating player wishes.  If
+         there are no Warpships capable of carrying a Systemship, the
+         Systemship is destroyed.
+
+POWER ALLOCATION AND SHIP ORDERS
+   Each ship order describes a ship's actions during one combat round.
+Much of the order will detail how much power is allocated from PD to the
+other ship attributes.  The power allocated from PD is necessary for
+those other attributes to operate.  No more power may be allocated to
+attributes than is undamaged and available in the PD unit.  Drives,
+Beams, Screens, ECM, Tubes and Cannons are the attributes that need
+powering.  The Warp Generator, Missiles, Systemship Racks, Holds, and
+Repair Bays do not need power in combat.
+
+   POWER ALLOCATION EXAMPLE
+   A ship was built with an original PD of 9.  In previous combat 3 hits
+have been taken on that PD, reducing it to 6.  From that PD=6, the ship
+allocates 1 to Drive (for maneuver during combat), 2 to Beams, 2 to
+Screens, and 0 to Tubes.  This totals 5, so one is unallocated.  (The
+ship could not power its Tubes to fire Missiles, since it was using 
+Beams and Screens.)
+
+   EXAMPLE OF BEAM FIRE
+   W3 is going to fire its Beam at S25, using the attack combat tactic.
+The order for this combat would look like this:
+   W3 (TL0) ATTACKS S25: D=0 B=3 S=2 T=0
+   (W3 also powered its Screens while allocating nothing to Drive or
+Tubes.  W3 would have needed a minimum of PD=5 for this example.
+Obviously, if W3 had not been built with a Beam of at least 3 and a
+Screen of at least 2, it could not have carried out this order.  Beams
+and Screens and ECM cannot be powered past their capacity, even if extra
+power is available.)
+
+   EXAMPLE OF MISSILE FIRE
+   S25 fires back at W3, using a Missile and the Dodge combat tactic.
+   S25 (TL0) DODGE: D=4 B=0 S=0 T=1
+     M ATTACKS W3: D=3
+   (Note that S25 needed a PD of at least five to execute this order.
+The D=3 for the Missile did NOT come out of the firing ship's PD.  Also,
+note that S25 did not designate a target of its own.  It dodged while
+firing a Missile, and the MISSILE attacked W3.  When the Combat Results
+Table (CRT) is read, the Attack tactic will be used for the Missile to
+see if the Missile hit.)
+   It may be helpful to think of a Missile as a little ship that exists
+for only one combat round and always uses the Attack tactic.  The
+Missile also has its own Drive unit, which can be set to any level of 1
+or greater when launched, regardless of the PD of the firing ship.  A
+Missile does a basic 2 hits of damage when it hits.
+
+   EXAMPLE OF CANNON FIRE
+   S32 fires at W3 using two Cannons and the Attack tactic.
+   S32 (TL1) ATTACKS W3: D=3 C=1 (firing 3 shells) C=1 (firing 1 shell)
+   (Note that the number of Shells fired by each Cannon must be
+specified.  Each Cannon may fire up to 3 Shells per round.)
+
+------------------------------------------------------------------------
+
+                          COMBAT RESULTS TABLE
+
+                              Target Ship Tactics
+
+Firing
+Ship        DRIVE
+Tactics     DIFFERENCE     ATTACK     DODGE     RETREAT
+
+   A        -3 or less     Miss       Miss      Escapes
+    T       -1, -2         Hit        Miss      Escapes
+     T      0, +1          Hit +2     Miss      Miss
+      A     +2             Hit +1     Hit +1    Miss
+       C    +3, +4         Miss       Hit       Hit
+        K   +5 or more     Miss       Miss      Miss
+
+   D        -4 or less     Miss       Miss      Escapes
+    O       -2, -3         Miss       Hit       Escapes
+     D      0, -1          Hit        Hit       Escapes
+      G     +1, +2         Hit        Miss      Escapes
+       E    +3 or more     Miss       Miss      Escapes
+
+  RE        -2 or less     Miss       Miss      Escapes
+    TRE     -1, 0          Hit        Miss      Escapes
+       AT   +1 or more     Miss       Miss      Escapes
+
+
+EXPLANATION OF COMBAT RESULTS
+
+MISS: The MISS result means the weapons fired missed the target ship,
+and no damage was done.
+ESCAPES: The ESCAPES result means that the ship that selected the
+RETREAT combat tactic successfully withdrew from its enemy and escaped.
+In order to ESCAPE, a retreating ship must simultaneously obtain the
+ESCAPE result against EACH enemy ship (not Missile) that fired on it.
+HIT: The HIT result means that the Beam or Missile or Shell(s) fired at
+the target hit it.  A Beam which hits does damage equivalent to the
+power of the Beam, plus tech level.  A Missile which hits does 2 hits
+damage, plus tech level.  Shellfire which hits does 1 hit of damage per
+Shell, plus tech level per burst.  "HIT +1" and "HIT +2" mean you add
+one and two hits, respectively, to the hits of damage inflicted by the
+weapon.
+------------------------------------------------------------------------
+
+READING THE COMBAT RESULTS TABLE
+   Beam or Cannon Fire: The appropriate cell from the CRT for Beam or
+Cannon fire is read at the intersection of the target ship's combat-
+tactic column and the firing ship's combat tactic row.  The specific row
+is found by subtracting the target ship's Drive allocation from the
+firing ship's Drive allocation and using the row corresponding to the
+difference.
+   Beam Fire Example: The firing ship selects the Dodge tactic,
+allocates 3 PD to drives, and allocates 3 PD to Beam.  The target ship
+selects the Attack tactic and allocates 2 to Drive with Screens
+unpowered.  Subtracting the target's Drive of 2 from the firing ship's
+Drive of 3 yields a +1.  The result from the CRT is read at the
+intersection of the target ship's ATTACK column and the firing ship's
+DODGE row at +1, +2.  The +1, +2 row is read because of the +1
+difference between Drives.  (It also would have been read if the
+difference was +2.)  The result at this intersection is "HIT".
+   Cannon Fire Example: The firing ship selects the Dodge tactic,
+allocates 3 PD to drives, allocates 1 PD to its Cannon, and chooses to
+fire 2 Shells from the Cannon.  The target ship selects the Attack
+tactic and allocates 2 to Drive with Screens unpowered.  Subtracting the
+target's Drive of 2 from the firing ship's Drive of 3 yields a +1.  The
+result from the CRT is read at the intersection of the target ship's
+ATTACK column and the firing ship's DODGE row at +1, +2.  The +1, +2 row
+is read because of the +1 difference between Drives.  (It also would
+have been read if the difference was +2.)  The result at this
+intersection is "HIT"  Both Shells hit.
+   Missile Fire: The appropriate CRT cell for Missile fire is read at
+the intersection of the target ship's combat tactic column and the
+firing ship's ATTACK row.  (Missiles always attack.)  The specific ship
+tactic row is found by subtracting the target's Drive allocation from
+the Drive setting given to the MISSILE.  (Remember: A Missile may be
+given any Drive setting of +1 or greater, at no PD cost except the 1 PD
+needed to power its Tube.)
+   Missile Fire Example: A Missile is fired and given a Drive setting of
+4.  It attacks (as always).  The target ship selected the Attack tactic
+and allotted 3 PD to Drive.  Subtracting the target's Drive allocation
+of 3 from the Missile's Drive setting of 4 yields a +1 difference. The
+CRT result is read at the intersection of the target's ATTACK column and
+the firing ship's ATTACK (0, +1) row.  The 0, +1 row is read because the
+difference between the Missile's Drive setting and target's Drive
+setting is +1.  The result at that intersection is "Hit +2".
+   ECM: After orders are revealed, the player using ECM allocates his
+ECM points among the attacking Missiles, and then adds or subtracts the
+difference between the defending ship's tech level and each Missile's
+tech level from the ECM points allocated to that Missile ONLY.
+   ECM Use Example: A ship of tech level 2 is attacked by a Missile
+using a Drive rating of 3 and with a tech level of 3.  The ship selected
+the ATTACK tactic, powered Drive to 3 and allocated 2 PD to ECM.
+Normally the Missile would subtract the target's drive of 3 from its own
+drive to get a difference of 0, then read the CRT at the intersection of
+the ATTACK (0,+1) row and the ATTACK column, giving a result of Hit +2.
+However the ship allocates its 2 points of ECM to the incoming Missile.
+Subtracting the Missile's tech level of 3 from the ship's tech level of
+1 gives a result of -1; this is applied to the ECM allocated to the
+Missile, resulting in 1 effective ECM point.  The player using ECM
+chooses to lower the Missile's Drive setting to 2.  This causes the
+Missile to get a drive difference of -1 and to use the ATTACK (-1,-2)
+row, resulting in just a Hit.
+
+RECORDING SHIP DAMAGE FROM COMBAT
+   When enemy weapons hit a target ship, that ship takes damage
+cumulatively from all weapons (of all ships) that hit it in each combat
+round.  The amount of power allocated to a ship's Screens, PLUS that
+ship's technological level, is subtracted from all hits a ship receives.
+(If the Screen is not powered, no tech level is added to the S=0.)  The
+Hit + 1 and Hit + 2 results from the CRT add one and two hits,
+respectively, to the hits a weapon inflicts.  One hit (if unabsorbed by
+Screens) does one Build Point worth of damage to the target.  Warp
+Generators and Repair Bays NEVER take damage in combat; when all the
+rest of the ship is destroyed, the warp generator and repair bay
+explode.
+   After subtracting the hits absorbed by the target ship's Screen from
+all hits scored on it, the remaining hits ("effective hits") are taken
+somewhere in the target's attributes.  When all of a ship's attributes
+are reduced to 0, the ship is destroyed.  Its counter is then removed
+from the map.
+   The player owning a ship decides where the hits are to be taken.
+
+EXAMPLE
+   A ship of technological level 0 has Screens powered at 4.  It takes 7
+hits in one combat round (including tech level adjustments).  The Screen
+absorbs 4 of the 7 hits.  The remaining 3 "effective" hits must be taken
+in the ship's attributes.  This is done by subtracting directly from
+Power/Drive rating, Beams, Tubes, Cannons, Missiles, Shells, Armor, ECM,
+Holds and Systemship Racks.  Before and after records for one round
+might look like this:
+   BEFORE: W4: TL0  PD=7 B=3 S=3 C=1 SH=12 E=1 (a 22-BP ship, counting
+           the generator.)
+   AFTER: W4: TL 0  PD={7}6 B=3 S={3}2 C=1 SH={12}6 E=1
+The player chose to take one hit in PD, one in Screens, and one in
+Shells.  Since 6 Shells cost 1 BP, the one hit took out 6 Shells.  If a
+ship has only one or two Shells left, it can use them to take a hit.
+However, if a ship has 6 or more Shells, a hit in Shells must take out
+6.  The same is true for Missiles, except that 1 hit of damage will
+destroy 3 Missiles.
+
+   Suppose W4 did not kill its enemy, but enters another round of
+combat.  The enemy ship is S35, a TL1 Systemship.  It fired two Missiles
+last round, and has attributes as follows:
+   S35: TL1  PD=6 S=3 T=2 M={9}7
+Combat orders for both ships are written out.  The players chose the
+following tactics:
+   S35 (TL1): DODGE D=4 T=2
+      M1 at W4: D=3
+      M2 at W4: D=4
+   W4 (TL0): ATTACK D=2 B=2 S=1 E=1
+The Systemship dodged and fired two Missiles, one at drive setting 3 and
+one at 4.  The Warpship attacked, firing its Beam at 3 and putting up a
+Screen with a strength of 1.
+   Reading the CRT we see that both Missiles hit W4: one at ATTACK
+(0,+1) and one at ATTACK (+2).  Those are, respectively, a Hit +2 and a
+Hit +1.  S35 also adds one more hit to the damage inflicted by each
+Missile because it is tech level 1.  Thus, the two Missiles that hit
+each do a basic 2 hits of damage, plus one more for tech level, and add
+the +2 and +1 from the CRT.  The two Missiles inflict 5 and 4 hits,
+respectively, for a total of 9 hits.  W4 had ECM powered to 1, and
+allocated that point of ECM to the first Missile.  However the Missile's
+tech level of 1 is subtracted from W4's tech level of 0 for an ECM
+modifier of -1, rendering W4's ECM ineffective.
+   W4's Screen was powered at 1, which subtracts 1 hit from the 9 done
+by the two Missiles -- leaving 8 effective hits.  (Since W4 is only tech
+level 0, the Screen absorbed no extra hits.)  W4 must take 8 hits
+somewhere in its attributes.  Its record at the end of last round looked
+like this:
+   W4: TL 0  PD={7}6 B=3 S={3}2 C=1 SH={12}6 E=1
+After taking 8 hits, it looks like this:
+   W4: TL 0  PD={7}6 B={3}0 S={3}0 C={1}0 SH={12}0 E={1}0
+W4 has elected to preserve all the PD possible in order to make an
+effective retreat attempt.
+   (S35 took no damage, because W4 missed with its Beam fire.  The Drive
+difference, subtracting S35's drive from W4's drive, was a -2.  Reading
+the ATTACK (-1,-2) row for the firing ship and the DODGE column for the
+target ship gives a result of MISS.
+
+
+SYSTEMSHIP PICKUP AND DROP IN COMBAT
+   A Warpship may pick up or drop Systemships during a combat round if
+it allocates Drive = 0 and Screen = 0 and selects the Dodge or Retreat
+tactic.  The Warpship may fire its Beam or power ECM while picking up or
+dropping Systemships, but may NOT fire Missiles or Cannons.  A Warpship
+may pick up or drop during one combat round as many Systemships as it
+has undamaged Systemship Racks.
+   Systemships dropped during a combat round may NOT fire weapons (or be
+fired on) that combat round.
+   Systemships picked up during a combat round may not fire any weapons
+during that round, but may power Screens and ECM.  They may be fired
+upon by enemy ships.
+   If a Systemship was to be picked up by a Warpship on a given combat
+round, but the Warpship is destroyed during that round, the Systemship
+is not automatically destroyed, but remains on the star hex.
+   If the Warpship dropping Systemships is destroyed on the round it
+drops the Systemships, the Systemships are NOT destroyed.  If the
+Warpship successfully retreats on the round it drops Systemships, the
+Systemships stay in the star hex.
+
+SYSTEMSHIP PICKUP AND DROP AFTER COMBAT
+   After all combat on all star hexes has been resolved for a player's
+turn, he may designate any Systemships he wishes picked up or dropped by
+any Warpship on the appropriate star hex.  This is essentially a free
+rearrangement of Systemships following combat, for the player whose turn
+it was.
+</pre>
+<h2> VII. PBEM </h2>
+<pre>
+   WarpWar is especially suited to PBEM due to its diceless character.
+Games may be played with a referee or without.  Refereed games are
+usually run "blind"; that is, no player knows anything about other
+players' fleets or stars, and possibly nothing about the map as well.
+Three or more players may play this way.  Non-refereed games are more
+suited to two players.  All moves and builds are "seen" (but BP and ship
+attributes are still secret) and combat rounds are sent with a blank
+screen or two preceding them so that the other player may write his
+orders and resolve the round immediately.
+   Referees of PBEM games must keep records for all ships, all stars and
+all Bases in the game.  They must also keep records of how much each
+player knows about all other players and about the map.
+
+CREATING NEW MAPS
+   New maps may be created if players desire a larger galaxy in which to
+fight.  Get a large sheet of hex paper with at least 400 hexes.  Each
+hex has a 1 in 12 chance of containing a star; roll 1d12 for each hex,
+or roll 2d6 and give it a star only on a roll of 11 or 12.  However, do
+not roll for a hex adjacent to an existing star.  Stars are never
+adjacent.  Give each star a 1 in 4 chance of having a warpline to each
+of the 4 nearest stars.  No star will ever have more than 4 warplines.
+Players' home worlds should be assigned in one of two ways.  Either
+spread them more or less evenly throughout the map, or distribute them
+around the periphery of the map with none in the center.  Give each star
+on the map a basic BP value.  A good range for BP values is 0-5, with
+higher values being rarer.  Rolling 2d6 and dividing the result by 3 is
+a quick method of assigning BP values.
+   Overall the map should be as fair as possible to all starting
+positions.  If the rolls give bad results, change them to produce a
+playable map.
+
+
+
+
+ _____________________________________________________________________
+| WARPWAR COUNTER SHEET                                               |
+|_____________________________________________________________________|
+| W1 | W2 | W3 | W5 | W7 | W8 | W9 |S13 |S23 |S33 |S43 |S53 |S55 |S65 |
+| () | () | () | () | () | () | () | o  | o  | o  | o  | o  | o  | o  |
+|____|____|____|____|____|____|____|____|____|____|____|____|____|____|
+|S65 |S73 |S75 |S83 |S85 |S93 |S95 | W2 | W3 | W4 | W5 | W7 | W8 | W9 |
+| o  | o  |  o | o  | o  | o  | o  | == | == | == | == | == | == | == |
+|____|____|____|____|____|____|____|____|____|____|____|____|____|____|
+|S10 |S20 |S22 |S30 |S40 |S42 |S44 |S50 |S52 |S54 |S60 |S70 |S80 |S90 |
+| +  | +  | +  | +  | +  | +  | +  | +  | +  | +  | +  | +  | +  | +  |
+|____|____|____|____|____|____|____|____|____|____|____|____|____|____|
+
+
+
+</pre>
+<h2> MAP </h2>
+
+<pre>       &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;
+      /    \    /    \    /    \    /    \    /    \    /    \    /    \
+  &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;
+ /    \0107/    \0206/    \0305/    \0404/    \0503/    \0602/    \0701/    \
+&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;
+ \0108/    \0207/Mosul0306/    \0405/    \0504/    \0603/    \0702/    \0801/
+  &gt;--&lt;      &gt;--&lt;  *(2)&gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;
+ /    \0208/    \||07/    \0406/    \0505/    \0604/    \0703/    \0802/    \
+&lt;      &gt;--&lt;      ||-&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;
+ \0209/    \0308/||  \0407/    \0506/ Ur \0605/    \0704/Larsu0803/    \0902/
+  &gt;--&lt;      &gt;--&lt;||    &gt;--&lt;      &gt;--&lt;  *(4)&gt;--&lt;      &gt;--&lt;  *(2)&gt;--&lt;      &gt;--&lt;
+ /    \0309/    ||408/    \0507/    //606/    \0705/    \ || /    \0903/    \
+&lt;      &gt;--&lt;     ||--&lt;      &gt;--&lt;    //&gt;--&lt;      &gt;--&lt;      &gt;||&lt;      &gt;--&lt;      &gt;
+ \0310/    \040||    \0508/    \0//7/    \0706/    \0805/ || \0904/    \1003/
+  &gt;--&lt;      &gt;--||     &gt;--&lt;      //-&lt;      &gt;--&lt;      &gt;--&lt;   || &gt;--&lt;      &gt;--&lt;
+ /    \0410/   ||0509/    \060//    \0707/    \0806/    \09||/    \1004/    \
+&lt;      &gt;--&lt;   || &gt;--&lt;      &gt;-//      &gt;--&lt;      &gt;--&lt;      &gt;-||      &gt;--&lt;      &gt;
+ \0411/    \05||/    \0609///  \0708/    \0807/    \0906/   ||1005/    \1104/
+  &gt;--&lt;      &gt;-||      &gt;--//     &gt;--&lt;      &gt;--&lt;      &gt;--&lt;    ||&gt;--&lt;      &gt;--&lt;
+ /    \0511/ || \0610(3)//\0709/    \0808/Calah0907/    \100||    \1105/    \
+&lt;      &gt;--(1)* Sippur   * Erech      &gt;--&lt;  *(1)&gt;--&lt;      &gt;--&lt;||    &gt;--&lt;      &gt;
+ \0512/    \0611/    \07\\/    \0809/    \ \\ /    \1007/    ||106/    \1205/
+  &gt;--&lt;      &gt;--&lt;      &gt;--\\     &gt;--&lt;      &gt;-\\      &gt;--&lt;      ||-&lt;      &gt;--&lt;
+ /    \0612/    \0711/    \\810/    \0909/   \\1008/    \1107/||  \1206/    \
+&lt;      &gt;--&lt;      &gt;--&lt;      \\-&lt;      &gt;--&lt;     \\--&lt;      &gt;--(0)* Susa-&lt;      &gt;
+ \0613/    \0712/    \0811/ \\ \0910/    \1009\\   \1108/    \//07/    \1306/
+  &gt;--&lt;      &gt;--&lt;      &gt;--&lt;   \\ &gt;--&lt;      &gt;--&lt; \\   &gt;--&lt;     //--&lt;      &gt;--&lt;
+ /    \0713Byblos0812/    \091\\Adab\1010/    \1\\9/    \12///    \1307/    \
+&lt;      &gt;--(3)*==================*(0) &gt;--&lt;      &gt;-\\      &gt;//&lt;      &gt;--&lt;      &gt;
+ \0714/    \0813/    \0912/    \\\11/    \1110/   \\1209//   \1308/    \1407/
+  &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      \\-&lt;      &gt;--&lt;     \\--//     &gt;--&lt;      &gt;--&lt;
+ /    \0814/    \0913/    \1012/ \\ \1111/    \1210/\\//\1309/    \1408/    \
+&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;  \\  &gt;--&lt;      &gt;--(1)* Nippur      &gt;--&lt;      &gt;
+ \0815/    \0914/Ubaid1013/    \11\\/    \1211/    \||\\/    \1409/    \1508/
+  &gt;--&lt;      &gt;--&lt;  *(5)&gt;--&lt;      &gt;-\\      &gt;--&lt;      ||-\\     &gt;--&lt;      &gt;--&lt;
+ /    \0915/    \||\\/    \1113/   \\1212/    \1311/||  \\410/    \1509/    \
+&lt;      &gt;--&lt;      ||-&lt;\\    &gt;--&lt;    \\&gt;--&lt;      &gt;--&lt;||    \\-&lt;      &gt;--&lt;      &gt;
+ \0916/    \1015/||  \\\14/    \1213\\Khafa312/    ||411/ \\ \1510/    \1609/
+  &gt;--&lt;      &gt;--&lt;||    &gt;-\\      &gt;--&lt;  *(2)&gt;--&lt;     ||--&lt;  \\  &gt;--&lt;      &gt;--&lt;
+ /    \1016/    ||115/   \\1214/    \1313/    \141||    \15\\/    \1610/    \
+&lt;      &gt;--&lt;     ||--&lt;     &gt;\\-&lt;      &gt;--&lt;      &gt;--||     &gt;--\\     &gt;--&lt;      &gt;
+ \1017/    \1116||   \1215/ \\ \1314/    \1413/   ||1512/   \\1611/    \1710/
+  &gt;--&lt;      &gt;--||     &gt;--&lt;    \\&gt;--&lt;      &gt;--&lt;   || &gt;--&lt;     \\--&lt;      &gt;--&lt;
+ /    \1117/   ||1216/    \1315\\Mari1414/    \15||/    \1612/\\Assur11/    \
+&lt;      &gt;--&lt;    ||&gt;--&lt;      &gt;--&lt;  *(1)&gt;--&lt;      &gt;||&lt;      ======*(2)&gt;--&lt;      &gt;
+ \1118/    \121||    \1316/    \||15/    \Lagash||(1)=====   \1712/    \1811/
+  &gt;--&lt;      &gt;--||     &gt;--&lt;      ||-&lt;      &gt;--<!--/*=====-<      -->--&lt;      &gt;--&lt;
+ /    \1218/   ||1317/    \1416||   \1515/  //\1614/    \1713/    \1812/    \
+&lt;      &gt;--&lt;   || &gt;--&lt;      &gt;--&lt;||    &gt;--&lt; //   &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;
+ \1219/    \13||/    \1417/    ||516Elam//1615/    \1714/Jarmo1813/    \1912/
+  &gt;--&lt;      &gt;-||      &gt;--&lt;    ||&gt;--&lt;   *(5)--&lt;      &gt;--&lt;  *(3)&gt;--&lt;      &gt;--&lt;
+ /    \Sumarra||\1418/    \151||    \1616/    \1715/    \||14/    \1913/    \
+&lt;      &gt;--&lt;(2)*\ &gt;--&lt;      &gt;--||     &gt;--&lt;      &gt;--&lt;      ||-&lt;      &gt;--&lt;      &gt;
+ \1320/    \1419\\   \1518/  ||\1617/    \1716/    \1815/||  \1914/    \2013/
+  &gt;--&lt;      &gt;--&lt;  \\  &gt;--&lt;   || &gt;--&lt;      &gt;--&lt;      &gt;--&lt;||    &gt;--&lt;      &gt;--&lt;
+ /    \1420/    \1519\\   \16||/    \1717/Girsu1816/    ||915/    \2014/    \
+&lt;      &gt;--&lt;      &gt;--&lt;  \\  &gt;||&lt;      ======*(1)&gt;--&lt;     ||--&lt;      &gt;--&lt;      &gt;
+ \1421/    \1520/    \161\\ ||(2)=====   \1817/    \191||    \2015/    \2114/
+  &gt;--&lt;      &gt;--&lt;      &gt;Umma\*=====-&lt;      &gt;--&lt;      &gt;--||     &gt;--&lt;      &gt;--&lt;
+ /    \1521/    \1620/    ||719/    \1818/    \1917/  ||\2016/    \2115/    \
+&lt;      &gt;--&lt;      &gt;--&lt;     ||--&lt;      &gt;--&lt;      &gt;--&lt;   || &gt;--&lt;      &gt;--&lt;      &gt;
+ \1522/Isin\1621/    \172||    \1819/    \1918/    \20||/    \2116/    \2215/
+  &gt;--&lt;  *(1)&gt;--&lt;      &gt;--||     &gt;--&lt;      &gt;--&lt;      &gt;||&lt;      &gt;--&lt;      &gt;--&lt;
+ /    \1\\2/    \1721/  ||\1820/    \1919/    \20Kish|| \2117/    \2216/    \
+&lt;      &gt;-\\      &gt;--&lt;   || &gt;--&lt;      &gt;--&lt;      &gt;-====*\\(0)-&lt;      &gt;--&lt;      &gt;
+ \1623/  \\\1722/    \1||1/    \1920Akkad\20=====  \2118\\   \2217/    \2316/
+  &gt;--&lt;    \\&gt;--&lt;      &gt;||&lt;      &gt;--(3)*======&lt;      &gt;--&lt;   \\ &gt;--&lt;      &gt;--&lt;
+ /    \172\\    \1822/ || \1921/    \2020/    \2119/    \2218\\Eridu317/    \
+&lt;      &gt;--&lt;\\    &gt;--(0)* Sumer&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;  *(1)&gt;--&lt;      &gt;
+ \1724/    \\823/    \19\\/    \2021/    \2120/    \2219/    \||18/    \2417/
+  &gt;--&lt;      \\-&lt;      &gt;--\\     &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      ||-&lt;      &gt;--&lt;
+ /    \1824/\\  \1923/    \\\22/    \2121/    \2220/    \2319/||  \2418/    \
+&lt;      &gt;--&lt;  \\  &gt;--&lt;      &gt;\\&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;||    &gt;--&lt;      &gt;
+ \1825/    \19\\/    \2023/   \\2122/    \2221/    \2320/    ||419/    \2518/
+  &gt;--&lt;      &gt;-\\      &gt;--&lt;     \\--&lt;      &gt;--&lt;      &gt;--&lt;     ||--&lt;      &gt;--&lt;
+ /    \1925/   \\2024/    \2123/\\  \2222/    \2321/    \242||    \2519/    \
+&lt;      &gt;--&lt;     \\--&lt;      &gt;--(4)* Babylon     &gt;--&lt;      &gt;--||     &gt;--&lt;      &gt;
+ \1926/    \2025/\\  \2124/    \2223/    \2322/    \2421/  ||\2520/    \2619/
+  &gt;--&lt;      &gt;--(2)* Nineveh     &gt;--&lt;      &gt;--&lt;      &gt;--&lt;   || &gt;--&lt;      &gt;--&lt;
+ /    \2026/    \2125/    \2224/    \2323/    \2422/    \25||/    \2620/    \
+&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;||&lt;      &gt;--&lt;      &gt;
+ \2027/    \2126/    \2225/    \2324/    \2423/    \2522/ || \2621/    \2720/
+  &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--(2)* Ugarit      &gt;--&lt;
+ /    \2127/    \2226/    \2325/    \2424/    \2523/    \2622/    \2721/    \
+&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;
+ \2128/    \2227/    \2526/    \2425/    \2424/    \2623/    \2722/    \2821/
+  &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;
+      \2228/    \2327/    \2426/    \2525/    \2624/    \2723/    \2822/
+       &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;      &gt;--&lt;
+
+</pre>
+<a href="http://www.contrib.andrew.cmu.edu/usr/gc00/gamelist.html">Back to the Game page </a>
+
+
+</body></html>

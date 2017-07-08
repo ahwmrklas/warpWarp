@@ -122,6 +122,9 @@ class playerAiThrd(threading.Thread):
                 if (playerPhase == "combat"):
                     self.combatOrders(self.playerName)
                     self.ready(self.playerName)
+            elif (gamePhase == "damageselection"):
+                if (playerPhase == "damageselection"):
+                    self.ready(self.playerName)
 
         self.hCon.quitCmd()
 

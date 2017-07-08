@@ -21,14 +21,16 @@ sampleGame = {
     'options': {
         'serverIp'  : "192.168.1.5",
         'mapSize'   : {'width':10, 'height':10},
-        'startingBP': 20,
-        'perTurnBP' :  5,
+        #'startingBP': 20,
+        #'perTurnBP' :  5,
     },
     'state': {
         'turnNumber': 0,
         'phase': "nil",
         'activePlayer': "ahw",
     },
+    'orders': [
+    ],
     'map': {'width':10, 'height':10},
     'playerList': [
         {'name': "ahw",  'phase': "nil"},
@@ -41,7 +43,7 @@ sampleGame = {
              'location': {'x':1, 'y':3},
              'image':"alpha.png",
              'owner':"ahw",
-             'valueBP':3,
+             'BP': {'perturn':3, 'cur':20},
              'visibility':[ {'player':"ahw",  'percent':100},
                             {'player':"bearda", 'percent':30},
                           ],
@@ -53,7 +55,7 @@ sampleGame = {
              'location': {'x':4, 'y':7},
              'image':"relic.png",
              'owner':"none",
-             'valueBP':0,
+             'BP':{'perturn':0, 'cur':10},
              'visibility':[ {'player':"ahw",  'percent':100},
                             {'player':"bearda", 'percent':30},
                           ],
@@ -92,7 +94,7 @@ sampleGame = {
              'location': {'x':4, 'y':8},
              'image': "b_5.png",
              'owner': "bearda",
-             'stockpile': 15,
+             'BP':{'perturn':0, 'cur':10},
             },
         ],
         'warpLineList': [
