@@ -76,6 +76,15 @@ def changeAllPlayerPhase(game, start, finish):
 
     return True
 
+# PURPOSE:
+# RETURNS:
+def resolveCombat(game):
+    # FIXME:
+    # for now cycle through every ship in combat and give it
+    # some points of damage ... eh, just damage all ships :-)
+    for ship in game['objects']['shipList']:
+        ship['damage'] = 5
+
 
 # class to handle game commands
 class gameserver:
@@ -260,11 +269,17 @@ class gameserver:
                     changeAllPlayerPhase(self.game, "waiting", "combat")
 
             elif (self.game['state']['phase'] == "combat"):
-                # Given player must wait for other players to be ready?
-                # When all players ready AUTO move to battle phase
-                self.game['state']['phase'] = "battle"
+                # Given player finished submitting orders must wait
+                changePlayerPhase(self.game, playerName, "combat", "waiting")
+
+                # When all players ready AUTO move to damage selection phase
+                if areAllPlayersInPhase(self.game, "waiting"):
+                    resolveCombat(self.game)
+                    self.game['state']['phase'] = "damageselection"
+                    changeAllPlayerPhase(self.game, "waiting", "damageselection")
+
                 # What if there is no combat? Probably go on to build
-                self.game['state']['phase'] = "build"
+                # self.game['state']['phase'] = "build"
             elif (self.game['state']['phase'] == "battle"):
                 # Given player can no longer give orders and must wait
                 # When all players ready AUTO move to damageSelection phase
@@ -319,30 +334,22 @@ class gameserver:
             # Have all opponents ships in *this* combat been given orders?
             # Input? ShipID, combat command (fire, move, shields ...)
             # TODO many more parameters
+
+            plid = cmd['plid']
+            battleOrders = cmd['battleOrders']
+
             assert(self.game['state']['phase'] == "combat")
-            changePlayerPhase(self.game, cmd['name'], "combat", "waiting")
 
             #Every player gives a list of orders, for all ships involved in a
             #Conflict. Once both players have sent orders, we start processing.
             #This stuff should go in game state.
-            if 'orders' not in self.game['state']:
-                self.game['state']['orders'] = {}
+            if 'orders' not in self.game:
+                self.game['orders'] = {}
 
-            self.game['state']['orders'][cmd['plid']] = cmd['battleOrders']
+            self.game['orders'][plid] = battleOrders
 
-            #has everyone submitted an order?
-            allOrders = True
-            for player in self.game['playerList']:
-                if player['name'] not in self.game['state']['orders']:
-                    print (player['name'] + " has not submitted orders" )
-                    allOrders = False
-                else:
-                    print (player['name'] + " has submitted orders" )
-
-
-            if allOrders:
-                print("all orders are in!")
-
+            # When all players ready (have submitted orders)
+            # AUTO move to damageselection phase
             # When all damage has been selected ... by all players ...
             # move to battle .... or retreat ... or combat over ... or next
             # battle?

@@ -104,10 +104,37 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
 
 # PURPOSE:
 # RETURNS:
+def damageAllocation(tkRoot, shipName):
+    print("damageAllocation")
+    if (tkRoot.hCon is not None):
+        # allocationResult = damageAllocation(tkRoot, shipName)
+
+        sendJson = warpWarCmds().acceptDamage(tkRoot.playerName)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        # not the right place to update.
+        # Send message? And that updates?
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+# PURPOSE:
+# RETURNS:
 def sendCombatReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
         sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.playerName, tkRoot.battleOrders)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        # Send ready because we are done with this round of combat
+        sendJson = warpWarCmds().ready(tkRoot.playerName, tkRoot.playerName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -341,6 +368,20 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendCombatReady(tkRoot))
 
+    elif (gamePhase == 'damageselection'):
+        # Find all of *my* ships that are damaged
+        # Pop up a menu with each damaged ship? (Each location with
+        # damage? At some point that is probably better. You kind of want
+        # to see combat results. What tactic did I hit/miss with? What
+        # tactic did my opponent hit/miss with)
+        # So you have a list of myships/yourships, each ships orders.
+        # each attacks results. Then you select your own ship and
+        # get a dialog to allocate the damage results.
+        for ship in tkRoot.game['objects']['shipList']:
+            if (ship['owner'] == tkRoot.playerName):
+                if (ship['damage'] >= 0):
+                    labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
+                    phaseMenuObject.add_command(label=labelString, command=lambda:damageAllocation(tkRoot, ship['name']))
     else:
         print("BAD PHASE", gamePhase)
         gamePhase = ""

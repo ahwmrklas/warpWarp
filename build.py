@@ -163,6 +163,7 @@ class build(Dialog):
              'image':"warpship.png",
              'owner': self.base['owner'],
              'techLevel': 1,
+             'damage': 0,
              'moves': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},   # relates to PowerDrive
              'PD': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},       # PowerDrive
              'WG': {'max': True if int(self.warpSpn.get()) == 1 else False, 'cur': True if int(self.warpSpn.get()) == 1 else False}, # Warp Generator

@@ -66,6 +66,7 @@ sampleGame = {
              'image':"warpship.png",
              'owner':"ahw",
              'techLevel': 1,
+             'damage': 0,
              'moves': {'cur':3},   # relates to PowerDrive
              'PD':{'max':5, 'cur':5},       # PowerDrive
              'WG':{'max':True, 'cur':True}, # Warp Generator

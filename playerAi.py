@@ -69,6 +69,16 @@ class playerAiThrd(threading.Thread):
         print("playerAi:RESP:", len(resp))
         return game
 
+    # PURPOSE: 
+    # RETURNS: game object
+    def combatOrders(self, name):
+        print("playerAi: combatOrders (nothing right now)")
+        #sendJson = warpWarCmds().combatOrders(self.playerName, self.playerName, tkRoot.battleOrders)
+        #self.hCon.sendCmd(sendJson)
+        #resp = self.hCon.waitFor(5)
+        #game = json.loads(resp)
+        #print("playerAi:RESP:", len(resp))
+
     # PURPOSE: automatically called by base thread class, right?
     #   Waits for clients to send us requests.
     # RETURNS: none
@@ -107,6 +117,10 @@ class playerAiThrd(threading.Thread):
                     self.ready(self.playerName)
             elif (gamePhase == "move"):
                 if (playerPhase == "move"):
+                    self.ready(self.playerName)
+            elif (gamePhase == "combat"):
+                if (playerPhase == "combat"):
+                    self.combatOrders(self.playerName)
                     self.ready(self.playerName)
 
         self.hCon.quitCmd()
