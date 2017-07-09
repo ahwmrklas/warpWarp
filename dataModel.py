@@ -107,6 +107,14 @@ class Player():
 # location either but they are here now.
 #
 
+# PURPOSE: look up ship name in game ship list
+# RETURNS: entry of ship
+def findShip(game, shipName):
+   for ship in game['objects']['shipList']:
+        if ship['name'] == shipName:
+            return ship
+   return None
+
 # PURPOSE: Return the player structure from the game
 # RETURNS: player table
 def playerTableGet(game, playerName):

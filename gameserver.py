@@ -38,14 +38,6 @@ import json
 import ijk
 import dataModel
 
-# PURPOSE: look up ship name in game ship list
-# RETURNS: entry of ship
-def findShip(game, shipName):
-   for ship in game['objects']['shipList']:
-        if ship['name'] == shipName:
-            return ship
-   return None
-
 # PURPOSE: look up base name in game base & star list
 # RETURNS: entry of base
 def findBase(game, baseName):

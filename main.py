@@ -17,6 +17,7 @@ from move import *
 from combat import *
 from mapUtil import *
 from connect import *
+from damage import *
 from cmds import warpWarCmds
 import json
 import getpass
@@ -102,10 +103,11 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
 
 # PURPOSE:
 # RETURNS:
-def damageAllocation(tkRoot, shipName):
-    print("damageAllocation")
+def damageAllocationMenu(tkRoot, shipName):
+    print("damageAllocationMenu")
     if (tkRoot.hCon is not None):
-        # allocationResult = damageAllocation(tkRoot, shipName)
+        ship = findShip(tkRoot.game, shipName)
+        allocationResult = damageAllocation(tkRoot, ship)
 
         sendJson = warpWarCmds().acceptDamage(tkRoot.playerName)
         print(" main sending: ", sendJson)
@@ -390,7 +392,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             if (ship['owner'] == tkRoot.playerName):
                 if (ship['damage'] >= 0):
                     labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
-                    phaseMenuObject.add_command(label=labelString, command=lambda:damageAllocation(tkRoot, ship['name']))
+                    phaseMenuObject.add_command(label=labelString, command=lambda:damageAllocationMenu(tkRoot, ship['name']))
 
         phaseMenuObject.add_command(label="Ready",
                                       command=lambda:sendReady(tkRoot))
