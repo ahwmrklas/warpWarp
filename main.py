@@ -109,11 +109,12 @@ def damageAllocationMenu(tkRoot, shipName):
         ship = findShip(tkRoot.game, shipName)
         allocationResult = damageAllocation(tkRoot, ship)
 
-        sendJson = warpWarCmds().acceptDamage(tkRoot.playerName)
-        print(" main sending: ", sendJson)
-        tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
+        if (allocationResult is not None):
+            sendJson = warpWarCmds().acceptDamage(tkRoot.playerName, allocationResult.ship)
+            print(" main sending: ", sendJson)
+            tkRoot.hCon.sendCmd(sendJson)
+            resp = tkRoot.hCon.waitFor(5)
+            tkRoot.game = json.loads(resp)
 
         # not the right place to update.
         # Send message? And that updates?

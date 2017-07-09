@@ -101,12 +101,9 @@ class warpWarCmds():
     # PURPOSE: Create the XXX string
     #       TODO    This is going to have many arguments!
     #       TODO    For all involved ships?
-    # Even if you received NO damage you should send this
-    # command. It will be a trigger to know a player is done
-    # with a battle and ready for the next one.
     # RETURNS: string with json
-    def acceptDamage(self, plid):
-        cmd  = { 'cmd' : {'cmd': "acceptdamage", 'plid':plid} }
+    def acceptDamage(self, plid, ship):
+        cmd  = { 'cmd' : {'cmd': "acceptdamage", 'plid':plid, 'ship':ship} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 

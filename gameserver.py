@@ -390,7 +390,7 @@ class gameserver:
 
             assert(self.game['state']['phase'] == "move")
 
-            ship = findShip(self.game, name)
+            ship = dataModel.findShip(self.game, name)
             if (ship is None):
                 print("GServer:", "error: Ship not found", name)
                 return False
@@ -447,7 +447,20 @@ class gameserver:
             # Did they deduct enough damage?
             # Do they have more ships with damage to deduct?
             # TODO many more parameters
+            # A ship that has been destroyed should be removed
+            # (perhaps moved to a "dead" list)
+
+            plid = cmd['plid']
+            newShip = cmd['ship']
+            print("ship update:", newShip)
             assert(self.game['state']['phase'] == "damageselection")
+
+            # maybe findShip could return the index too?
+            # dataModel.findShip(self.game, newShip['name'])
+            for index, ship in enumerate(self.game['objects']['shipList']) :
+                if ship['name'] == newShip['name'] :
+                    self.game['objects']['shipList'][index] = newShip
+                    break
 
         elif cmdStr == 'savegame':
             # Write file ... who is responsible for game save?
