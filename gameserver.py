@@ -82,13 +82,198 @@ def changeAllPlayerPhase(game, start, finish):
     return True
 
 # PURPOSE:
+# RETURNS: string representation of given order
+def prettyOrders(order):
+    tactic = order['tactic'][0]
+    drive  = order['tactic'][1]
+    beamTarget  = order['beams'][0]
+    beamPower   = order['beams'][1]
+    screenPower = order['screens']
+    pretty = "%s: D=%d, B=(%d, %s), S=%d" % (tactic, drive, beamPower, beamTarget, screenPower)
+    missiles = ""
+    for missile in order['missiles']:
+        missiles += "\nT=(%d, %s)" % (missile[1], missile[0])
+
+    return pretty + missiles
+
+# PURPOSE:
 # RETURNS:
-def resolveCombat(game):
+def combatChartLookup(myTactic, myDrive, targetTactic, targetDrive):
+    combatChart = {
+        'ATTACK': {
+            'ATTACK': {
+                -4:'Miss',
+                -3:'Miss',
+                -2:'Hit',
+                -1:'Hit',
+                 0:'Hit+2',
+                 1:'Hit+2',
+                 2:'Hit+1',
+                 3:'Miss',
+                 4:'Miss',
+                 5:'Miss',
+            },
+            'DODGE': {
+                -4:'Miss',
+                -3:'Miss',
+                -2:'Miss',
+                -1:'Miss',
+                 0:'Miss',
+                 1:'Miss',
+                 2:'Hit+1',
+                 3:'Hit',
+                 4:'Hit',
+                 5:'Miss',
+            },
+            'RETREAT': {
+                -4:'Escapes',
+                -3:'Escapes',
+                -2:'Escapes',
+                -1:'Escapes',
+                 0:'Miss',
+                 1:'Miss',
+                 2:'Miss',
+                 3:'Hit',
+                 4:'Hit',
+                 5:'Miss',
+            },
+        },
+        'DODGE': {
+            'ATTACK': {
+                -4:'Miss',
+                -3:'Miss',
+                -2:'Miss',
+                -1:'Hit',
+                 0:'Hit',
+                 1:'Hit',
+                 2:'Hit',
+                 3:'Miss',
+                 4:'Miss',
+                 5:'Miss',
+            },
+            'DODGE': {
+                -4:'Miss',
+                -3:'Hit',
+                -2:'Hit',
+                -1:'Hit',
+                 0:'Hit',
+                 1:'Miss',
+                 2:'Miss',
+                 3:'Miss',
+                 4:'Miss',
+                 5:'Miss',
+            },
+            'RETREAT': {
+                -4:'Escapes',
+                -3:'Escapes',
+                -2:'Escapes',
+                -1:'Escapes',
+                 0:'Escapes',
+                 1:'Escapes',
+                 2:'Escapes',
+                 3:'Escapes',
+                 4:'Escapes',
+                 5:'Escapes',
+            },
+        },
+        'RETREAT': {
+            'ATTACK': {
+                -4:'Miss',
+                -3:'Miss',
+                -2:'Miss',
+                -1:'Hit',
+                 0:'Hit',
+                 1:'Miss',
+                 2:'Miss',
+                 3:'Miss',
+                 4:'Miss',
+                 5:'Miss',
+            },
+            'DODGE': {
+                -4:'Miss',
+                -3:'Miss',
+                -2:'Miss',
+                -1:'Miss',
+                 0:'Miss',
+                 1:'Miss',
+                 2:'Miss',
+                 3:'Miss',
+                 4:'Miss',
+                 5:'Miss',
+            },
+            'RETREAT': {
+                -4:'Escapes',
+                -3:'Escapes',
+                -2:'Escapes',
+                -1:'Escapes',
+                 0:'Escapes',
+                 1:'Escapes',
+                 2:'Escapes',
+                 3:'Escapes',
+                 4:'Escapes',
+                 5:'Escapes',
+            },
+        },
+    }
+
+    # (myTactic, myDrive, targetTactic, targetDrive):
+    # The lookup tables range from -4 to +5 so
+    # limit the range
+    driveDiff = myDrive - targetDrive
+    if (driveDiff < -4):
+        driveDiff = -4
+    elif (driveDiff > 5):
+        driveDiff = 5
+
+    result = combatChart[myTactic][targetTactic][driveDiff]
+    return result
+
+# PURPOSE:
+# RETURNS:
+def resolveCombat(game, orders):
     # FIXME:
     # for now cycle through every ship in combat and give it
     # some points of damage ... eh, just damage all ships :-)
     for ship in game['objects']['shipList']:
         ship['damage'] = 5
+
+    print("ALLorders:")
+    print(orders)
+
+    # What are the combat orders?
+    # Find each combat order.
+    # Find target of each order (an order can have multiple targets)
+    # Find the orders for each target.
+    # Match them up and resolve - so I need a simple function
+    # for one v one orders to resolve against the chart
+
+    # Table of orders is:
+    # Array of players (dict)
+    #    For each player there is an array of ships (dict)
+    #       For each ship there is an order
+    #           each order can have a unique target
+    for player, playerOrders in orders.items():
+        for ship, shipOrders, in playerOrders.items():
+            pretty = prettyOrders(shipOrders)
+            print(player, "ship:", ship, "order:", pretty)
+            myPower  = shipOrders['beams'][1]
+            if (myPower > 0):
+                myTactic     = shipOrders['tactic'][0]
+                myDrive      = shipOrders['tactic'][1]
+                myTarget     = shipOrders['beams'][0]
+                targetDrive      = 3
+                targetTactic     = 'ATTACK'
+                result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
+                print("%s Beam '%s' %s" % (ship, result, myTarget))
+            else:
+                for missile in shipOrders['missiles']:
+                    myTactic = 'ATTACK'
+                    myDrive  = missile[1]
+                    myTarget = missile[0]
+                    targetDrive      = 3
+                    targetTactic     = 'ATTACK'
+                    result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
+                    print("%s Missile '%s' %s" % (ship, result, myTarget))
 
 # PURPOSE:
 # RETURNS:
@@ -334,7 +519,7 @@ class gameserver:
                 # end turn if there wasn't
                 if areAllPlayersInPhase(self.game, "waiting"):
                     if (self.game['orders']):
-                        resolveCombat(self.game)
+                        resolveCombat(self.game, self.game['orders'])
                         self.game['state']['phase'] = "damageselection"
                         changeAllPlayerPhase(self.game, "waiting", "damageselection")
                     else:

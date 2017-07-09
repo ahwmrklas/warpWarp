@@ -103,28 +103,6 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
 
 # PURPOSE:
 # RETURNS:
-def damageAllocationMenu(tkRoot, shipName):
-    print("damageAllocationMenu")
-    if (tkRoot.hCon is not None):
-        ship = findShip(tkRoot.game, shipName)
-        allocationResult = damageAllocation(tkRoot, ship)
-
-        if (allocationResult is not None):
-            sendJson = warpWarCmds().acceptDamage(tkRoot.playerName, allocationResult.ship)
-            print(" main sending: ", sendJson)
-            tkRoot.hCon.sendCmd(sendJson)
-            resp = tkRoot.hCon.waitFor(5)
-            tkRoot.game = json.loads(resp)
-
-        # not the right place to update.
-        # Send message? And that updates?
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
-
-# PURPOSE:
-# RETURNS:
 def sendCombatReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
@@ -145,6 +123,28 @@ def sendCombatReady(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
+
+        # not the right place to update.
+        # Send message? And that updates?
+        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(pt)
+        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+# PURPOSE:
+# RETURNS:
+def damageAllocationMenu(tkRoot, shipName):
+    print("damageAllocationMenu")
+    if (tkRoot.hCon is not None):
+        ship = findShip(tkRoot.game, shipName)
+        allocationResult = damageAllocation(tkRoot, ship)
+
+        if (allocationResult is not None):
+            sendJson = warpWarCmds().acceptDamage(tkRoot.playerName, allocationResult.ship)
+            print(" main sending: ", sendJson)
+            tkRoot.hCon.sendCmd(sendJson)
+            resp = tkRoot.hCon.waitFor(5)
+            tkRoot.game = json.loads(resp)
 
         # not the right place to update.
         # Send message? And that updates?

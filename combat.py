@@ -262,7 +262,7 @@ class combat(Dialog):
 
         self.tacticVar = StringVar(self.powerFrame)
         self.tacticVar.set("tactic")
-        tacticList = ["attack", "dodge", "retreat"]
+        tacticList = ["ATTACK", "DODGE", "RETREAT"]
         tactic = OptionMenu(self.powerFrame, self.tacticVar, *tacticList)
         tactic.grid(row=2, column=2)
 
@@ -389,7 +389,7 @@ class combat(Dialog):
         #lets print out all the energy we are using!
         self.combatOrder =   {
                         'ship'    : self.friendlyList[0]['name'], #TODO make this work for more than one ship
-                        'moves'   : [self.tacticVar.get(), self.moveVar.get()],
+                        'tactic'  : [self.tacticVar.get(), self.moveVar.get()],
                         'beams'   : [self.beamTargetVar.get(),self.beamVar.get()],
                         'screens' : self.screenVar.get(),
                         'missiles' : [ [self.Tubes[i].targetVar.get(), self.Tubes[i].var.get()] for i in range(len(self.Tubes)) ]

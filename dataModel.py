@@ -208,8 +208,8 @@ def emptyGame():
             'phase': "nil",
             'activePlayer': "nil",
         },
-        'orders': [
-        ],
+        'orders': {
+        },
         'map': {'width':10, 'height':10},
         'playerList': [
         ],

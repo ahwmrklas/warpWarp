@@ -29,8 +29,8 @@ sampleGame = {
         'phase': "nil",
         'activePlayer': "ahw",
     },
-    'orders': [
-    ],
+    'orders': {
+    },
     'map': {'width':10, 'height':10},
     'playerList': [
         {'name': "ahw",  'phase': "nil"},
