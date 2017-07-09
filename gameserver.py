@@ -46,6 +46,17 @@ def findShip(game, shipName):
             return ship
    return None
 
+# PURPOSE: look up base name in game base & star list
+# RETURNS: entry of base
+def findBase(game, baseName):
+    for base in game['objects']['starBaseList']:
+        if base['name'] == baseName:
+            return base
+    for base in game['objects']['starList']:
+        if base['name'] == baseName:
+            return base
+    return None
+
 # PURPOSE: look to see if all players are in a given phase
 # RETURNS: true iff all players in game are in phase
 def areAllPlayersInPhase(game, phase):
@@ -245,12 +256,14 @@ class gameserver:
             # We would have to deduct the cost from the players total.
             # Of course need to see if it is a valid ship to begin with
             # TODO lots of parameters!
+            ship = cmd['ship']
+            baseName = cmd['base']
             assert(self.game['state']['phase'] == "build")
+
             #lets do this the lazy way first. just append the ship to the list!
             print("GServer:", "ship to append:")
-            print(cmd['ship'])
+            print(ship)
             #How much will this ship cost?
-            ship = cmd['ship']
             cost = 0
             cost += ship['PD']['max']
             cost += ship['B']['max']
@@ -267,7 +280,7 @@ class gameserver:
             if ship['WG']['max'] == True:
                 cost += 5
 
-            print ("GServer:", cost)
+            print ("GServer cost:", cost)
 
             #TODO: This next section is bad. we don't check to see if the player
             #who sent the command owns the base, or is in the right spot.
@@ -275,17 +288,17 @@ class gameserver:
             #and have the base we work with just be any base on the ship's hex
             #owned by the right player
 
-            #does the base have enough to pay for the ship?
-            if cmd['base']['stockpile'] >= cost:
-                #find the base in the game
-                for base in self.game['objects']['starBaseList']:
-                    if base['name'] == cmd['base']['name']:
-                        #subtract the cost...
-                        print (base)
-                        base['stockpile'] -= cost
-                        print (base)
-                        #and build the ship!
-                        self.game['objects']['shipList'].append(cmd['ship'])
+            #find the base in the game
+            base = findBase(self.game, baseName)
+            if (base is not None):
+                #does the base have enough to pay for the ship?
+                if base['BP']['cur'] >= cost:
+                    #subtract the cost...
+                    print (base)
+                    base['BP']['cur'] -= cost
+                    print (base)
+                    #and build the ship!
+                    self.game['objects']['shipList'].append(ship)
 
         elif cmdStr == 'ready':
             # A generic cmd used to end several phases

@@ -8,7 +8,7 @@ class build(Dialog):
     # RETURNS:
     def __init__(self, master, base):
         self.base = base
-        self.remaining = self.base['stockpile']
+        self.remaining = self.base['BP']['cur']
         Dialog.__init__(self, master)
 
     # PURPOSE:
@@ -16,7 +16,7 @@ class build(Dialog):
     def makeHeader(self, headerFrame):
         headerFrame.grid(columnspan=2)
         totalFrame = Frame(headerFrame, relief=RIDGE, bd=10)
-        TotalW = Label(totalFrame, text="Total BP:%d" % self.base['stockpile'])
+        TotalW = Label(totalFrame, text="Total BP:%d" % self.base['BP']['cur'])
         TotalW.grid()
         totalFrame.grid(row=0,column=1)
 
@@ -26,7 +26,7 @@ class build(Dialog):
         spentFrame.grid(row=0,column=2)
 
         remainingFrame = Frame(headerFrame, relief=RIDGE, bd=10)
-        self.remainingW = Label(remainingFrame, text="Remaining BP:%d" % self.base['stockpile'])
+        self.remainingW = Label(remainingFrame, text="Remaining BP:%d" % self.base['BP']['cur'])
         self.remainingW.grid()
         remainingFrame.grid(row=0,column=3)
 
@@ -130,12 +130,12 @@ class build(Dialog):
         used = used + 5 * int(self.warpSpn.get())
 
         for spinner in self.spinList:
-            spinner.config(to=self.base['stockpile'] - used + int(spinner.get()))
+            spinner.config(to=self.base['BP']['cur'] - used + int(spinner.get()))
 
-        self.rpSpn.config(to=int((self.base['stockpile'] - used)/5) + int(self.rpSpn.get()))
+        self.rpSpn.config(to=int((self.base['BP']['cur'] - used)/5) + int(self.rpSpn.get()))
 
         self.spentW.config(text="Used BP:%d" % used)
-        self.remainingW.config(text="Remaining BP:%d" % (self.base['stockpile'] - used))
+        self.remainingW.config(text="Remaining BP:%d" % (self.base['BP']['cur'] - used))
 
     # PURPOSE:
     # RETURNS:

@@ -158,7 +158,7 @@ def buildShip(tkRoot, base):
         buildResult = build(tkRoot, base)
 
     if (buildResult is not None):
-        sendJson = warpWarCmds().buildShip(tkRoot.playerName, buildResult.ship, base)
+        sendJson = warpWarCmds().buildShip(tkRoot.playerName, buildResult.ship, base['name'])
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -285,10 +285,16 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'build'):
         phaseMenuObject.add_command(label="Bases you own:")
+        for star in tkRoot.game['objects']['starList']:
+            if (star['owner'] == tkRoot.playerName):
+                labelString = "'%s'    BP left: %d" % (star['name'],
+                        star['BP']['cur'])
+                phaseMenuObject.add_command(label=labelString, 
+                                            command=lambda:buildShip(tkRoot, star))
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 labelString = "'%s'    BP left: %d" % (base['name'],
-                        base['stockpile'])
+                        base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
                                             command=lambda:buildShip(tkRoot, base))
 
