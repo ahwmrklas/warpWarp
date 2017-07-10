@@ -97,9 +97,9 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
         combatResult = combat(tkRoot, friendlyShips, enemyShips)
 
     if (combatResult is not None):
-        print (combatResult.combatOrder)
+        print (combatResult.combatOrders)
 
-        tkRoot.battleOrders[friendlyShips[0]['name']] = combatResult.combatOrder
+        tkRoot.battleOrders.update(combatResult.combatOrders)
 
 # PURPOSE:
 # RETURNS:

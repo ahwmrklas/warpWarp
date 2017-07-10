@@ -14,6 +14,7 @@ class combat(Dialog):
     def __init__(self, master, friendlyList, enemyList):
         self.friendlyList = friendlyList
         self.enemyList = enemyList
+        self.combatOrders = dict((friend['name'], '') for friend in friendlyList)
         Dialog.__init__(self, master)
 
     # PURPOSE:
@@ -359,41 +360,63 @@ class combat(Dialog):
         #panes.grid_rowconfigure(0, weight = 1)
         #panes.grid_columnconfigure(0, weight = 1)
 
-        leftFrame = Frame(panes, bg="green", bd=1, relief="sunken")
-        leftFrame.pack(expand=1, fill=BOTH)
+        self.leftFrame = Frame(panes, bg="green", bd=1, relief="sunken")
+        self.leftFrame.pack(expand=1, fill=BOTH)
 
         rightFrame = Frame(panes, bg="red", bd=1, relief="sunken")
         rightFrame.pack(expand=1, fill=BOTH)
 
-        #panes.paneconfigure(leftFrame, stretch="always")
+        #panes.paneconfigure(self.leftFrame, stretch="always")
         #panes.paneconfigure(rightFrame, stretch="always")
 
-        panes.add(leftFrame, stretch="always")
+        panes.add(self.leftFrame, stretch="always")
         panes.add(rightFrame, stretch="always")
-        #panes.paneconfigure(leftFrame)
+        #panes.paneconfigure(self.leftFrame)
         
 
-        redbutton = Button(rightFrame, text="Red", fg="red")
+        redbutton = Button(rightFrame, text="Give order", fg="red", command = self.giveOrder)
         redbutton.pack(expand=True, fill=BOTH)
 
-        for entry in self.friendlyList:
-            self.singleShip(leftFrame, entry, self.enemyList)
+        self.shipSelectVar = StringVar(self.leftFrame)
+        self.shipSelect = OptionMenu(self.leftFrame, self.shipSelectVar, 
+                *[friendly['name'] for friendly in self.friendlyList],
+                command=self.shipChange)
+        self.shipSelectVar.set(self.friendlyList[0]['name'])
+        self.shipSelect.pack(expand=True, fill=BOTH)
 
-        return leftFrame # initial focus
+        self.shipFrame = Frame(self.leftFrame, bg="green")
+        self.shipFrame.pack(expand=1, fill=BOTH)
+        self.singleShip(self.shipFrame, self.friendlyList[0], self.enemyList)
 
-    # PURPOSE:
-    # RETURNS:
-    def apply(self):
-        print("nothing to apply")
+        return self.leftFrame # initial focus
+
+    def shipChange(self, name):
+        print ("this is a stupid function, and the ship name is %s" % name)
+        #we need to shake off self.shipFram
+        self.shipFrame.destroy()
+        self.shipFrame = Frame(self.leftFrame, bg="green")
+        self.shipFrame.pack(expand=1, fill=BOTH)
+        #find our ship!
+        for ship in self.friendlyList:
+            if ship['name'] == name:
+                self.singleShip(self.shipFrame, ship, self.enemyList)
+                break
+
+    def giveOrder(self):
 
         #lets print out all the energy we are using!
-        self.combatOrder =   {
-                        'ship'    : self.friendlyList[0]['name'], #TODO make this work for more than one ship
+        self.combatOrders[self.ship['name']] =   {
+                        'ship'    : self.ship['name'], #TODO make this work for more than one ship
                         'tactic'  : [self.tacticVar.get(), self.moveVar.get()],
                         'beams'   : [self.beamTargetVar.get(),self.beamVar.get()],
                         'screens' : self.screenVar.get(),
                         'missiles' : [ [self.Tubes[i].targetVar.get(), self.Tubes[i].var.get()] for i in range(len(self.Tubes)) ]
                 }
 
-        print (self.combatOrder)
+        print (self.combatOrders)
+
+    # PURPOSE:
+    # RETURNS:
+    def apply(self):
+        print("nothing to apply")
 

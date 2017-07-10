@@ -8,7 +8,7 @@
 from combat import combat
 
 import tkinter as tk
-from samplegame import sampleGame
+from sampleBattle import sampleGame
 
 # PURPOSE:
 #  create bare page
@@ -16,11 +16,15 @@ from samplegame import sampleGame
 def main():
     lists = sampleGame['objects']
     shipList = lists['shipList']
+    friends = [ship for ship in shipList if ship['owner'] == 'ahw']
+    enemies = [ship for ship in shipList if ship['owner'] == 'bearda']
+    print (friends)
+    print (enemies)
 
     root = tk.Tk()
     root.title("testCombat")
-    tmp = combat(root, shipList, shipList)
-    print(tmp.combatOrder)
+    tmp = combat(root, friends, enemies)
+    print(tmp.combatOrders)
     root.mainloop()
 
 # Start the main function
