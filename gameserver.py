@@ -230,6 +230,15 @@ def combatChartLookup(myTactic, myDrive, targetTactic, targetDrive):
 
 # PURPOSE:
 # RETURNS:
+def findTargetShipOrders(shipName, orders):
+    for player, playerOrders in orders.items():
+        for ship, shipOrders, in playerOrders.items():
+            if (shipName == ship):
+                return shipOrders
+    return None
+
+# PURPOSE:
+# RETURNS:
 def resolveCombat(game, orders):
     # FIXME:
     # for now cycle through every ship in combat and give it
@@ -261,10 +270,21 @@ def resolveCombat(game, orders):
                 myTactic     = shipOrders['tactic'][0]
                 myDrive      = shipOrders['tactic'][1]
                 myTarget     = shipOrders['beams'][0]
-                targetDrive      = 3
-                targetTactic     = 'ATTACK'
+
+                targetShipOrders = findTargetShipOrders(myTarget, orders)
+                if (targetShipOrders):
+                    pretty = prettyOrders(shipOrders)
+                    print("targetship:", myTarget, "order:", pretty)
+                    targetTactic     = targetShipOrders['tactic'][0]
+                    targetDrive      = targetShipOrders['tactic'][1]
+                else:
+                    targetTactic     = 'RETREAT'
+                    targetDrive      = 0
+
                 result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
                 print("%s Beam '%s' %s" % (ship, result, myTarget))
+                targetShip = dataModel.findShip(self.game, myTarget)
+                #assert(targetShip)
             else:
                 for missile in shipOrders['missiles']:
                     myTactic = 'ATTACK'
