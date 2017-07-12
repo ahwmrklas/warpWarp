@@ -243,8 +243,8 @@ def resolveCombat(game, orders):
     # FIXME:
     # for now cycle through every ship in combat and give it
     # some points of damage ... eh, just damage all ships :-)
-    for ship in game['objects']['shipList']:
-        ship['damage'] = 5
+    #for ship in game['objects']['shipList']:
+    #    ship['damage'] = 5
 
     print("ALLorders:")
     print(orders)
@@ -273,18 +273,46 @@ def resolveCombat(game, orders):
 
                 targetShipOrders = findTargetShipOrders(myTarget, orders)
                 if (targetShipOrders):
-                    pretty = prettyOrders(shipOrders)
+                    pretty = prettyOrders(targetShipOrders)
                     print("targetship:", myTarget, "order:", pretty)
                     targetTactic     = targetShipOrders['tactic'][0]
                     targetDrive      = targetShipOrders['tactic'][1]
+                    targetScreen     = targetShipOrders['screens']
                 else:
                     targetTactic     = 'RETREAT'
                     targetDrive      = 0
+                    targetScreen     = 0
 
                 result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
                 print("%s Beam '%s' %s" % (ship, result, myTarget))
-                targetShip = dataModel.findShip(self.game, myTarget)
+                targetShip = dataModel.findShip(game, myTarget)
                 #assert(targetShip)
+                if (targetShip is None):
+                    continue
+                if   result == "Miss":
+                    damage = 0
+                elif result == "Hit":
+                    damage = 0 + myPower
+                elif result == "Hit+1":
+                    damage = 1 + myPower
+                elif result == "Hit+2":
+                    damage = 2 + myPower
+                elif result == "Escapes":
+                    damage = -1
+                else:
+                    print('ERROR!')
+
+                if (damage < 0):
+                    pass
+                if (damage < targetScreen):
+                    damage = 0
+                else:
+                    damage -= targetScreen
+
+                if (targetShip['damage'] < 0) and (damage >=0):
+                    targetShip['damage'] = 0
+
+                targetShip['damage'] += damage
             else:
                 for missile in shipOrders['missiles']:
                     myTactic = 'ATTACK'

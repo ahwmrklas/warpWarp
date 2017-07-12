@@ -66,6 +66,11 @@ def newGame(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
+        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
         # not the right place to update.
         # Send message? And that updates?
         phaseMenu(tkRoot, tkRoot.game['state']['phase'], "nil")
