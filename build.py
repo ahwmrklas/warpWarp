@@ -8,6 +8,7 @@ class build(Dialog):
     # RETURNS:
     def __init__(self, master, base):
         self.base = base
+        print(self.base['owner'])
         self.remaining = self.base['BP']['cur']
         Dialog.__init__(self, master)
 
@@ -156,6 +157,7 @@ class build(Dialog):
     # RETURNS:
     def apply(self):
         print("apply build")
+        print(self.base['owner'])
         self.ship =  {
              'name': self.shipNameEntry.get(),
              'type': "ship",

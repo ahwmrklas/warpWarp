@@ -162,6 +162,7 @@ def damageAllocationMenu(tkRoot, shipName):
 # RETURNS:
 def buildShip(tkRoot, base):
     print("buildMenu")
+    print(base['owner'])
     if (tkRoot.hCon is not None):
         buildResult = build(tkRoot, base)
 
@@ -295,16 +296,20 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Bases you own:")
         for star in tkRoot.game['objects']['starList']:
             if (star['owner'] == tkRoot.playerName):
+                print (star['owner'])
+                print (tkRoot.playerName)
                 labelString = "'%s'    BP left: %d" % (star['name'],
                         star['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda:buildShip(tkRoot, star))
+                                            command=lambda star=star:buildShip(tkRoot, star))
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
+                print (base['owner'])
+                print (tkRoot.playerName)
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda:buildShip(tkRoot, base))
+                                            command=lambda base=base:buildShip(tkRoot, base))
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))

@@ -145,7 +145,6 @@ def getConflictList(objects):
     thingList    = objects['thingList']
     shipList     = objects['shipList']
     starBaseList = objects['starBaseList']
-    assert(starList and thingList and shipList and starBaseList)
 
     allList = starList + thingList + shipList + starBaseList
     sortedList = sorted(allList, key=myCmp)
@@ -241,11 +240,18 @@ def emptyGame():
             'shipList': [
             ],
             'starBaseList': [
-                {'name': "Babylon 5",
+                {'name': "Babylon_4",
+                 'type': "base",
+                 'location': {'x':8, 'y':4},
+                 'image': "b_5.png",
+                 'owner': "bearda",
+                 'BP': {'perturn':0, 'cur':10},
+                },
+                {'name': "Babylon_5",
                  'type': "base",
                  'location': {'x':4, 'y':8},
                  'image': "b_5.png",
-                 'owner': "nil",
+                 'owner': "ahw",
                  'BP': {'perturn':0, 'cur':10},
                 },
             ],
