@@ -239,6 +239,81 @@ def findTargetShipOrders(shipName, orders):
 
 # PURPOSE:
 # RETURNS:
+# passing in "game" and "orders" seems overkill. Just pass in game
+# and find the orders ... buy that also seems weird
+def figureStuffOut(game, orders, myShipName, myPower, myTactic, myDrive, myTarget):
+
+    targetShipOrders = findTargetShipOrders(myTarget, orders)
+    if (targetShipOrders):
+        pretty = prettyOrders(targetShipOrders)
+        print("targetship:", myTarget, "order:", pretty)
+        targetTactic     = targetShipOrders['tactic'][0]
+        targetDrive      = targetShipOrders['tactic'][1]
+        targetScreen     = targetShipOrders['screens']
+    else:
+        # Can't find otders for the target.
+        # That shouldn't happen. assert?
+        # Maybe the target player was just lazy?
+        # ??? This should be considered an error on the part
+        # of the client.
+        print("targetship:", myTarget, "CAN'T FIND ORDERS!!!!")
+        targetTactic     = 'RETREAT'
+        targetDrive      = 0
+        targetScreen     = 0
+
+    # We know what the offense is doing, we know what the defense is doing
+    # rock, paper, scissors the results
+    result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
+    print("%s Beam/Missile '%s' %s" % (myShipName, result, myTarget))
+
+    # ugly if statement on results
+    # combatChartLookup should probably just return the number
+    if   result == "Miss":
+        damage = 0
+    elif result == "Hit":
+        damage = 0 + myPower
+    elif result == "Hit+1":
+        damage = 1 + myPower
+    elif result == "Hit+2":
+        damage = 2 + myPower
+    elif result == "Escapes":
+        damage = -1
+    else:
+        print('ERROR!')
+
+    # A negative number means the target
+    # has escaped. BUT it can't escape unless EVERY attack results in "escape"
+    if (damage < 0):
+        return
+
+    # Target didn't escape but has the screen protected it?
+    if (damage < targetScreen):
+        damage = 0
+    else:
+        damage -= targetScreen
+
+    targetShip = dataModel.findShip(game, myTarget)
+    # This is a worse error on the part of the client
+    #assert(targetShip)
+    if (targetShip is None):
+        print("targetship:", myTarget, "CAN'T FIND SHIP!!!!")
+        return
+
+    # Note I was going to have a negative damage mean
+    # the ship escaped
+
+    # This damage calculation is incorrect.
+    # Lookup the rules and the screens only protect you from
+    # the TOTAL number of hits in the round. So a whole bunch
+    # of "1" damage can overcome the shields eventually.
+
+    if (targetShip['damage'] < 0) and (damage >=0):
+        targetShip['damage'] = 0
+
+    targetShip['damage'] += damage
+
+# PURPOSE:
+# RETURNS:
 def resolveCombat(game, orders):
     # FIXME:
     # for now cycle through every ship in combat and give it
@@ -262,66 +337,24 @@ def resolveCombat(game, orders):
     #       For each ship there is an order
     #           each order can have a unique target
     for player, playerOrders in orders.items():
-        for ship, shipOrders, in playerOrders.items():
+        for myShip, shipOrders, in playerOrders.items():
             pretty = prettyOrders(shipOrders)
-            print(player, "ship:", ship, "order:", pretty)
+            print(player, "ship:", myShip, "order:", pretty)
             myPower  = shipOrders['beams'][1]
             if (myPower > 0):
                 myTactic     = shipOrders['tactic'][0]
                 myDrive      = shipOrders['tactic'][1]
                 myTarget     = shipOrders['beams'][0]
 
-                targetShipOrders = findTargetShipOrders(myTarget, orders)
-                if (targetShipOrders):
-                    pretty = prettyOrders(targetShipOrders)
-                    print("targetship:", myTarget, "order:", pretty)
-                    targetTactic     = targetShipOrders['tactic'][0]
-                    targetDrive      = targetShipOrders['tactic'][1]
-                    targetScreen     = targetShipOrders['screens']
-                else:
-                    targetTactic     = 'RETREAT'
-                    targetDrive      = 0
-                    targetScreen     = 0
+                figureStuffOut(game, orders, myShip, myPower, myTactic, myDrive, myTarget)
 
-                result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
-                print("%s Beam '%s' %s" % (ship, result, myTarget))
-                targetShip = dataModel.findShip(game, myTarget)
-                #assert(targetShip)
-                if (targetShip is None):
-                    continue
-                if   result == "Miss":
-                    damage = 0
-                elif result == "Hit":
-                    damage = 0 + myPower
-                elif result == "Hit+1":
-                    damage = 1 + myPower
-                elif result == "Hit+2":
-                    damage = 2 + myPower
-                elif result == "Escapes":
-                    damage = -1
-                else:
-                    print('ERROR!')
-
-                if (damage < 0):
-                    pass
-                if (damage < targetScreen):
-                    damage = 0
-                else:
-                    damage -= targetScreen
-
-                if (targetShip['damage'] < 0) and (damage >=0):
-                    targetShip['damage'] = 0
-
-                targetShip['damage'] += damage
             else:
                 for missile in shipOrders['missiles']:
+                    myPower  = 2
                     myTactic = 'ATTACK'
                     myDrive  = missile[1]
                     myTarget = missile[0]
-                    targetDrive      = 3
-                    targetTactic     = 'ATTACK'
-                    result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
-                    print("%s Missile '%s' %s" % (ship, result, myTarget))
+                    figureStuffOut(game, orders, myShip, myPower, myTactic, myDrive, myTarget)
 
 # PURPOSE:
 # RETURNS:
@@ -429,9 +462,6 @@ class gameserver:
             # What about a player joining a previously saved game?
             # Input? Player name and potentially player specific options
             # What player specific options? IP:port?
-            assert( (self.game['state']['phase'] == "nil") or
-                    (self.game['state']['phase'] == "creating")
-                  )
             newPlayer = cmd['name']
             print("GServer:", "newPlayer", newPlayer)
 
@@ -444,6 +474,9 @@ class gameserver:
                 # Normally the player shouldn't exist! But they do for the
                 # sample game (or if reconnecting to a game)
                 if (player['phase'] == "nil"):
+                    assert( (self.game['state']['phase'] == "nil") or
+                            (self.game['state']['phase'] == "creating")
+                          )
                     player['phase'] = "creating"
                 else:
                     print("GServer:", "player", player, "must be rejoining game???!!!")
