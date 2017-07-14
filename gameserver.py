@@ -379,18 +379,20 @@ def checkForVictory(game):
 
     # reset victory points to zero
     players = {}
-    players['none'] = 0
     for player in game['playerList']:
         players[player['name']] = 0
 
     for thing in game['objects']['starList']:
-        players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
+        if (thing['owner']):
+            players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
         print("star: name:", thing['name'], " owner:",thing['owner'])
     for thing in game['objects']['starBaseList']:
-        players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
+        if (thing['owner']):
+            players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
         print("base: name:", thing['name'], " owner:",thing['owner'])
     for thing in game['objects']['thingList']:
-        players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
+        if (thing['owner']):
+            players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
         print("thing: name:", thing['name'], " owner:",thing['owner'])
 
     # Check everyones victory points. Did anyone win?

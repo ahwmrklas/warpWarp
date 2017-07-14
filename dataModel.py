@@ -110,10 +110,24 @@ class Player():
 # PURPOSE: look up ship name in game ship list
 # RETURNS: entry of ship
 def findShip(game, shipName):
-   for ship in game['objects']['shipList']:
+    for ship in game['objects']['shipList']:
         if ship['name'] == shipName:
             return ship
-   return None
+    return None
+
+# PURPOSE: Return the base structure from game
+#   (Stars and Bases are mostly interchangeable. They should be in one list)
+# RETURNS: entry for base table
+def findBase(game, findName):
+
+    for base in game['objects']['starList']:
+        if base['name'] == findName:
+            return base
+    for base in game['objects']['starBaseList']:
+        if base['name'] == findName:
+            return base
+
+    return None
 
 # PURPOSE: Return the player structure from the game
 # RETURNS: player table
@@ -218,7 +232,7 @@ def emptyGame():
                  'type': "star",
                  'location': {'x':1, 'y':3},
                  'image':"alpha.png",
-                 'owner':"nil",
+                 'owner':None,
                  'BP': {'perturn':3, 'cur':20},
                  'visibility':[ {'player':"ahw",  'percent':100},
                                 {'player':"bearda", 'percent':30},
@@ -230,7 +244,7 @@ def emptyGame():
                  'type': "special",
                  'location': {'x':4, 'y':7},
                  'image':"relic.png",
-                 'owner':"nil",
+                 'owner':None,
                  'BP': {'perturn':0, 'cur':15},
                  'visibility':[ {'player':"ahw",  'percent':100},
                                 {'player':"bearda", 'percent':30},

@@ -160,14 +160,14 @@ def damageAllocationMenu(tkRoot, shipName):
 
 # PURPOSE:
 # RETURNS:
-def buildShip(tkRoot, base):
-    print("buildMenu")
-    print(base['owner'])
-    if (tkRoot.hCon is not None):
+def buildShip(tkRoot, baseName):
+    print("buildMenu", baseName)
+    base = findBase(tkRoot.game, baseName)
+    if (base and tkRoot.hCon is not None):
         buildResult = build(tkRoot, base)
 
     if (buildResult is not None):
-        sendJson = warpWarCmds().buildShip(tkRoot.playerName, buildResult.ship, base['name'])
+        sendJson = warpWarCmds().buildShip(tkRoot.playerName, buildResult.ship, baseName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -301,7 +301,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 labelString = "'%s'    BP left: %d" % (star['name'],
                         star['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda star=star:buildShip(tkRoot, star))
+                                            command=lambda:buildShip(tkRoot, star['name']))
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 print (base['owner'])
@@ -309,7 +309,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda base=base:buildShip(tkRoot, base))
+                                            command=lambda:buildShip(tkRoot, base['name']))
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
