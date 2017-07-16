@@ -108,6 +108,16 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
 
 # PURPOSE:
 # RETURNS:
+def conquestAtLocation(tkRoot, friendlyShips, nonShipList):
+    print("conquestAtLocation")
+    ship = friendlyShips[0]
+    tkRoot.battleOrders[ship['name']] = {
+                                            'ship' : ship['name'],
+                                            'conquer': nonShipList
+                                        }
+
+# PURPOSE:
+# RETURNS:
 def sendCombatReady(tkRoot):
     print("readyMenu")
     if (tkRoot.hCon is not None):
@@ -374,9 +384,11 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # on the location so it brings up the battle screen.
         phaseMenuObject.add_command(label="Conflicts:")
         for conflict in conflictList:
-            conflictDict = organizeConflict(conflict)
+            conflictDict, nonShipList = organizeConflict(conflict)
             print(tkRoot.playerName)
             print(conflictDict)
+            print("NONSHIP")
+            print(nonShipList)
             #who am I,and who is my enemy?
             friendlyShips = conflictDict[tkRoot.playerName]
             enemyShips = []
@@ -385,8 +397,14 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                     for ship in conflictDict[key]:
                         enemyShips.append(ship)
 
-            labelString = "%d of Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
-            phaseMenuObject.add_command(label=labelString, command=lambda:combatAtLocation(tkRoot, friendlyShips, enemyShips))
+            if enemyShips:
+                labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
+                phaseMenuObject.add_command(label=labelString, command=lambda:combatAtLocation(tkRoot, friendlyShips, enemyShips))
+            elif nonShipList:
+                labelString = "%d Friendlies control this sector" % (len(friendlyShips))
+                phaseMenuObject.add_command(label=labelString, command=lambda:conquestAtLocation(tkRoot, friendlyShips, nonShipList))
+            else:
+                assert(0)
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendCombatReady(tkRoot))

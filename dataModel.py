@@ -18,7 +18,7 @@ objects -- This is a big one,
         techLevel -- tech level at the time of creation
         moveLeft  -- how much movement is left for this ship? 0 when off turn
         location  -- Where is it
-        owner -- who owns it?  
+        owner -- who owns it?
     bases
         location -- this is the name of a star
         ???
@@ -49,7 +49,7 @@ class GameInfo():
 
     def initOptions(self, options):
         """
-        This function should initialize any game options we decide to 
+        This function should initialize any game options we decide to
         implement
 
         This might include alternate rules, planet placement, and starting
@@ -74,7 +74,6 @@ class GameInfo():
         for name in playerNames:
             self.playerList.append(Player(name))
 
-    
     def initObjects(self):
         """
         This should create a list of objects, and place them on the board
@@ -115,18 +114,16 @@ def findShip(game, shipName):
             return ship
     return None
 
-# PURPOSE: Return the base structure from game
+# PURPOSE: look up base name in game base & star list
 #   (Stars and Bases are mostly interchangeable. They should be in one list)
-# RETURNS: entry for base table
-def findBase(game, findName):
-
-    for base in game['objects']['starList']:
-        if base['name'] == findName:
-            return base
+# RETURNS: entry of base
+def findBase(game, baseName):
     for base in game['objects']['starBaseList']:
-        if base['name'] == findName:
+        if base['name'] == baseName:
             return base
-
+    for base in game['objects']['starList']:
+        if base['name'] == baseName:
+            return base
     return None
 
 # PURPOSE: Return the player structure from the game
@@ -185,6 +182,23 @@ def getConflictList(objects):
         last = obj
     return listOfLists
 
+# PURPOSE:
+# RETURNS: list of objects at given location
+def findAtLocation(objects, location):
+    assert(objects)
+    starList     = objects['starList']
+    thingList    = objects['thingList']
+    shipList     = objects['shipList']
+    starBaseList = objects['starBaseList']
+
+    allList = starList + thingList + shipList + starBaseList
+    atLocation = []
+    for obj in allList:
+        if location -- obj['location']:
+            atLocation.append(obj)
+
+    return atLocation
+
 # PURPOSE: turn a conflict  into a list of ships on each side
 # RETURNS: A dict of ships on each side
 # Example:
@@ -195,6 +209,7 @@ def getConflictList(objects):
 #   }
 def organizeConflict(conflict):
     conflictDict = {}
+    nonShipList = []
     for thing in conflict:
         print ("here is the thing!")
         print (thing)
@@ -204,7 +219,10 @@ def organizeConflict(conflict):
             if thing['owner'] not in conflictDict.keys():
                 conflictDict[thing['owner']] = []
             conflictDict[thing['owner']].append(thing)
-    return conflictDict
+        else:
+            nonShipList.append(thing)
+
+    return conflictDict, nonShipList
 
 # PURPOSE: create and return an empty game
 #    FIXME TODO

@@ -38,17 +38,6 @@ import json
 import ijk
 import dataModel
 
-# PURPOSE: look up base name in game base & star list
-# RETURNS: entry of base
-def findBase(game, baseName):
-    for base in game['objects']['starBaseList']:
-        if base['name'] == baseName:
-            return base
-    for base in game['objects']['starList']:
-        if base['name'] == baseName:
-            return base
-    return None
-
 # PURPOSE: look to see if all players are in a given phase
 # RETURNS: true iff all players in game are in phase
 def areAllPlayersInPhase(game, phase):
@@ -338,6 +327,13 @@ def resolveCombat(game, orders):
     #           each order can have a unique target
     for player, playerOrders in orders.items():
         for myShip, shipOrders, in playerOrders.items():
+            if shipOrders['conquer']:
+                # This is a change of ownership.
+                for base in shipOrders['conquer']:
+                    print(player, "ship:", myShip, "conquer", base['name'])
+                    base = dataModel.findBase(game, base['name'])
+                    base['owner'] = player
+                continue
             pretty = prettyOrders(shipOrders)
             print(player, "ship:", myShip, "order:", pretty)
             myPower  = shipOrders['beams'][1]
@@ -671,7 +667,7 @@ class gameserver:
                                    x, y)
             ship['location']['x'] = x
             ship['location']['y'] = y
-            ship['moves']['cur'] = ship['moves']['cur'] -delta 
+            ship['moves']['cur'] = ship['moves']['cur'] -delta
 
             #now we start a battle, if we can.
             #Is there anything here that can trigger a battle?

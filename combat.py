@@ -14,7 +14,7 @@ class combat(Dialog):
     def __init__(self, master, friendlyList, enemyList):
         self.friendlyList = friendlyList
         self.enemyList = enemyList
-        self.combatOrders = dict((friend['name'], '') for friend in friendlyList)
+        self.combatOrders = dict((friend['name'], {}) for friend in friendlyList)
         Dialog.__init__(self, master)
 
     # PURPOSE:
