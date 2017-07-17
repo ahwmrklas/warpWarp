@@ -329,9 +329,9 @@ def resolveCombat(game, orders):
         for myShip, shipOrders, in playerOrders.items():
             if shipOrders['conquer']:
                 # This is a change of ownership.
-                for base in shipOrders['conquer']:
-                    print(player, "ship:", myShip, "conquer", base['name'])
-                    base = dataModel.findBase(game, base['name'])
+                for baseName in shipOrders['conquer']:
+                    print(player, "ship:", myShip, "conquer", baseName)
+                    base = dataModel.findBase(game, baseName)
                     base['owner'] = player
                 continue
             pretty = prettyOrders(shipOrders)
@@ -579,6 +579,9 @@ class gameserver:
                 if areAllPlayersInPhase(self.game, "waiting"):
                     self.game['state']['phase'] = "move"
                     changeAllPlayerPhase(self.game, "waiting", "move")
+                    # Reset all ships so that can move again
+                    for ship in self.game['objects']['shipList']:
+                        ship['moves']['cur'] = ship['PD']['cur']
 
             elif (self.game['state']['phase'] == "move"):
                 # Given player can no longer move and must wait

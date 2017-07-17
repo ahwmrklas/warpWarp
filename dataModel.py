@@ -124,6 +124,12 @@ def findBase(game, baseName):
     for base in game['objects']['starList']:
         if base['name'] == baseName:
             return base
+    # FIXME ... should we really look in thinglist?
+    # I imagined "things" couldn't be used to build ships ...
+    # BUt they might have build points on them.
+    for thing in game['objects']['thingList']:
+        if thing['name'] == baseName:
+            return thing
     return None
 
 # PURPOSE: Return the player structure from the game

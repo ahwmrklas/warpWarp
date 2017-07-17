@@ -402,7 +402,10 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 phaseMenuObject.add_command(label=labelString, command=lambda:combatAtLocation(tkRoot, friendlyShips, enemyShips))
             elif nonShipList:
                 labelString = "%d Friendlies control this sector" % (len(friendlyShips))
-                phaseMenuObject.add_command(label=labelString, command=lambda:conquestAtLocation(tkRoot, friendlyShips, nonShipList))
+                bases = []
+                for base in nonShipList:
+                    bases.append(base['name'])
+                phaseMenuObject.add_command(label=labelString, command=lambda:conquestAtLocation(tkRoot, friendlyShips, bases))
             else:
                 assert(0)
 
