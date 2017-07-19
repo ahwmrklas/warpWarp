@@ -98,7 +98,8 @@ def sendReady(tkRoot):
 # RETURNS:
 def combatAtLocation(tkRoot, friendlyShips, enemyShips):
     print("combatAtLocationMenu")
-    if (tkRoot.hCon is not None):
+    combatResult = None
+    if (friendlyShips and enemyShips):
         combatResult = combat(tkRoot, friendlyShips, enemyShips)
 
     if (combatResult is not None):
@@ -110,11 +111,12 @@ def combatAtLocation(tkRoot, friendlyShips, enemyShips):
 # RETURNS:
 def conquestAtLocation(tkRoot, friendlyShips, nonShipList):
     print("conquestAtLocation")
-    ship = friendlyShips[0]
-    tkRoot.battleOrders[ship['name']] = {
-                                            'ship' : ship['name'],
-                                            'conquer': nonShipList
-                                        }
+    if (friendlyShips):
+        ship = friendlyShips[0]
+        tkRoot.battleOrders[ship['name']] = {
+                                                'ship' : ship['name'],
+                                                'conquer': nonShipList
+                                            }
 
 # PURPOSE:
 # RETURNS:
@@ -149,7 +151,7 @@ def sendCombatReady(tkRoot):
 # PURPOSE:
 # RETURNS:
 def damageAllocationMenu(tkRoot, shipName):
-    print("damageAllocationMenu")
+    print("damageAllocationMenu", shipName)
     if (tkRoot.hCon is not None):
         ship = findShip(tkRoot.game, shipName)
         allocationResult = damageAllocation(tkRoot, ship)
@@ -311,7 +313,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 labelString = "'%s'    BP left: %d" % (star['name'],
                         star['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda:buildShip(tkRoot, star['name']))
+                                            command=lambda name=star['name']:buildShip(tkRoot, name))
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 print (base['owner'])
@@ -319,7 +321,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda:buildShip(tkRoot, base['name']))
+                                            command=lambda name=base['name']:buildShip(tkRoot, name))
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReady(tkRoot))
@@ -390,7 +392,9 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             print("NONSHIP")
             print(nonShipList)
             #who am I,and who is my enemy?
-            friendlyShips = conflictDict[tkRoot.playerName]
+            friendlyShips = []
+            if (tkRoot.playerName in conflictDict):
+                friendlyShips = conflictDict[tkRoot.playerName]
             enemyShips = []
             for key in conflictDict:
                 if key != tkRoot.playerName:
@@ -399,13 +403,13 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
 
             if enemyShips:
                 labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
-                phaseMenuObject.add_command(label=labelString, command=lambda:combatAtLocation(tkRoot, friendlyShips, enemyShips))
+                phaseMenuObject.add_command(label=labelString, command=lambda friendlyShips=friendlyShips, enemyShips=enemyShips:combatAtLocation(tkRoot, friendlyShips, enemyShips))
             elif nonShipList:
                 labelString = "%d Friendlies control this sector" % (len(friendlyShips))
                 bases = []
                 for base in nonShipList:
                     bases.append(base['name'])
-                phaseMenuObject.add_command(label=labelString, command=lambda:conquestAtLocation(tkRoot, friendlyShips, bases))
+                phaseMenuObject.add_command(label=labelString, command=lambda friendlyShips=friendlyShips, bases=bases:conquestAtLocation(tkRoot, friendlyShips, bases))
             else:
                 assert(0)
 
@@ -425,7 +429,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             if (ship['owner'] == tkRoot.playerName):
                 if (ship['damage'] >= 0):
                     labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
-                    phaseMenuObject.add_command(label=labelString, command=lambda:damageAllocationMenu(tkRoot, ship['name']))
+                    phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
 
         phaseMenuObject.add_command(label="Ready",
                                       command=lambda:sendReady(tkRoot))
@@ -444,7 +448,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
 
     #bind event
     tkRoot.bind("<<updateMenu>>", 
-            lambda event:phaseMenu(tkRoot, gamePhase, playerPhase))
+            lambda event, gamePhase=gamePhase, playerPhase=playerPhase :phaseMenu(tkRoot, gamePhase, playerPhase))
 
 # PURPOSE: Create menu GUI elements
 # RETURNS: none

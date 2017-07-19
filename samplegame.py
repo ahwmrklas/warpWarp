@@ -74,7 +74,7 @@ sampleGame = {
              'WG':{'max':True, 'cur':True}, # Warp Generator
              'B': {'max':3, 'cur':3},       # Beams
              'S': {'max':2, 'cur':2},       # Screens (Shields)
-             'E': {'max':2, 'cur':2},       # Electronic Counter Measures (New)
+             'E': {'max':0, 'cur':0},       # Electronic Counter Measures (New)
              'T': {'max':3, 'cur':3},       # Tubes
              'M': {'max':7, 'cur':7},       # Missiles
              'A': {'max':2, 'cur':2},       # Armor (New)

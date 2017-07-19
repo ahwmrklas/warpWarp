@@ -1,6 +1,13 @@
 import tkinter as tk
 from tkinter.simpledialog import *
 
+# PURPOSE int() throws an error for an empty string. I want 0
+# RETURNS: an integer
+def myInt(string):
+    if string.isdigit():
+        return int(string)
+    return 0
+
 class damageAllocation(Dialog):
 
     # PURPOSE:
@@ -118,19 +125,27 @@ class damageAllocation(Dialog):
 
     # PURPOSE:
     # RETURNS:
-    def updateSpinners(self):
+    def usedDamage(self):
         used = 0
         for spinner in self.spinList:
-            used = used + int(spinner.get())
+            used = used + myInt(spinner.get())
 
-        used = used + 5 * int(self.rpSpn.get())
-        used = used + 5 * int(self.warpSpn.get())
+        used = used + 5 * myInt(self.rpSpn.get())
+        used = used + 5 * myInt(self.warpSpn.get())
+
+        return used
+
+
+    # PURPOSE:
+    # RETURNS:
+    def updateSpinners(self):
+        used = self.usedDamage()
 
         for spinner in self.spinList:
-            if spinner.limit >= (self.ship['damage'] - used + int(spinner.get())):
-                spinner.config(to=self.ship['damage'] - used + int(spinner.get()))
+            if spinner.limit >= (self.ship['damage'] - used + myInt(spinner.get())):
+                spinner.config(to=self.ship['damage'] - used + myInt(spinner.get()))
 
-        self.rpSpn.config(to=int((self.ship['damage'] - used)/5) + int(self.rpSpn.get()))
+        self.rpSpn.config(to=int((self.ship['damage'] - used)/5) + myInt(self.rpSpn.get()))
 
         self.spentW.config(text="Used Damage:%d" % used)
         self.remainingW.config(text="Remaining Damage:%d" % (self.ship['damage'] - used))
@@ -154,16 +169,16 @@ class damageAllocation(Dialog):
     # RETURNS:
     def apply(self):
         print("apply damage")
-        self.ship['damage']= 0
-        self.ship['PD']['cur']=self.ship['PD']['cur'] - int(self.pwrSpn.get())       # PowerDrive
-        self.ship['B']['cur']=self.ship['B']['cur'] - int(self.beamSpn.get())
-        self.ship['S']['cur']=self.ship['S']['cur'] - int(self.screenSpn.get())
-        self.ship['E']['cur']=self.ship['E']['cur'] - int(self.ecmSpn.get())
-        self.ship['T']['cur']=self.ship['T']['cur'] - int(self.tubeSpn.get())
-        self.ship['A']['cur']=self.ship['A']['cur'] - int(self.armorSpn.get())
-        self.ship['C']['cur']=self.ship['C']['cur'] - int(self.cannonSpn.get())
-        self.ship['SR']['cur']=self.ship['SR']['cur'] - int(self.srSpn.get())
-        self.ship['H']['cur']=self.ship['H']['cur'] - int(self.holdSpn.get())
-        self.ship['R']['cur']=self.ship['R']['cur'] - int(self.rpSpn.get())
-        self.ship['WG']['cur']=self.ship['WG']['cur'] - int(self.warpSpn.get())
+        self.ship['damage']  = self.ship['damage'] - self.usedDamage()
+        self.ship['PD']['cur'] = self.ship['PD']['cur'] - myInt(self.pwrSpn.get())       # PowerDrive
+        self.ship['B']['cur']  = self.ship['B']['cur']  - myInt(self.beamSpn.get())
+        self.ship['S']['cur']  = self.ship['S']['cur']  - myInt(self.screenSpn.get())
+        self.ship['E']['cur']  = self.ship['E']['cur']  - myInt(self.ecmSpn.get())
+        self.ship['T']['cur']  = self.ship['T']['cur']  - myInt(self.tubeSpn.get())
+        self.ship['A']['cur']  = self.ship['A']['cur']  - myInt(self.armorSpn.get())
+        self.ship['C']['cur']  = self.ship['C']['cur']  - myInt(self.cannonSpn.get())
+        self.ship['SR']['cur'] = self.ship['SR']['cur'] - myInt(self.srSpn.get())
+        self.ship['H']['cur']  = self.ship['H']['cur']  - myInt(self.holdSpn.get())
+        self.ship['R']['cur']  = self.ship['R']['cur']  - myInt(self.rpSpn.get())
+        self.ship['WG']['cur'] = self.ship['WG']['cur'] - myInt(self.warpSpn.get())
         print (self.ship)

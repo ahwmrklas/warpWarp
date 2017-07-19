@@ -327,7 +327,11 @@ def resolveCombat(game, orders):
     #           each order can have a unique target
     for player, playerOrders in orders.items():
         for myShip, shipOrders, in playerOrders.items():
-            if shipOrders['conquer']:
+            if (not shipOrders):
+                print("ERROR:", myShip, "has no orders")
+                print("Should assert ... but must fix client")
+                continue
+            if 'conquer' in shipOrders:
                 # This is a change of ownership.
                 for baseName in shipOrders['conquer']:
                     print(player, "ship:", myShip, "conquer", baseName)
@@ -719,15 +723,25 @@ class gameserver:
 
             plid = cmd['plid']
             newShip = cmd['ship']
-            print("ship update:", newShip)
+            print("ship update:", newShip['name'], newShip)
             assert(self.game['state']['phase'] == "damageselection")
 
             # maybe findShip could return the index too?
-            # dataModel.findShip(self.game, newShip['name'])
-            for index, ship in enumerate(self.game['objects']['shipList']) :
+            # lookup = dataModel.findShip(self.game, newShip['name'])
+            for i, ship in enumerate(self.game['objects']['shipList']) :
                 if ship['name'] == newShip['name'] :
-                    self.game['objects']['shipList'][index] = newShip
+                    index = i
                     break
+
+            assert(index is not None)
+            if (newShip['damage'] > 0):
+                # the damage must have been more than the ship
+                # could take; therefore, destroy it.
+                print("ship:", newShip['name'], "Explodes!!")
+                del self.game['objects']['shipList'][index]
+            else:
+                # Replace existing ship
+                self.game['objects']['shipList'][index] = newShip
 
         elif cmdStr == 'savegame':
             # Write file ... who is responsible for game save?
