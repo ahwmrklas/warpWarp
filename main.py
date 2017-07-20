@@ -194,6 +194,12 @@ def buildShip(tkRoot, baseName):
 
 # PURPOSE:
 # RETURNS:
+def moveMenu(tkRoot, shipName):
+    print("moveMenu", shipName)
+    createMoveGraph(tkRoot, tkRoot.game, tkRoot.hexMap, shipName)
+
+# PURPOSE:
+# RETURNS:
 def refresh(tkRoot):
     print("refresh")
     if (tkRoot.hCon is not None):
@@ -328,30 +334,24 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         #TODO: enable the move right click stuff.
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'move'):
-        #we also need to determine if it is our turn to move
+        # is it our turn to move?
         player = playerTableGet(tkRoot.game, tkRoot.playerName)
-        if player['name'] == tkRoot.playerName:
-            if player['phase'] == "move":
-                phaseMenuObject.add_command(label="Ships you own:")
-                private = [tkRoot, "", tkRoot.hexMap, tkRoot.hexMap.getLeftPrivateCallBack(), tkRoot.playerName]
-                for ship in tkRoot.game['objects']['shipList']:
-                    if (ship['owner'] == tkRoot.playerName):
-                        if (ship['WG']['cur'] == True):
-                            labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
-                                                                         ship['moves']['cur'],
-                                                                         ship['PD']['cur'])
-                            private[1] = ship['name']
-                            moveCommand = menuMover(private,
-                                                    ship['location']['x'],
-                                                    ship['location']['y'],
-                                                    ship['moves']['cur'])
-                            phaseMenuObject.add_command(label=labelString, command=moveCommand)
-                phaseMenuObject.add_command(label="Ready",
-                                      command=lambda:sendReady(tkRoot))
-                #enable the move right click stuff.
-                setupMovement(tkRoot.hexMap, tkRoot)
-            else:
-                tkRoot.hexMap.setRightPrivateCallBack(None, None)
+        if player['phase'] == "move":
+            phaseMenuObject.add_command(label="Ships you own:")
+            for ship in tkRoot.game['objects']['shipList']:
+                if (ship['owner'] == tkRoot.playerName):
+                    if (ship['WG']['cur'] == True):
+                        labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
+                                                                     ship['moves']['cur'],
+                                                                     ship['PD']['cur'])
+                        phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']: moveMenu(tkRoot, name))
+
+            phaseMenuObject.add_command(label="Ready",
+                                  command=lambda:sendReady(tkRoot))
+            #enable the move right click stuff.
+            setupRightClickMoveMenu(tkRoot.hexMap, tkRoot)
+        else:
+            tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'combat'):
 
         # They make their choices and submit orders.

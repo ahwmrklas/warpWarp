@@ -12,36 +12,23 @@ from ijk import *
 from cmds import warpWarCmds
 import json
 
-class menuMover:
-    def __init__(self, private, x, y, shipMove):
-
-        # This only happened when server got corrupted
-        # but it was really annoying
-        if (shipMove < 0):
-            print("Error: move < zero:", shipMove)
-            shipMove = 0
-
-        self.private = private
-        self.hexGrid = private[2]
-        self.startX = x
-        self.startY = y
-
-        self.movement = shipMove
-
-    def __call__(self):
-        self.hexGrid.setLeftPrivateCallBack(moveOnClick, self.private)
-        startI, startJ, startK = XYtoIJK(self.startX, self.startY)
-        for i in range(-self.movement, self.movement + 1):
-            for j in range(-self.movement, self.movement + 1):
-                for k in range(-self.movement, self.movement + 1):
-                    if i+j+k==0:
-                        x,y = IJKtoXY(startI + i, startJ + j, startK + k)
-                        self.hexGrid.setBorders(x, y, 'Green')
+# PURPOSE:
+# RETURNS:
+def createMoveGraph(tkRoot, game, hexMap, shipName):
+    ship = findShip(game, shipName)
+    private = [tkRoot, shipName, tkRoot.hexMap.getLeftPrivateCallBack()]
+    hexMap.setLeftPrivateCallBack(moveOnClick, private)
+    startI, startJ, startK = XYtoIJK(ship['location']['x'], ship['location']['y'])
+    movesLeft = ship['moves']['cur']
+    for i in range(-movesLeft, movesLeft + 1):
+        for j in range(-movesLeft, movesLeft + 1):
+            for k in range(-movesLeft, movesLeft + 1):
+                if i+j+k==0:
+                    x,y = IJKtoXY(startI + i, startJ + j, startK + k)
+                    hexMap.setBorders(x, y, 'Green')
 
 #set the new onclick listener
-def setupMovement(hexGrid, tkRoot):
-    #set the on click listener
-    private = [tkRoot, "", hexGrid, hexGrid.getLeftPrivateCallBack(), tkRoot.playerName]
+def setupRightClickMoveMenu(hexMap, tkRoot):
 
     # create a menu
     def do_popup(private, pixel_X, pixel_Y, hex_x, hex_y):
@@ -55,12 +42,11 @@ def setupMovement(hexGrid, tkRoot):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
                                                                      ship['moves']['cur'],
                                                                      ship['PD']['cur'])
-                        private[1] = ship['name']
-                        moveCommand = menuMover(private,
-                                                ship['location']['x'],
-                                                ship['location']['y'],
-                                                ship['moves']['cur'])
-                        popup.add_command(label=labelString, command=moveCommand)
+                        popup.add_command(label=labelString,
+                                  command=lambda game=tkRoot.game,
+                                                 hexMap=tkRoot.hexMap,
+                                                 shipName=ship['name']:
+                                                 createMoveGraph(tkRoot, game, hexMap, shipName))
         try:
             #disable left click
             popup.post(pixel_X, pixel_Y)
@@ -68,49 +54,47 @@ def setupMovement(hexGrid, tkRoot):
             popup.grab_set()
             pass
 
-    #the true means we need the root pixel location
-    hexGrid.setRightPrivateCallBack(do_popup, private)
+    hexMap.setRightPrivateCallBack(do_popup, None)
 
 def moveOnClick(private, x, y):
     tkRoot = private[0]
     shipName = private[1]
-    hexGrid = private[2]
-    id = private[4]
+    original = private[2]
     #write the ship where it should be.
-    print("Left Click to Move")
-    for ship in tkRoot.game['objects']['shipList']:
-        if ship['name'] == shipName:
-            #can we move there?
-            moveLeft = ship['moves']['cur']
-            cur_x = ship['location']['x']
-            cur_y = ship['location']['y']
+    print("Left Click to Move", shipName)
+    ship = findShip(tkRoot.game, shipName)
 
-            si,sj,sk = XYtoIJK(x,y)
-            fi,fj,fk = XYtoIJK(cur_x,cur_y)
-            delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
-            if (delta <= moveLeft):
-                ship['location']['x'] = x
-                ship['location']['y'] = y
-                #find the ijk stuff for decrementing the right number of moves
-                ship['moves']['cur'] = ship['moves']['cur'] - delta
+    #can we move there?
+    moveLeft = ship['moves']['cur']
+    cur_x = ship['location']['x']
+    cur_y = ship['location']['y']
 
-                # Send the move command to the server
-                # We could also Queue up all the move commands
-                # and play them out to the server later.
-                # That would permit the user to change their
-                # mind about a move and cancel it before it is
-                # parmanent
-                if (tkRoot.hCon is not None):
-                    sendJson = warpWarCmds().moveShip(id, shipName, x, y)
-                    tkRoot.hCon.sendCmd(sendJson)
-                    resp = tkRoot.hCon.waitFor(5)
-                    tkRoot.game = json.loads(resp)
+    si,sj,sk = XYtoIJK(x,y)
+    fi,fj,fk = XYtoIJK(cur_x,cur_y)
+    delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+    if (delta <= moveLeft):
+        ship['location']['x'] = x
+        ship['location']['y'] = y
+        #find the ijk stuff for decrementing the right number of moves
+        ship['moves']['cur'] = ship['moves']['cur'] - delta
 
-                updateMap(tkRoot, hexGrid, tkRoot.game)
+        # Send the move command to the server
+        # We could also Queue up all the move commands
+        # and play them out to the server later.
+        # That would permit the user to change their
+        # mind about a move and cancel it before it is
+        # permanent
+        if (tkRoot.hCon is not None):
+            sendJson = warpWarCmds().moveShip(ship['owner'], shipName, x, y)
+            tkRoot.hCon.sendCmd(sendJson)
+            resp = tkRoot.hCon.waitFor(5)
+            tkRoot.game = json.loads(resp)
 
-                #replace the old call back
-                hexGrid.setLeftPrivateCallBack(private[3][0], private[3][1])
-                #send event
-                print ("sending event!")
-                tkRoot.event_generate("<<updateMenu>>", when='tail')
-                print ("sent event!")
+        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+
+        # Restore the old call back
+        tkRoot.hexMap.setLeftPrivateCallBack(original[0], original[1])
+        #send event
+        print ("sending event!")
+        tkRoot.event_generate("<<updateMenu>>", when='tail')
+        print ("sent event!")
