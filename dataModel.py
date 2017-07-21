@@ -262,6 +262,16 @@ def emptyGame():
                                 {'player':"bearda", 'percent':30},
                               ],
                 },
+                {'name':"Beta",
+                 'type': "star",
+                 'location': {'x':7, 'y':4},
+                 'image':"alpha.png",
+                 'owner':None,
+                 'BP': {'perturn':3, 'cur':10},
+                 'visibility':[ {'player':"ahw",  'percent':100},
+                                {'player':"bearda", 'percent':30},
+                              ],
+                },
             ],
             'thingList': [
                 {'name':"AncientRelic",
@@ -295,7 +305,7 @@ def emptyGame():
             ],
             'warpLineList': [
                 {'start': "Alpha", 'end': "Beta"},
-                {'start': "Beta",  'end': "Alpha"},
+                {'start': "Babylon_5",  'end': "Alpha"},
             ],
         },
         'history': [

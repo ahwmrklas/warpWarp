@@ -2,7 +2,7 @@ from hexgrid import *
 from tkinter import *
 from overlay import *
 from hexinfo import *
-from dataModel import getConflictList
+import dataModel
 
 # PURPOSE:
 # RETURNS: list of objects at x,y
@@ -45,7 +45,7 @@ def updateMap(tkRoot, hexMap, game):
     #draw red borders around all combat hexes. We will have to find the
     #combat list again, even though we already found it in update phase menu.
     if tkRoot.game['state']['phase'] == 'combat':
-        conflictList = getConflictList(tkRoot.game['objects'])
+        conflictList = dataModel.getConflictList(tkRoot.game['objects'])
         for conflict in conflictList:
             tkRoot.hexMap.setBorders(int(conflict[0]['location']['x']),
                     int(conflict[0]['location']['y']), 'Red')
@@ -56,12 +56,21 @@ def updateMap(tkRoot, hexMap, game):
     thingList = lists['thingList']
     shipList = lists['shipList']
     starBaseList = lists['starBaseList']
+    warpLineList = lists['warpLineList']
 
     # Break up the objectlists into a 2D array. I don't like this
     # but for the moment it works
     objArray = DrawArray(dim['width'], dim['height'], game['objects'])
 
     hexMap.drawObjects(objArray)
+
+    print("Sorry, the warpline list isn't right.")
+    for line in warpLineList:
+        base1 = dataModel.findBase(tkRoot.game, line['start'])
+        base2 = dataModel.findBase(tkRoot.game, line['end'])
+        if (base1 and base2):
+            hexMap.drawLine(base1['location']['x'], base1['location']['y'],
+                            base2['location']['x'], base2['location']['y'])
 
 # PURPOSE:
 # RETURNS: Nothing ... but a return might be useful

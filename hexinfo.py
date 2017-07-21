@@ -1,4 +1,4 @@
-# Pop up a dialog bog that displays all of the information about a particular
+# Pop up a dialog box that displays all of the information about a particular
 # location on the hex grid.
 # Must give the location (the x,y or some sort of class with all the
 # hex info?) And of course must give the info
