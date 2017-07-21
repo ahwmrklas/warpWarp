@@ -304,9 +304,7 @@ def figureStuffOut(game, orders, myShipName, myPower, myTactic, myDrive, myTarge
 # PURPOSE:
 # RETURNS:
 def resolveCombat(game, orders):
-    # FIXME:
-    # for now cycle through every ship in combat and give it
-    # some points of damage ... eh, just damage all ships :-)
+    # For testing
     #for ship in game['objects']['shipList']:
     #    ship['damage'] = 5
 
@@ -349,12 +347,18 @@ def resolveCombat(game, orders):
                 figureStuffOut(game, orders, myShip, myPower, myTactic, myDrive, myTarget)
 
             else:
+                # Need ship to deduct missiles
+                ship = dataModel.findShip(game, myShip)
+                assert(ship)
                 for missile in shipOrders['missiles']:
                     myPower  = 2
                     myTactic = 'ATTACK'
                     myDrive  = missile[1]
                     myTarget = missile[0]
-                    figureStuffOut(game, orders, myShip, myPower, myTactic, myDrive, myTarget)
+                    if (myDrive > 0):
+                        assert(ship['M']['cur'] > 0)
+                        ship['M']['cur'] -= 1
+                        figureStuffOut(game, orders, myShip, myPower, myTactic, myDrive, myTarget)
 
 # PURPOSE:
 # RETURNS:
