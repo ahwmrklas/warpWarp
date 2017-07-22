@@ -132,6 +132,21 @@ def findBase(game, baseName):
             return thing
     return None
 
+#If x,y is a hex with a warpline, return a list of x and ys for the other ends
+def getWarpLineEnd(game, x,y):
+
+    #if they go to one of these locations, it only costs one
+    warpEnds = []
+    for line in game['objects']['warpLineList']:
+        base1 = findBase(game, line['start'])
+        base2 = findBase(game, line['end'])
+        if (base1['location']['x'] == x and base1['location']['y'] == y):
+            warpEnds.append( [base2['location']['x'], base2['location']['y'] ])
+        if (base2['location']['x'] == x and base2['location']['y'] == y):
+            warpEnds.append( [base1['location']['x'], base1['location']['y'] ])
+
+    return warpEnds
+
 # PURPOSE: Return the player structure from the game
 # RETURNS: player table
 def playerTableGet(game, playerName):

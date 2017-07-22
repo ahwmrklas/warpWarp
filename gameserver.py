@@ -553,7 +553,7 @@ class gameserver:
             #owned by the right player
 
             #find the base in the game
-            base = findBase(self.game, baseName)
+            base = dataModel.findBase(self.game, baseName)
             if (base is not None):
                 #does the base have enough to pay for the ship?
                 if base['BP']['cur'] >= cost:
@@ -673,6 +673,12 @@ class gameserver:
             si,sj,sk = ijk.XYtoIJK(x, y)
             fi,fj,fk = ijk.XYtoIJK(ship['location']['x'], ship['location']['y'])
             delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+            
+            #the above only works if no warplines are involved
+            #if they go to one of these locations, it only costs one
+            warpEnds = dataModel.getWarpLineEnd(self.game, ship['location']['x'], ship['location']['y'])
+            if [x,y] in warpEnds:
+                delta = 1
 
             print("GServer:", " delta", delta, ship['location']['x'], ship['location']['y'],
                                    x, y)

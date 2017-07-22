@@ -16,8 +16,6 @@ import json
 # RETURNS:
 def createMoveGraph(tkRoot, game, hexMap, shipName):
     ship = findShip(game, shipName)
-    private = [tkRoot, shipName, tkRoot.hexMap.getLeftPrivateCallBack()]
-    hexMap.setLeftPrivateCallBack(moveOnClick, private)
     startI, startJ, startK = XYtoIJK(ship['location']['x'], ship['location']['y'])
     movesLeft = ship['moves']['cur']
     for i in range(-movesLeft, movesLeft + 1):
@@ -26,6 +24,13 @@ def createMoveGraph(tkRoot, game, hexMap, shipName):
                 if i+j+k==0:
                     x,y = IJKtoXY(startI + i, startJ + j, startK + k)
                     hexMap.setBorders(x, y, 'Green')
+
+    #if they go to one of these locations, it only costs one
+    warpEnds = getWarpLineEnd(game, ship['location']['x'], ship['location']['y'])
+    for warpEnd in warpEnds:
+            hexMap.setBorders(warpEnd[0], warpEnd[1], 'Yellow')
+    private = [tkRoot, shipName, tkRoot.hexMap.getLeftPrivateCallBack(), warpEnds]
+    hexMap.setLeftPrivateCallBack(moveOnClick, private)
 
 #set the new onclick listener
 def setupRightClickMoveMenu(hexMap, tkRoot):
@@ -60,6 +65,7 @@ def moveOnClick(private, x, y):
     tkRoot = private[0]
     shipName = private[1]
     original = private[2]
+    warpEnds = private[3]
     #write the ship where it should be.
     print("Left Click to Move", shipName)
     ship = findShip(tkRoot.game, shipName)
@@ -72,6 +78,8 @@ def moveOnClick(private, x, y):
     si,sj,sk = XYtoIJK(x,y)
     fi,fj,fk = XYtoIJK(cur_x,cur_y)
     delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+    if [x,y] in warpEnds:
+        delta = 1
     if (delta <= moveLeft):
         ship['location']['x'] = x
         ship['location']['y'] = y
