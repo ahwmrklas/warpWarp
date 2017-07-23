@@ -50,10 +50,7 @@ def connectServer(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -71,28 +68,14 @@ def newGame(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        # not the right place to update.
-        # Send message? And that updates?
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], "nil")
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
-def sendReady(tkRoot):
-    print("readyMenu")
-    if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ready(tkRoot.playerName, tkRoot.playerName)
-        print(" main sending: ", sendJson)
-        tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-
-        # not the right place to update.
-        # Send message? And that updates?
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+def sendReadyMenu(tkRoot):
+    print("sendReadyMenu")
+    tkRoot.event_generate("<<sendReady>>", when='tail')
+    tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -141,12 +124,7 @@ def sendCombatReady(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        # not the right place to update.
-        # Send message? And that updates?
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -163,12 +141,7 @@ def damageAllocationMenu(tkRoot, shipName):
             resp = tkRoot.hCon.waitFor(5)
             tkRoot.game = json.loads(resp)
 
-        # not the right place to update.
-        # Send message? And that updates?
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -185,12 +158,7 @@ def buildShip(tkRoot, baseName):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        # not the right place to update.
-        # Send message? And that updates?
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -208,10 +176,7 @@ def refresh(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-        assert(pt)
-        phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-        updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -252,10 +217,7 @@ def loadGame(tkRoot):
     resp = tkRoot.hCon.waitFor(5)
     tkRoot.game = json.loads(resp)
 
-    pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-    assert(pt)
-    phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
-    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+    tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # I don't like these. They don't seem very objecty
 def saveGame(game):
@@ -278,11 +240,33 @@ def aboutHelp():
 def helpHelp():
     print("helpHelp")
 
-def updateMenu(tkRoot):
-    #for the moment, we just call phasemenu
+# PURPOSE:
+# RETURNS:
+def sendReady(event, tkRoot):
+    print("sendReady:", event)
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().ready(tkRoot.playerName, tkRoot.playerName)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+# PURPOSE:
+# RETURNS:
+def updateWWMenu(event, tkRoot):
+    print("updateWWMenu:", event)
+
     pt = playerTableGet(tkRoot.game, tkRoot.playerName)
-    assert(pt)
-    phaseMenu(tkRoot, tkRoot.game['state']['phase'], pt['phase'])
+    playerPhase = None
+    if (pt):
+        playerPhase = pt['phase']
+
+    gamePhase = None
+    if (tkRoot.game):
+        gamePhase = tkRoot.game['state']['phase']
+
+    phaseMenu(tkRoot, gamePhase, playerPhase)
+    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
 
 # PURPOSE: Delete previous and set new, phase menu
 # RETURNS: none
@@ -301,6 +285,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # Player is waiting on opponent. All they can do is refresh.
         phaseMenuObject.add_command(label="WAITING on opponent")
     elif (gamePhase == 'nil'):
+        gamePhase = ""
         phaseMenuObject.add_command(label="New",
                               command=lambda:newGame(tkRoot))
         phaseMenuObject.add_command(label="Open",
@@ -308,7 +293,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'creating'):
         phaseMenuObject.add_command(label="Ready",
-                              command=lambda:sendReady(tkRoot))
+                              command=lambda:sendReadyMenu(tkRoot))
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'build'):
         phaseMenuObject.add_command(label="Bases you own:")
@@ -330,7 +315,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                                             command=lambda name=base['name']:buildShip(tkRoot, name))
 
         phaseMenuObject.add_command(label="Ready",
-                              command=lambda:sendReady(tkRoot))
+                              command=lambda:sendReadyMenu(tkRoot))
         #TODO: enable the move right click stuff.
         tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'move'):
@@ -347,7 +332,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']: moveMenu(tkRoot, name))
 
             phaseMenuObject.add_command(label="Ready",
-                                  command=lambda:sendReady(tkRoot))
+                                  command=lambda:sendReadyMenu(tkRoot))
             #enable the move right click stuff.
             setupRightClickMoveMenu(tkRoot.hexMap, tkRoot)
         else:
@@ -382,7 +367,10 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # If the conflict list is *empty* then there is no point in a combat
         # phase. Automatically move on.
         if (not conflictList):
-            print("conflicts are empty. do a send event later")
+            print("conflicts are empty. send the ready command and redo menus")
+            tkRoot.event_generate("<<sendReady>>", when='tail')
+            tkRoot.event_generate("<<updateWWMenu>>", when='tail')
+            print("conflicts are empty. post send event")
 
         # I want to display each battle location in the phase menu and
         # highlight the location in red. Like red outline the hex
@@ -437,7 +425,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                     phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
 
         phaseMenuObject.add_command(label="Ready",
-                                      command=lambda:sendReady(tkRoot))
+                                      command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'victory'):
         gamePhase = "Game Over. You are a " + playerPhase
     else:
@@ -450,10 +438,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     phaseMenuObject.add_command(label="Refresh", command=lambda:refresh(tkRoot))
 
     menuBar.add_cascade(label="Phase " + gamePhase, menu=phaseMenuObject)
-
-    #bind event
-    tkRoot.bind("<<updateMenu>>", 
-            lambda event, gamePhase=gamePhase, playerPhase=playerPhase :phaseMenu(tkRoot, gamePhase, playerPhase))
 
 # PURPOSE: Create menu GUI elements
 # RETURNS: none
@@ -483,7 +467,7 @@ def addMenus(tkRoot):
     menuBar.add_cascade(label="Help", menu=helpMenu)
 
     tkRoot.config(menu=menuBar)
-    phaseMenu(tkRoot, None, None)
+    tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE: Just make a function out of the main code. It doesn't
 #          seem right without that.
@@ -498,6 +482,8 @@ def main():
     tkRoot.game = None
     tkRoot.playerName = getpass.getuser()
     tkRoot.battleOrders = {}
+    tkRoot.bind("<<updateWWMenu>>", lambda event :updateWWMenu(event, tkRoot))
+    tkRoot.bind("<<sendReady>>", lambda event :sendReady(event, tkRoot))
 
 
     # menu bar

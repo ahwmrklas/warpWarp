@@ -151,7 +151,9 @@ def getWarpLineEnd(game, x,y):
 # PURPOSE: Return the player structure from the game
 # RETURNS: player table
 def playerTableGet(game, playerName):
-    assert(game and playerName)
+    if (not game):
+        return None
+
     for player in game['playerList'] :
         if (player['name'] == playerName):
             return player
