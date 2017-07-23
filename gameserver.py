@@ -378,39 +378,36 @@ def harvest(game):
 def checkForVictory(game):
     # Lots of things could cause you to win
     # (We could even make the victory algorithm selectable?)
-    # For now just the person with the largest owned build points
-    # over a given threshold
+    # for now we use the simplest method. If a player owns no bases, they lose.
 
     # reset victory points to zero
     players = {}
     for player in game['playerList']:
         players[player['name']] = 0
 
-    for thing in game['objects']['starList']:
-        if (thing['owner']):
-            players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
-        print("star: name:", thing['name'], " owner:",thing['owner'])
     for thing in game['objects']['starBaseList']:
         if (thing['owner']):
-            players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
+            players[thing['owner']] = players[thing['owner']] + 1
         print("base: name:", thing['name'], " owner:",thing['owner'])
-    for thing in game['objects']['thingList']:
-        if (thing['owner']):
-            players[thing['owner']] = players[thing['owner']] + thing['BP']['cur']
-        print("thing: name:", thing['name'], " owner:",thing['owner'])
 
-    # Check everyones victory points. Did anyone win?
-    highest = 0
-    for name, score in players.items():
-        print("name:", name, " score:", score)
-        if (score > highest):
-            highest = score
-            winner = name
+    #does only one player have a base?
+    noBasesFound = 1
+    possibleWinner = ""
+    for name, bases in players.items():
+        if bases:
+            if noBasesFound:
+                noBasesFound = 0 #we found a base!
+                possibleWinner = name
+            else:
+                return None #multiple people have a base. We are still in this!
 
-    if (highest > 30):
-        return winner
-
-    return None
+    #if we get here, only one player has a base!
+    #maybe.
+    if noBasesFound:
+        #NO ONE HAS A BASE? panic.
+        return "No one"
+    else:
+        return possibleWinner
 
 
 # class to handle game commands
