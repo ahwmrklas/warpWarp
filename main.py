@@ -377,7 +377,12 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # We need a list of each thing involved in combat at each location
         # (So an array of locations each with a list of "things" involved)
         conflictList = getConflictList(tkRoot.game['objects'])
-        print(conflictList)
+        print("conflicts:", conflictList)
+
+        # If the conflict list is *empty* then there is no point in a combat
+        # phase. Automatically move on.
+        if (not conflictList):
+            print("conflicts are empty. do a send event later")
 
         # I want to display each battle location in the phase menu and
         # highlight the location in red. Like red outline the hex

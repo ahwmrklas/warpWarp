@@ -64,7 +64,6 @@ def updateMap(tkRoot, hexMap, game):
 
     hexMap.drawObjects(objArray)
 
-    print("Sorry, the warpline list isn't right.")
     for line in warpLineList:
         base1 = dataModel.findBase(tkRoot.game, line['start'])
         base2 = dataModel.findBase(tkRoot.game, line['end'])
