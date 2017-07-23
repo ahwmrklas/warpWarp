@@ -140,6 +140,7 @@ def getWarpLineEnd(game, x,y):
     for line in game['objects']['warpLineList']:
         base1 = findBase(game, line['start'])
         base2 = findBase(game, line['end'])
+        assert(base1 and base2)
         if (base1['location']['x'] == x and base1['location']['y'] == y):
             warpEnds.append( [base2['location']['x'], base2['location']['y'] ])
         if (base2['location']['x'] == x and base2['location']['y'] == y):
