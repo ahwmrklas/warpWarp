@@ -71,21 +71,6 @@ def changeAllPlayerPhase(game, start, finish):
     return True
 
 # PURPOSE:
-# RETURNS: string representation of given order
-def prettyOrders(order):
-    tactic = order['tactic'][0]
-    drive  = order['tactic'][1]
-    beamTarget  = order['beams'][0]
-    beamPower   = order['beams'][1]
-    screenPower = order['screens']
-    pretty = "%s: D=%d, B=(%d, %s), S=%d" % (tactic, drive, beamPower, beamTarget, screenPower)
-    missiles = ""
-    for missile in order['missiles']:
-        missiles += "\nT=(%d, %s)" % (missile[1], missile[0])
-
-    return pretty + missiles
-
-# PURPOSE:
 # RETURNS:
 def combatChartLookup(myTactic, myDrive, targetTactic, targetDrive):
     combatChart = {
@@ -234,7 +219,7 @@ def figureStuffOut(game, orders, myShipName, myPower, myTactic, myDrive, myTarge
 
     targetShipOrders = findTargetShipOrders(myTarget, orders)
     if (targetShipOrders):
-        pretty = prettyOrders(targetShipOrders)
+        pretty = dataModel.prettyOrders(targetShipOrders)
         print("targetship:", myTarget, "order:", pretty)
         targetTactic     = targetShipOrders['tactic'][0]
         targetDrive      = targetShipOrders['tactic'][1]
@@ -336,7 +321,7 @@ def resolveCombat(game, orders):
                     base = dataModel.findBase(game, baseName)
                     base['owner'] = player
                 continue
-            pretty = prettyOrders(shipOrders)
+            pretty = dataModel.prettyOrders(shipOrders)
             print(player, "ship:", myShip, "order:", pretty)
             myPower  = shipOrders['beams'][1]
             if (myPower > 0):

@@ -248,6 +248,25 @@ def organizeConflict(conflict):
 
     return conflictDict, nonShipList
 
+# PURPOSE: These are combat orders ... which really isn't the game
+#          representation. But I wanted this in more than one module
+# RETURNS: string representation of given order
+def prettyOrders(order):
+    if not order:
+        return ""
+
+    tactic = order['tactic'][0]
+    drive  = order['tactic'][1]
+    beamTarget  = order['beams'][0]
+    beamPower   = order['beams'][1]
+    screenPower = order['screens']
+    pretty = "%s: D=%d, B=(%d, %s), S=%d" % (tactic, drive, beamPower, beamTarget, screenPower)
+    missiles = ""
+    for missile in order['missiles']:
+        missiles += "\nT=(%d, %s)" % (missile[1], missile[0])
+
+    return pretty + missiles
+
 # PURPOSE: create and return an empty game
 #    FIXME TODO
 #    I don't think this actually insantiates a new object.

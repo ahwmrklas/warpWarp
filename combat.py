@@ -6,6 +6,7 @@
 
 import tkinter as tk
 from tkinter.simpledialog import *
+import dataModel
 
 class combat(Dialog):
 
@@ -158,7 +159,6 @@ class combat(Dialog):
         for ship in enemyList:
             targetList.append(ship["name"])
 
-        targetVar.set("target")
         target = OptionMenu(shipFrame, targetVar, *targetList if targetList else "<NoEnemies>")
 
         return target
@@ -221,14 +221,14 @@ class combat(Dialog):
 
     # PURPOSE:
     # RETURNS:
-    def singleShip(self, base, ship, enemyList):
-        if not ship:
-            return
+    def singleShip(self, frame, ship, enemyList, initialOrders):
+        assert(ship)
 
         self.ship = ship
-        print(self.ship)
+        print("singleShip:", self.ship['name'], self.ship)
+        print("initOrders:", dataModel.prettyOrders(initialOrders))
 
-        shipFrame = LabelFrame(base,
+        shipFrame = LabelFrame(frame,
                                text=ship['name'],
                                bg="orange", bd=1, relief="sunken")
         shipFrame.pack(fill=BOTH, expand=1)
@@ -250,8 +250,13 @@ class combat(Dialog):
                                  bg="blue", bd=1, relief="sunken")
         self.powerFrame.pack(fill=BOTH, expand=1)
 
+        if (initialOrders):
+            initMove = initialOrders['tactic'][1]
+        else:
+            initMove = 0
+
         self.moveVar = IntVar(self.powerFrame)
-        self.moveVar.set(0)
+        self.moveVar.set(initMove)
         tmp = Label(self.powerFrame, text="Move")
         tmp.grid(row=2, column=0, sticky="W")
         self.Move = Spinbox(self.powerFrame, width=3,
@@ -261,8 +266,13 @@ class combat(Dialog):
                       )
         self.Move.grid(row=2, column=1)
 
+        if (initialOrders):
+            initTactic = initialOrders['tactic'][0]
+        else:
+            initTactic = "tactic"
+
         self.tacticVar = StringVar(self.powerFrame)
-        self.tacticVar.set("tactic")
+        self.tacticVar.set(initTactic)
         tacticList = ["ATTACK", "DODGE", "RETREAT"]
         tactic = OptionMenu(self.powerFrame, self.tacticVar, *tacticList)
         tactic.grid(row=2, column=2)
@@ -272,8 +282,14 @@ class combat(Dialog):
                                  bg="blue", bd=1, relief="sunken")
 
         self.energyFrame.pack(fill=BOTH, expand=1)
+
+        if (initialOrders):
+            initBeam = initialOrders['beams'][1]
+        else:
+            initBeam = 0
+
         self.beamVar = IntVar(self.energyFrame)
-        self.beamVar.set(0)
+        self.beamVar.set(initBeam)
         CurB = ship['B']['cur']
         text = "Beams:" + str(CurB) + " of " + str(ship['B']['max'])
         tmp = Label(self.energyFrame, text=text)
@@ -285,12 +301,24 @@ class combat(Dialog):
                             )
         self.Beams.grid(row=3, column=1)
 
+        if (initialOrders):
+            initTarget = initialOrders['beams'][0]
+        else:
+            initTarget = "target"
+
         self.beamTargetVar = StringVar(self.energyFrame)
-        target = self.createTargetList(self.energyFrame, enemyList, self.beamTargetVar)
+        self.beamTargetVar.set(initTarget)
+        target = self.createTargetList(self.energyFrame, enemyList,
+                                       self.beamTargetVar)
         target.grid(row=3, column=2)
 
+        if (initialOrders):
+            initScreen = initialOrders['screens']
+        else:
+            initScreen = 0
+
         self.screenVar = IntVar(self.energyFrame)
-        self.screenVar.set(0)
+        self.screenVar.set(initScreen)
         CurS = ship['S']['cur']
         text = "Screens:" + str(CurS) + " of " + str(ship['S']['max'])
         tmp = Label(self.energyFrame, text=text)
@@ -321,13 +349,25 @@ class combat(Dialog):
             tmp.grid(row=i, column=0, sticky="W")
             self.Tubes[i].label = tmp
 
+            if (initialOrders):
+                initDrive = initialOrders['missiles'][i][1]
+            else:
+                initDrive = 0
+
             tmp = IntVar(self.missleFrame)
-            tmp.set(0)
+            tmp.set(initDrive)
             tmp.trace("w", self.allUpdate)
             self.Tubes[i].var = tmp
 
+            if (initialOrders):
+                initTarget = initialOrders['missiles'][i][0]
+            else:
+                initTarget = "target"
+
             self.Tubes[i].targetVar = StringVar(self.missleFrame)
-            tmp = self.createTargetList(self.missleFrame, enemyList, self.Tubes[i].targetVar)
+            self.Tubes[i].targetVar.set(initTarget)
+            tmp = self.createTargetList(self.missleFrame, enemyList,
+                                        self.Tubes[i].targetVar)
             tmp.grid(row=i, column=2)
             self.Tubes[i].target = tmp
 
@@ -355,6 +395,9 @@ class combat(Dialog):
 
         master.pack(fill=BOTH, expand=1)
 
+        # Start with the first ship
+        ship = self.friendlyList[0]
+
         panes = tk.PanedWindow(master, orient="horizontal")
         panes.pack(fill=BOTH, expand=1)
         #panes.grid_rowconfigure(0, weight = 1)
@@ -362,6 +405,10 @@ class combat(Dialog):
 
         self.leftFrame = Frame(panes, bg="green", bd=1, relief="sunken")
         self.leftFrame.pack(expand=1, fill=BOTH)
+
+        # This rightFrame seems pointless now.
+        # Think I had envisioned friendly ships on the left
+        # and potential enemy targets on the right.
 
         rightFrame = Frame(panes, bg="red", bd=1, relief="sunken")
         rightFrame.pack(expand=1, fill=BOTH)
@@ -374,24 +421,26 @@ class combat(Dialog):
         #panes.paneconfigure(self.leftFrame)
         
 
-        redbutton = Button(rightFrame, text="Give order", fg="red", command = self.giveOrder)
+        redbutton = Button(rightFrame, text="red", fg="red")
         redbutton.pack(expand=True, fill=BOTH)
 
         self.shipSelectVar = StringVar(self.leftFrame)
         self.shipSelect = OptionMenu(self.leftFrame, self.shipSelectVar, 
                 *[friendly['name'] for friendly in self.friendlyList],
                 command=self.shipChange)
-        self.shipSelectVar.set(self.friendlyList[0]['name'])
+        self.shipSelectVar.set(ship['name'])
         self.shipSelect.pack(expand=True, fill=BOTH)
 
         self.shipFrame = Frame(self.leftFrame, bg="green")
         self.shipFrame.pack(expand=1, fill=BOTH)
-        self.singleShip(self.shipFrame, self.friendlyList[0], self.enemyList)
+        self.singleShip(self.shipFrame, ship, self.enemyList,
+                        self.combatOrders[ship['name']])
 
         return self.leftFrame # initial focus
 
     def shipChange(self, name):
         print ("this is a stupid function, and the ship name is %s" % name)
+        self.giveOrder()
         #we need to shake off self.shipFram
         self.shipFrame.destroy()
         self.shipFrame = Frame(self.leftFrame, bg="green")
@@ -399,24 +448,70 @@ class combat(Dialog):
         #find our ship!
         for ship in self.friendlyList:
             if ship['name'] == name:
-                self.singleShip(self.shipFrame, ship, self.enemyList)
+                self.singleShip(self.shipFrame, ship, self.enemyList,
+                                self.combatOrders[name])
                 break
 
     def giveOrder(self):
 
         #lets print out all the energy we are using!
+        print("giveOrder for:", self.ship['name'])
         self.combatOrders[self.ship['name']] =   {
-                        'ship'    : self.ship['name'], #TODO make this work for more than one ship
+                        'ship'    : self.ship['name'],
                         'tactic'  : [self.tacticVar.get(), self.moveVar.get()],
-                        'beams'   : [self.beamTargetVar.get(),self.beamVar.get()],
+                        'beams'   : [self.beamTargetVar.get(),
+                                     self.beamVar.get()],
                         'screens' : self.screenVar.get(),
                         'missiles' : [ [self.Tubes[i].targetVar.get(), self.Tubes[i].var.get()] for i in range(len(self.Tubes)) ]
                 }
 
-        print (self.combatOrders)
+        for name, order in self.combatOrders.items():
+            print(name, "order:", dataModel.prettyOrders(order))
+
+    # PURPOSE:
+    # RETURNS:
+    def ok(self, event=None):
+        print("myOK")
+        self.giveOrder()
+        super().ok(event)
+
+    # PURPOSE:
+    #   Did they  give complete orders for every friendly ship?
+    # RETURNS: True if valid orders given
+    def validate(self):
+        print("validate")
+
+        # MUST:
+        for shipName, order in self.combatOrders.items():
+            print(shipName, "order:", dataModel.prettyOrders(order))
+            # MUST have orders for every ship
+            if (not order):
+                print(shipName, "Has no orders")
+                return False
+            # MUST select an overall tactic for each ship
+            if (order['tactic'][0] == 'tactic'):
+                print(shipName, "Has no tactic")
+                return False
+            # MUST specify a target if using beams
+            if (order['beams'][1] > 0):
+                if (order['beams'][0] == 'target'):
+                    print(shipName, "Using Beams with no target")
+                    return False
+            # MUST specify a target if using a missile
+            for missile in order['missiles']:
+                if (missile[1] > 0):
+                    if (missile[0] == 'target'):
+                        print(shipName, "Using Missile with no target")
+                        return False
+
+        # WARNING:
+        # Did they spend all their PD?
+        # Did they pick any target?
+
+        return True
 
     # PURPOSE:
     # RETURNS:
     def apply(self):
+        self.giveOrder()
         print("nothing to apply")
-
