@@ -490,7 +490,7 @@ def main():
     addMenus(tkRoot)
 
     tkRoot.mapFrame = Frame(tkRoot)
-    tkRoot.hexMap = initMap(tkRoot, 10, 10)
+    tkRoot.hexMap = initMap(tkRoot, 21, 15)
     tkRoot.mapFrame.pack()
 
     tkRoot.buttonFrame = Frame(tkRoot)

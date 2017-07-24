@@ -72,7 +72,7 @@ class comThrd(threading.Thread):
             s = socket.socket()
             s.connect((self.ip, self.port))
             s.send(msg.encode())
-            cmd = s.recv(4096)
+            cmd = s.recv(8192)
             jsonStr = cmd.decode()
             # print("client received (", len(jsonStr), "):\n")
             # print(jsonStr)
