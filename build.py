@@ -162,7 +162,7 @@ class build(Dialog):
              'name': self.shipNameEntry.get(),
              'type': "ship",
              'location': {'x':self.base['location']['x'], 'y':self.base['location']['y']},
-             'image':"warpship.png",
+             'image':"ship1.png",
              'owner': self.base['owner'],
              'techLevel': 1,
              'damage': 0,
