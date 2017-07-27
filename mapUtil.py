@@ -28,7 +28,7 @@ def initMap(tkRoot, width, height):
     hexMap.grid(row=0, column=0, padx=10, pady=10)
 
     # display the whole hexMap.
-    hexMap.drawGrid('blue')
+    hexMap.drawGrid('white')
 
     return hexMap
 
@@ -39,7 +39,7 @@ def updateMap(tkRoot, hexMap, game):
     if (game is None):
         return
 
-    hexMap.drawGrid('blue')
+    hexMap.drawGrid('white')
 
     #super annoying bit of complexity here. if we are in combat, we need to 
     #draw red borders around all combat hexes. We will have to find the
