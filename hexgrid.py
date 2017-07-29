@@ -147,7 +147,6 @@ class HexagonalGrid(HexaCanvas):
     # PURPOSE: Draw line from then center of one cell to another
     # RETURNS: None
     def drawLine(self, xStart, yStart, xEnd, yEnd):
-        print("drawLine(", xStart, yStart, xEnd, yEnd, ")")
         startpix_x, startpix_y = self.findPixel(xStart, yStart)
         endpix_x,   endpix_y   = self.findPixel(xEnd,   yEnd)
         self.create_line((startpix_x, startpix_y), (endpix_x, endpix_y), fill="Yellow", width=2)

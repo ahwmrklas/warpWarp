@@ -266,7 +266,7 @@ def updateWWMenu(event, tkRoot):
         gamePhase = tkRoot.game['state']['phase']
 
     phaseMenu(tkRoot, gamePhase, playerPhase)
-    updateMap(tkRoot, tkRoot.game)
+    tkRoot.hexMap.updateMap(tkRoot.game)
 
 # PURPOSE: Delete previous and set new, phase menu
 # RETURNS: none
@@ -278,6 +278,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     menuBar = tkRoot.nametowidget(menuBar)
     if (len(menuBar.children.items()) > 2):
         menuBar.delete(3)
+
+    tkRoot.hexMap.unHiliteMap()
 
     phaseMenuObject = Menu(menuBar)
 
@@ -310,6 +312,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         star['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
                                             command=lambda name=star['name']:buildShip(tkRoot, name))
+                tkRoot.hexMap.hiliteMap(star['location']['x'], star['location']['y'], 'Blue', None)
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 print (base['owner'])
@@ -318,6 +321,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
                                             command=lambda name=base['name']:buildShip(tkRoot, name))
+                tkRoot.hexMap.hiliteMap(base['location']['x'], base['location']['y'], 'Blue', None)
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
@@ -398,6 +402,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 if key != tkRoot.playerName:
                     for ship in conflictDict[key]:
                         enemyShips.append(ship)
+
+            tkRoot.hexMap.hiliteMap(int(conflict[0]['location']['x']), int(conflict[0]['location']['y']), 'Red', None)
 
             if enemyShips:
                 labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
@@ -493,7 +499,7 @@ def main():
     addMenus(tkRoot)
 
     tkRoot.mapFrame = Frame(tkRoot)
-    tkRoot.hexMap = initMap(tkRoot, 10, 10)
+    tkRoot.hexMap = hexMap(tkRoot, 10, 10)
     tkRoot.mapFrame.pack()
 
     tkRoot.buttonFrame = Frame(tkRoot)
@@ -511,7 +517,7 @@ def main():
 
     tkRoot.buttonFrame.pack()
     
-    updateMap(tkRoot, tkRoot.game)
+    tkRoot.hexMap.updateMap(tkRoot.game)
 
 
     # at the moment this does nothing valuable

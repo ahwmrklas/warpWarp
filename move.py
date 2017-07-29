@@ -98,7 +98,7 @@ def moveOnClick(private, x, y):
             resp = tkRoot.hCon.waitFor(5)
             tkRoot.game = json.loads(resp)
 
-        updateMap(tkRoot, tkRoot.game)
+        tkRoot.hexMap.updateMap(tkRoot.game)
 
         # Restore the old call back
         tkRoot.hexMap.setLeftPrivateCallBack(original[0], original[1])

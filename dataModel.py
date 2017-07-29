@@ -132,6 +132,15 @@ def findBase(game, baseName):
             return thing
     return None
 
+# PURPOSE:
+# RETURNS: list of objects at x,y
+def findObjectsAt(objList, x, y):
+    retList = []
+    for obj in objList:
+        if ( x == obj['location']['x'] and y == obj['location']['y']):
+           retList.append(obj)
+    return retList
+
 #If x,y is a hex with a warpline, return a list of x and ys for the other ends
 def getWarpLineEnd(game, x,y):
 

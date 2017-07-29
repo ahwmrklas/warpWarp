@@ -4,92 +4,104 @@ from overlay import *
 from hexinfo import *
 import dataModel
 
-# PURPOSE:
-# RETURNS: list of objects at x,y
-def findObjectsAt(objList, x, y):
-    retList = []
-    for obj in objList:
-        if ( x == obj['location']['x'] and y == obj['location']['y']):
-           retList.append(obj)
-    return retList
 
+class hexMap(HexagonalGrid):
+    def __init__(self, tkRoot, width, height):
+        self.hiliteList = []
+        self.anchorFrame = tkRoot.mapFrame
+        self.callbackData = tkRoot
 
-# PURPOSE:
-# RETURNS: hexMap handle
-def initMap(tkRoot, width, height):
+        self.initMap(width, height)
 
-    # create a hex map that is the basis of our game display
-    hexMap = HexagonalGrid(tkRoot.mapFrame, scale = 20, grid_width=width,
-                           grid_height=height)
+    # PURPOSE:
+    # RETURNS: hexMap handle
+    def initMap(self, width, height):
 
-    hexMap.setLeftPrivateCallBack(clickHex, tkRoot)
+        # create a hex map that is the basis of our game display
+        HexagonalGrid.__init__(self, master = self.anchorFrame, scale = 20,
+                               grid_width=width,
+                               grid_height=height)
 
-    # Locate the hexmap on the tkinter "grid"
-    hexMap.grid(row=0, column=0, padx=10, pady=10)
+        self.setLeftPrivateCallBack(self.clickHex, self.callbackData)
 
-    # display the whole hexMap.
-    hexMap.drawGrid('white')
+        # Locate the hexmap on the tkinter "grid"
+        self.grid(row=0, column=0, padx=10, pady=10)
 
-    return hexMap
+    # PURPOSE: Add a highlight color to given location
+    # A color of "None" erases any hilite for that location
+    # RETURN: none
+    def hiliteMap(self, x, y, color, callback):
+        print("HLMap", x,y,color)
+        self.hiliteList.append((x,y,color,callback))
 
-# PURPOSE:
-# RETURN: none
-def updateMap(tkRoot, game):
+    # PURPOSE: Erase all hiliting
+    # RETURN: none
+    def unHiliteMap(self):
+        self.hiliteList = []
 
-    if (game is None):
-        return
+    # PURPOSE: 
+    # RETURN: none
+    def resizeMap(self, width, height):
+        # don't resize if it is already the same size?
+        #if ((width != self.grid_width) or
+        #    (height != self.grid_height)):
+        self.initMap(width, height)
+        self.unHiliteMap()
 
-    if ((game['map']['width'] != tkRoot.hexMap.grid_width) or
-        (game['map']['height'] != tkRoot.hexMap.grid_height)):
-        tkRoot.hexMap = initMap(tkRoot, game['map']['width'], game['map']['height'])
+    # PURPOSE:
+    # RETURN: none
+    def updateMap(self, game):
+    
+        if (game is None):
+            return
+    
+        if ((game['map']['width'] != self.grid_width) or
+            (game['map']['height'] != self.grid_height)):
+            self.resizeMap(game['map']['width'], game['map']['height'])
+    
+        self.drawGrid('white')
+    
+        # Draw a pretty colored hilight around all the special hexes
+        for hilite in self.hiliteList:
+            print("hilight", hilite)
+            self.setBorders(hilite[0], hilite[1], hilite[2])
+    
+        dim = game['map']
+        lists = game['objects']
+        starList = lists['starList']
+        thingList = lists['thingList']
+        shipList = lists['shipList']
+        starBaseList = lists['starBaseList']
+        warpLineList = lists['warpLineList']
+    
+        # Break up the objectlists into a 2D array. I don't like this
+        # but for the moment it works
+        objArray = DrawArray(dim['width'], dim['height'], game['objects'])
+    
+        self.drawObjects(objArray)
+    
+        for line in warpLineList:
+            base1 = dataModel.findBase(game, line['start'])
+            base2 = dataModel.findBase(game, line['end'])
+            if (base1 and base2):
+                self.drawLine(base1['location']['x'], base1['location']['y'],
+                                base2['location']['x'], base2['location']['y'])
 
-    tkRoot.hexMap.drawGrid('white')
+    # PURPOSE:
+    # RETURNS: Nothing ... but a return might be useful
+    def clickHex(self, tkRoot, x, y):
+        print("Clicked on ", x, y, " Display info about hex")
 
-    #super annoying bit of complexity here. if we are in combat, we need to 
-    #draw red borders around all combat hexes. We will have to find the
-    #combat list again, even though we already found it in update phase menu.
-    if tkRoot.game['state']['phase'] == 'combat':
-        conflictList = dataModel.getConflictList(tkRoot.game['objects'])
-        for conflict in conflictList:
-            tkRoot.hexMap.setBorders(int(conflict[0]['location']['x']),
-                    int(conflict[0]['location']['y']), 'Red')
+        # Find all of the things located at x,y
+        lists = tkRoot.game['objects']
+        starList = lists['starList']
+        starBaseList = lists['starBaseList']
+        thingList = lists['thingList']
+        shipList = lists['shipList']
+        xyList = []
+        xyList.extend(dataModel.findObjectsAt(starList, x, y))
+        xyList.extend(dataModel.findObjectsAt(thingList, x, y))
+        xyList.extend(dataModel.findObjectsAt(shipList, x, y))
+        xyList.extend(dataModel.findObjectsAt(starBaseList, x, y))
 
-    dim = game['map']
-    lists = game['objects']
-    starList = lists['starList']
-    thingList = lists['thingList']
-    shipList = lists['shipList']
-    starBaseList = lists['starBaseList']
-    warpLineList = lists['warpLineList']
-
-    # Break up the objectlists into a 2D array. I don't like this
-    # but for the moment it works
-    objArray = DrawArray(dim['width'], dim['height'], game['objects'])
-
-    tkRoot.hexMap.drawObjects(objArray)
-
-    for line in warpLineList:
-        base1 = dataModel.findBase(tkRoot.game, line['start'])
-        base2 = dataModel.findBase(tkRoot.game, line['end'])
-        if (base1 and base2):
-            tkRoot.hexMap.drawLine(base1['location']['x'], base1['location']['y'],
-                            base2['location']['x'], base2['location']['y'])
-
-# PURPOSE:
-# RETURNS: Nothing ... but a return might be useful
-def clickHex(tkRoot, x, y):
-    print("Clicked on ", x, y, " Display info about hex")
-
-    # Find all of the things located at x,y
-    lists = tkRoot.game['objects']
-    starList = lists['starList']
-    starBaseList = lists['starBaseList']
-    thingList = lists['thingList']
-    shipList = lists['shipList']
-    xyList = []
-    xyList.extend(findObjectsAt(starList, x, y))
-    xyList.extend(findObjectsAt(thingList, x, y))
-    xyList.extend(findObjectsAt(shipList, x, y))
-    xyList.extend(findObjectsAt(starBaseList, x, y))
-
-    hexInfo(tkRoot.mapFrame, xyList)
+        hexInfo(tkRoot.mapFrame, xyList)
