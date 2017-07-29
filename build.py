@@ -181,6 +181,7 @@ class build(Dialog):
              'H': {'max':int(self.holdSpn.get()), 'cur':int(self.holdSpn.get())},       # Holds (New)
              'R': {'max':int(self.rpSpn.get()), 'cur':int(self.rpSpn.get())},       # Repair Bays (New)
              'visibility':[ {'player':self.base['owner'],  'percent':10}],
+             'carried_ships' :[],
             }
         print (self.ship)
 

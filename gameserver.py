@@ -667,6 +667,17 @@ class gameserver:
             ship['location']['y'] = y
             ship['moves']['cur'] = ship['moves']['cur'] -delta
 
+            #are there any system ships stored on this ship?
+            #TODO: make sure we don't move too many ships
+            for carried_name in ship['carried_ships']:
+                #all we have is the name. We need to find the actual ship object in the data model
+                carried_ship = dataModel.findShip(self.game, carried_name)
+                #update the position of the carried ship
+                carried_ship['location']['x'] = x
+                carried_ship['location']['y'] = y
+
+
+
             #now we start a battle, if we can.
             #Is there anything here that can trigger a battle?
             for otherShip in self.game['objects']['shipList']:
