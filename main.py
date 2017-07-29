@@ -280,6 +280,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         menuBar.delete(3)
 
     tkRoot.hexMap.unHiliteMap()
+    tkRoot.hexMap.setRightPrivateCallBack(None, None)
 
     phaseMenuObject = Menu(menuBar)
 
@@ -297,11 +298,9 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                                   command=lambda:newGame(tkRoot))
             phaseMenuObject.add_command(label="Open",
                                   command=lambda:loadGame(tkRoot))
-            tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'creating'):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
-        tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'build'):
         phaseMenuObject.add_command(label="Bases you own:")
         for star in tkRoot.game['objects']['starList']:
@@ -326,7 +325,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
         #TODO: enable the move right click stuff.
-        tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'move'):
         # is it our turn to move?
         player = playerTableGet(tkRoot.game, tkRoot.playerName)
@@ -344,8 +342,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                                   command=lambda:sendReadyMenu(tkRoot))
             #enable the move right click stuff.
             setupRightClickMoveMenu(tkRoot.hexMap, tkRoot)
-        else:
-            tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'combat'):
 
         # They make their choices and submit orders.

@@ -104,5 +104,5 @@ def moveOnClick(private, x, y):
         tkRoot.hexMap.setLeftPrivateCallBack(original[0], original[1])
         #send event
         print ("sending event!")
-        tkRoot.event_generate("<<updateMenu>>", when='tail')
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
         print ("sent event!")
