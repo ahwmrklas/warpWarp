@@ -692,11 +692,10 @@ class gameserver:
         elif cmdStr == 'loadship':
             #this is as simple as can be.
             #find both ships, add the name of 1 to the carried list of 2
-            ship = dataModel.findShip(cmd['shipName'])
-            mother = dataModel.findShip(cmd['motherName'])
+            ship = dataModel.findShip(self.game, cmd['shipName'])
+            mother = dataModel.findShip(self.game, cmd['motherName'])
             #are these guys in the same square
-            if ship['location']['x'] == mother['location']['x'] and
-            ship['location']['y'] == mother['location']['y']:
+            if ship['location']['x'] == mother['location']['x'] and ship['location']['y'] == mother['location']['y']:
                 mother['carried_ships'].append(ship['name'])
 
         elif cmdStr == 'combatorders': # Per ship? All ships?

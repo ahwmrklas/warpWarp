@@ -551,7 +551,7 @@ def defaultGame():
                  'location': {'x':8, 'y':4},
                  'image': "b_5.png",
                  'owner': "bearda",
-                 'BP': {'perturn':0, 'cur':10},
+                 'BP': {'perturn':0, 'cur':20},
                 },
                 {'name': "Babylon_5",
                  'type': "base",
