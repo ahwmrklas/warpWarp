@@ -14,6 +14,7 @@ from overlay import *
 from hexinfo import *
 from build import *
 from move import *
+from loadShip import *
 from combat import *
 from mapUtil import *
 from connect import *
@@ -158,6 +159,22 @@ def buildShip(tkRoot, baseName):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
+
+# PURPOSE: opens the load ship menu and sends the command
+# RETURNS: none
+def loadShip(tkRoot, ship, shipList):
+    print("loadShipMenu")
+    if (tkRoot.hCon is not None):
+        #I don't like sending the whole tkRoot here. if you have an idea, do it.
+        loadResult = loadShipMenu(tkRoot, ship, shipList)
+
+    if (loadResult is not None):
+        sendJson = warpWarCmds().loadShip(tkRoot.playerName, loadResult.ship['name'], loadResult.motherVar.get())
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
@@ -337,6 +354,13 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                                                                      ship['moves']['cur'],
                                                                      ship['PD']['cur'])
                         phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']: moveMenu(tkRoot, name))
+                    else:
+                        #find a way to get system ships on to warp ships
+                        labelString = "\tSystem Ship:'%s'    Moves left: N/A" % (ship['name'])
+                        #TODO: make hCon more secure
+                        phaseMenuObject.add_command(label=labelString,
+                                command=lambda name=ship['name']: loadShip(tkRoot, ship, tkRoot.game['objects']['shipList']))
+
 
             phaseMenuObject.add_command(label="Ready",
                                   command=lambda:sendReadyMenu(tkRoot))

@@ -689,6 +689,16 @@ class gameserver:
                             otherShip['moves']['cur'] = 0
                             #set a flag, or have everyone else figure it out for themselves?
 
+        elif cmdStr == 'loadship':
+            #this is as simple as can be.
+            #find both ships, add the name of 1 to the carried list of 2
+            ship = dataModel.findShip(cmd['shipName'])
+            mother = dataModel.findShip(cmd['motherName'])
+            #are these guys in the same square
+            if ship['location']['x'] == mother['location']['x'] and
+            ship['location']['y'] == mother['location']['y']:
+                mother['carried_ships'].append(ship['name'])
+
         elif cmdStr == 'combatorders': # Per ship? All ships?
             # A combat instruction
             # Check for proper state. Are there existing orders?
