@@ -46,7 +46,8 @@ def connectServer(tkRoot):
         tkRoot.hCon = tmp.result
         tkRoot.playerName = tmp.playerName
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName)
+        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
@@ -64,7 +65,7 @@ def newGame(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName)
+        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
@@ -77,6 +78,23 @@ def sendReadyMenu(tkRoot):
     print("sendReadyMenu")
     tkRoot.event_generate("<<sendReady>>", when='tail')
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
+
+# PURPOSE:
+# RETURNS:
+def playerOptionMenu(tkRoot):
+    print("playerOptionMenu")
+    print("Should launch dialog to pick")
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().removePlayer(tkRoot.playerName, tkRoot.playerName)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+
+        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -316,6 +334,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             phaseMenuObject.add_command(label="Open",
                                   command=lambda:loadGame(tkRoot))
     elif (gamePhase == 'creating'):
+        phaseMenuObject.add_command(label="Options",
+                              command=lambda:playerOptionMenu(tkRoot))
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'build'):
@@ -509,7 +529,12 @@ def main():
     tkRoot.hCon = None
     tkRoot.hexMap = None
     tkRoot.game = None
+
+    # These should be read from a config file or some other saved options.
     tkRoot.playerName = getpass.getuser()
+    tkRoot.playerStartBases = ['Ur', 'Mosul', 'Larsu']
+    tkRoot.playerColor = 'Red'
+
     tkRoot.battleOrders = {}
     tkRoot.bind("<<updateWWMenu>>", lambda event :updateWWMenu(event, tkRoot))
     tkRoot.bind("<<sendReady>>", lambda event :sendReady(event, tkRoot))

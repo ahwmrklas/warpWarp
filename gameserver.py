@@ -348,7 +348,7 @@ def resolveCombat(game, orders):
 # PURPOSE:
 # RETURNS:
 def harvest(game):
-    # For now event unowned locations increase BuildPoints every turn
+    # For now even unowned locations increase BuildPoints every turn
     # That will make unowned locations pile up wealth. Is that good
     # for the game? We could have only "owned" locations do that.
     for thing in game['objects']['starList']:
@@ -370,25 +370,23 @@ def checkForVictory(game):
     for player in game['playerList']:
         players[player['name']] = 0
 
-    for thing in game['objects']['starBaseList']:
+    for thing in game['objects']['starList']:
         if (thing['owner']):
             players[thing['owner']] = players[thing['owner']] + 1
         print("base: name:", thing['name'], " owner:",thing['owner'])
 
     #does only one player have a base?
-    noBasesFound = 1
-    possibleWinner = ""
+    possibleWinner = None
     for name, bases in players.items():
         if bases:
-            if noBasesFound:
-                noBasesFound = 0 #we found a base!
-                possibleWinner = name
-            else:
+            if possibleWinner:
                 return None #multiple people have a base. We are still in this!
+            else:
+                possibleWinner = name
 
     #if we get here, only one player has a base!
     #maybe.
-    if noBasesFound:
+    if possibleWinner is None:
         #NO ONE HAS A BASE? panic.
         return "No one"
     else:
@@ -451,13 +449,22 @@ class gameserver:
             # Input? Player name and potentially player specific options
             # What player specific options? IP:port?
             newPlayer = cmd['name']
+            startingBases = cmd['bases']
+            color = cmd['color']
             print("GServer:", "newPlayer", newPlayer)
 
             player = dataModel.playerTableGet(self.game, newPlayer)
 
             if player is None:
                 self.game['playerList'].append({'name':  newPlayer,
-                                                'phase': "creating"})
+                                                'phase': "creating",
+                                                'color': color})
+                player = dataModel.playerTableGet(self.game, newPlayer)
+                player['color'] = color
+                for base in startingBases:
+                    ownIt = dataModel.findBase(self.game, base)
+                    if ownIt:
+                        ownIt['owner'] = newPlayer
             else:
                 # Normally the player shouldn't exist! But they do for the
                 # sample game (or if reconnecting to a game)
@@ -466,8 +473,9 @@ class gameserver:
                             (self.game['state']['phase'] == "creating")
                           )
                     player['phase'] = "creating"
+                    print("GServer: I don't think this should happen anymore")
                 else:
-                    print("GServer:", "player", player, "must be rejoining game???!!!")
+                    print("GServer:", "player", newPlayer, "must be rejoining game???!!!")
 
         elif cmdStr == 'newgame':
             # What to do? Offer to save current game? NO! this is the server,

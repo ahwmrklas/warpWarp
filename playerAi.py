@@ -24,6 +24,8 @@ class playerAiThrd(threading.Thread):
     # RETURNS: none
     def __init__(self, name, ipAddr, port):
         self.playerName = name
+        self.startingBases = ['Babylon', 'Nineveh', 'Ugarit']
+        self.color = 'Green'
         self.ipAddr = ipAddr
         self.port = port
         self.threadContinue = True
@@ -51,7 +53,7 @@ class playerAiThrd(threading.Thread):
     # RETURNS: game object
     def newPlayer(self, name):
         print("playerAi: newPlayer")
-        sendJson = warpWarCmds().newPlayer(self.playerName, name)
+        sendJson = warpWarCmds().newPlayer(self.playerName, name, self.startingBases, self.color)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)

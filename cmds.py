@@ -44,9 +44,17 @@ class warpWarCmds():
 
     # PURPOSE: Create the new player string
     #    DUPLICATE TODO FIXME XXX 
+    # startBase should be  list of names
     # RETURNS: string with json
-    def newPlayer(self, plid, name):
-        cmd  = { 'cmd' : {'cmd': "newplayer", 'plid':plid, 'name': name} }
+    def newPlayer(self, plid, name, startBase, color):
+        cmd  = { 'cmd' : {'cmd': "newplayer", 'plid':plid, 'name': name, 'bases': startBase, 'color':color} }
+        jsonStr = json.dumps(cmd, ensure_ascii=False)
+        return jsonStr
+
+    # PURPOSE: Remove the player from the game (only during create)
+    # RETURNS: string with json
+    def removePlayer(self, plid, name):
+        cmd  = { 'cmd' : {'cmd': "removeplayer", 'plid':plid, 'name': name} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
