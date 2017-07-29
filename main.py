@@ -266,7 +266,7 @@ def updateWWMenu(event, tkRoot):
         gamePhase = tkRoot.game['state']['phase']
 
     phaseMenu(tkRoot, gamePhase, playerPhase)
-    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+    updateMap(tkRoot, tkRoot.game)
 
 # PURPOSE: Delete previous and set new, phase menu
 # RETURNS: none
@@ -284,13 +284,18 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     if (playerPhase == 'waiting'):
         # Player is waiting on opponent. All they can do is refresh.
         phaseMenuObject.add_command(label="WAITING on opponent")
-    elif (gamePhase == 'nil'):
-        gamePhase = ""
-        phaseMenuObject.add_command(label="New",
-                              command=lambda:newGame(tkRoot))
-        phaseMenuObject.add_command(label="Open",
-                              command=lambda:loadGame(tkRoot))
-        tkRoot.hexMap.setRightPrivateCallBack(None, None)
+    elif (gamePhase == None):
+        if (tkRoot.hCon is None):
+            gamePhase = "connect"
+            phaseMenuObject.add_command(label="Connect",
+                                  command=lambda:connectServer(tkRoot))
+        else:
+            gamePhase = "start"
+            phaseMenuObject.add_command(label="New",
+                                  command=lambda:newGame(tkRoot))
+            phaseMenuObject.add_command(label="Open",
+                                  command=lambda:loadGame(tkRoot))
+            tkRoot.hexMap.setRightPrivateCallBack(None, None)
     elif (gamePhase == 'creating'):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
@@ -431,8 +436,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     else:
         print("BAD PHASE", gamePhase)
         gamePhase = ""
-        phaseMenuObject.add_command(label="Connect",
-                              command=lambda:connectServer(tkRoot))
 
     phaseMenuObject.add_separator()
     phaseMenuObject.add_command(label="Refresh", command=lambda:refresh(tkRoot))
@@ -490,7 +493,7 @@ def main():
     addMenus(tkRoot)
 
     tkRoot.mapFrame = Frame(tkRoot)
-    tkRoot.hexMap = initMap(tkRoot, 21, 15)
+    tkRoot.hexMap = initMap(tkRoot, 10, 10)
     tkRoot.mapFrame.pack()
 
     tkRoot.buttonFrame = Frame(tkRoot)
@@ -508,7 +511,7 @@ def main():
 
     tkRoot.buttonFrame.pack()
     
-    updateMap(tkRoot, tkRoot.hexMap, tkRoot.game)
+    updateMap(tkRoot, tkRoot.game)
 
 
     # at the moment this does nothing valuable

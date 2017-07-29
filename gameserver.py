@@ -20,7 +20,7 @@
 #
 #
 # PHASE:
-# nil
+# None
 # creating
 # build
 # move
@@ -436,7 +436,7 @@ class gameserver:
             print("GServer:", "quitCommandRecieved")
 
             # This cmd doesn't save anything. Call save if you want to save
-            self.game['state']['phase'] = "nil"
+            self.game['state']['phase'] = None
             self.gameContinues = False
 
         elif cmdStr == 'ping':
@@ -461,8 +461,8 @@ class gameserver:
             else:
                 # Normally the player shouldn't exist! But they do for the
                 # sample game (or if reconnecting to a game)
-                if (player['phase'] == "nil"):
-                    assert( (self.game['state']['phase'] == "nil") or
+                if (player['phase'] is None ):
+                    assert( (self.game['state']['phase'] is None) or
                             (self.game['state']['phase'] == "creating")
                           )
                     player['phase'] = "creating"
@@ -481,8 +481,7 @@ class gameserver:
             # Need to be given the name of the game?
             # Warn/Error if current game hasn't been saved (is dirty)
             gameName = cmd['name']
-            self.game = dataModel.emptyGame()
-            assert(self.game['state']['phase'] == "nil")
+            self.game = dataModel.defaultGame()
             self.game['state']['phase'] = "creating"
             # TODO probably need things like game options???
             # TODO lots of options, right?

@@ -169,7 +169,7 @@ def myCmp(obj):
 
 # PURPOSE: Search lists of objects for items on the
 #   same location but owned by different owners.
-#   "none/nil" should count as a different owner
+#   "None" should count as a different owner
 # RETURNS: An array of Lists of all those conflicted ownership locations
 # Example:
 #   conflicts[0] = Ship1, Ship2, StarBase3
@@ -268,19 +268,55 @@ def prettyOrders(order):
     return pretty + missiles
 
 # PURPOSE: create and return an empty game
-#    FIXME TODO
-#    I don't think this actually insantiates a new object.
+#    This should be displayed when players first connect
+#    We could make this some fancy graphic ... if we wanted to work it out
 # RETURNS: new empty game
 def emptyGame():
-    sampleGame = {
+    empty = {
+        'options': {
+        },
+        'state': {
+            'turnNumber': 0,
+            'phase': None,
+            'activePlayer': None,
+        },
+        'orders': {
+        },
+        'map': {'width':10, 'height':10},
+        'playerList': [
+        ],
+        'objects': {
+            'starList': [
+            ],
+            'thingList': [
+            ],
+            'shipList': [
+            ],
+            'starBaseList': [
+            ],
+            'warpLineList': [
+            ],
+        },
+        'history': [
+        ],
+    }
+    return empty
+
+# PURPOSE: create and return the default WarpWar map
+#    This is the game to start playing
+#    FIXME TODO
+#    I don't think this actually insantiates a new object.
+# RETURNS: new default WarpWar map
+def defaultGame():
+    defaultGame = {
         'options': {
             'serverIp'  : "192.168.1.5",
             'mapSize'   : {'width':21, 'height':15},
         },
         'state': {
             'turnNumber': 0,
-            'phase': "nil",
-            'activePlayer': "nil",
+            'phase': None,
+            'activePlayer': None,
         },
         'orders': {
         },
@@ -547,4 +583,4 @@ def emptyGame():
         'history': [
         ],
     }
-    return sampleGame
+    return defaultGame

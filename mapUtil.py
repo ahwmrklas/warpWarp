@@ -34,12 +34,16 @@ def initMap(tkRoot, width, height):
 
 # PURPOSE:
 # RETURN: none
-def updateMap(tkRoot, hexMap, game):
+def updateMap(tkRoot, game):
 
     if (game is None):
         return
 
-    hexMap.drawGrid('white')
+    if ((game['map']['width'] != tkRoot.hexMap.grid_width) or
+        (game['map']['height'] != tkRoot.hexMap.grid_height)):
+        tkRoot.hexMap = initMap(tkRoot, game['map']['width'], game['map']['height'])
+
+    tkRoot.hexMap.drawGrid('white')
 
     #super annoying bit of complexity here. if we are in combat, we need to 
     #draw red borders around all combat hexes. We will have to find the
@@ -62,13 +66,13 @@ def updateMap(tkRoot, hexMap, game):
     # but for the moment it works
     objArray = DrawArray(dim['width'], dim['height'], game['objects'])
 
-    hexMap.drawObjects(objArray)
+    tkRoot.hexMap.drawObjects(objArray)
 
     for line in warpLineList:
         base1 = dataModel.findBase(tkRoot.game, line['start'])
         base2 = dataModel.findBase(tkRoot.game, line['end'])
         if (base1 and base2):
-            hexMap.drawLine(base1['location']['x'], base1['location']['y'],
+            tkRoot.hexMap.drawLine(base1['location']['x'], base1['location']['y'],
                             base2['location']['x'], base2['location']['y'])
 
 # PURPOSE:
