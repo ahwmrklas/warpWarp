@@ -12,6 +12,7 @@ def main():
     lists = sampleGame['objects']
     baseList = lists['starBaseList']
     base = baseList[0]
+    base['BP']['cur'] = 600
 
     root = tk.Tk()
     root.title("testBuild")
