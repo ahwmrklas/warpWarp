@@ -39,14 +39,13 @@ class hexMap(HexagonalGrid):
     def unHiliteMap(self):
         self.hiliteList = []
 
-    # PURPOSE: 
+    # PURPOSE: Only resize if needed
     # RETURN: none
     def resizeMap(self, width, height):
         # don't resize if it is already the same size?
-        #if ((width != self.grid_width) or
-        #    (height != self.grid_height)):
-        self.initMap(width, height)
-        self.unHiliteMap()
+        if ((width != self.grid_width) or (height != self.grid_height)):
+            self.initMap(width, height)
+            self.unHiliteMap()
 
     # PURPOSE:
     # RETURN: none
@@ -54,10 +53,6 @@ class hexMap(HexagonalGrid):
     
         if (game is None):
             return
-    
-        if ((game['map']['width'] != self.grid_width) or
-            (game['map']['height'] != self.grid_height)):
-            self.resizeMap(game['map']['width'], game['map']['height'])
     
         self.drawGrid('white')
     
@@ -92,16 +87,12 @@ class hexMap(HexagonalGrid):
     def clickHex(self, tkRoot, x, y):
         print("Clicked on ", x, y, " Display info about hex")
 
+        assert(tkRoot)
+        if (tkRoot.game is None):
+            return
+
         # Find all of the things located at x,y
-        lists = tkRoot.game['objects']
-        starList = lists['starList']
-        starBaseList = lists['starBaseList']
-        thingList = lists['thingList']
-        shipList = lists['shipList']
         xyList = []
-        xyList.extend(dataModel.findObjectsAt(starList, x, y))
-        xyList.extend(dataModel.findObjectsAt(thingList, x, y))
-        xyList.extend(dataModel.findObjectsAt(shipList, x, y))
-        xyList.extend(dataModel.findObjectsAt(starBaseList, x, y))
+        xyList.extend(dataModel.findObjectsAt(tkRoot.game, x, y))
 
         hexInfo(tkRoot.mapFrame, xyList)

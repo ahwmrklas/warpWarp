@@ -133,13 +133,27 @@ def findBase(game, baseName):
     return None
 
 # PURPOSE:
-# RETURNS: list of objects at x,y
-def findObjectsAt(objList, x, y):
-    retList = []
-    for obj in objList:
+# RETURNS: list of objects at given location
+def findObjectsAt(game, x, y):
+    if (game is None):
+        return []
+    assert(game) # I want an assert here ... but sometimes game was "None"
+
+    objects = game['objects']
+    assert(objects)
+
+    starList     = objects['starList']
+    thingList    = objects['thingList']
+    shipList     = objects['shipList']
+    starBaseList = objects['starBaseList']
+
+    allList = starList + thingList + shipList + starBaseList
+    atLocation = []
+    for obj in allList:
         if ( x == obj['location']['x'] and y == obj['location']['y']):
-           retList.append(obj)
-    return retList
+            atLocation.append(obj)
+
+    return atLocation
 
 #If x,y is a hex with a warpline, return a list of x and ys for the other ends
 def getWarpLineEnd(game, x,y):
@@ -214,23 +228,6 @@ def getConflictList(objects):
                 conflicts = []
         last = obj
     return listOfLists
-
-# PURPOSE:
-# RETURNS: list of objects at given location
-def findAtLocation(objects, location):
-    assert(objects)
-    starList     = objects['starList']
-    thingList    = objects['thingList']
-    shipList     = objects['shipList']
-    starBaseList = objects['starBaseList']
-
-    allList = starList + thingList + shipList + starBaseList
-    atLocation = []
-    for obj in allList:
-        if location -- obj['location']:
-            atLocation.append(obj)
-
-    return atLocation
 
 # PURPOSE: turn a conflict  into a list of ships on each side
 # RETURNS: A dict of ships on each side

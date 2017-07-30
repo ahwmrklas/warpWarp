@@ -9,9 +9,11 @@ class HexaCanvas(Canvas):
         Canvas.__init__(self, master, *args, **kwargs)
 
         self.hexaSize = 20
+        self.setHexaSize(self.hexaSize)
 
     def setHexaSize(self, number):
         self.hexaSize = number
+        self.Δx = (self.hexaSize**2 - (self.hexaSize/2)**2)**0.5
 
 
     def create_hexagone(self, x, y, content = TileContent.NO_ITEMS,
@@ -50,8 +52,7 @@ class HexaCanvas(Canvas):
 
         """
         size = self.hexaSize
-        Δx = (size**2 - (size/2)**2)**0.5
-        self.Δx = Δx 
+        Δx  = self.Δx
 
         point1 = (x+Δx, y+size/2)
         point2 = (x+Δx, y-size/2)
@@ -100,11 +101,14 @@ class HexagonalGrid(HexaCanvas):
         width  = 2 * Δx * grid_width + Δx
         height = 1.5 * scale * grid_height + 0.5 * scale
         self.rightExternalCallBack = None
+        self.lastX = 0
+        self.lastY = 0
 
         HexaCanvas.__init__(self, master, background='white', width=width, height=height, *args, **kwargs)
         self.bind("<Button-1>", self.leftClickCallback)
         self.bind("<Button-3>", self.rightClickCallback)
-        # self.bind("<Motion>", self.motion)
+        self.bind("<Enter>", self.Enter)
+        self.bind("<Leave>", self.Leave)
         self.setHexaSize(scale)
 
     def setCell(self, xCell, yCell, *args, **kwargs ):
@@ -177,6 +181,7 @@ class HexagonalGrid(HexaCanvas):
 
     #placeholder for canvas onclick listener
     def leftClickCallback(self, event):
+        print ("clicked at", event.x, event.y)
         x,y = self.getHexForPix(event.x, event.y)
         if x >= 0 and y >= 0: 
             if (self.leftExternalCallBack is not None):
@@ -184,6 +189,7 @@ class HexagonalGrid(HexaCanvas):
 
     #placeholder for canvas onclick listener
     def rightClickCallback(self, event):
+        print ("clicked at", event.x, event.y)
         x,y = self.getHexForPix(event.x, event.y)
         if x >= 0 and y >= 0: 
             if (self.rightExternalCallBack is not None):
@@ -192,7 +198,6 @@ class HexagonalGrid(HexaCanvas):
                                            x, y)
 
     def getHexForPix(self, x, y):
-            print ("clicked at", x, y)
             #who am I closest to? guess.
             x_guess = int(x/ (2 * self.Δx))
             y_guess = int(y / (1.5 * self.hexaSize))
@@ -220,9 +225,25 @@ class HexagonalGrid(HexaCanvas):
                 return -1,-1
 
 
-    #placeholder for canvas motion listener
-    def motion(self, event):
-        print ("moved ", event.x, event.y)
+    #placeholder for canvas Motion listener
+    def Motion(self, event):
+        self.lastX = event.x
+        self.lastY = event.y
+
+    #placeholder for canvas Enter listener
+    def Enter(self, event):
+        self.bind("<Motion>", self.Motion)
+        self.lastX = -1
+        self.lastY = -1
+
+    #placeholder for canvas Enter listener
+    def Leave(self, event):
+        self.unbind("<Motion>")
+        self.lastX = -1
+        self.lastY = -1
+
+    def getCurrentPoint(self):
+        return self.lastX, self.lastY
 
     def setBorders(self, x, y, color):
                         self.setCell(x, y,

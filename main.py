@@ -23,6 +23,50 @@ from cmds import warpWarCmds
 import json
 import getpass
 
+# PURPOSE: Timer call back every second to check if the mouse has moved.
+#          If it hasn't moved create a tool tip of info for the given location
+#          Perhaps more colors?
+# RETURNS:
+def tooltip(tkRoot):
+    x,y = tkRoot.hexMap.getCurrentPoint()
+    if ( (x != tkRoot.tooltipX) or (y != tkRoot.tooltipY) ):
+        tkRoot.tooltipX = x
+        tkRoot.tooltipY = y
+        tkRoot.tooltipCount = 0
+        if (tkRoot.tooltip):
+            tkRoot.tooltip.destroy()
+            tkRoot.tooltip = None
+        
+    if ((x > 0) and (y > 0)):
+        tkRoot.tooltipCount += 1
+        if (tkRoot.tooltipCount == 2):
+            x,y = tkRoot.hexMap.getHexForPix(x, y)
+            if ((x > 0) and (y > 0)):
+                #print("tooltip trigger", x, y)
+                text = ""
+                objs = findObjectsAt(tkRoot.game, x, y)
+                for obj in objs:
+                    if text:
+                        text += "\n"
+                    text += obj['type'] + ":" + obj['name']
+
+                if not text:
+                    text = "The vast emptiness of space"
+            
+                # creates a toplevel window
+                tkRoot.tooltip = tk.Toplevel(tkRoot)
+                # Leaves only the label and removes the app window
+                tkRoot.tooltip.wm_overrideredirect(True)
+                x,y = tkRoot.winfo_pointerxy()
+                label = tk.Label(tkRoot.tooltip, text=text, justify='left',
+                               background="#ffffff", relief='solid', borderwidth=1,
+                               wraplength = 100)
+                height = label.winfo_reqheight()
+                tkRoot.tooltip.wm_geometry("+%d+%d" % (x, y-height))
+                label.pack(ipadx=1)
+
+
+    tkRoot.after(1000, lambda :tooltip(tkRoot))
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
@@ -297,8 +341,10 @@ def updateWWMenu(event, tkRoot):
         playerPhase = pt['phase']
 
     gamePhase = None
+
     if (tkRoot.game):
         gamePhase = tkRoot.game['state']['phase']
+        tkRoot.hexMap.resizeMap(tkRoot.game['map']['width'], tkRoot.game['map']['height'])
 
     phaseMenu(tkRoot, gamePhase, playerPhase)
     tkRoot.hexMap.updateMap(tkRoot.game)
@@ -343,7 +389,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         for star in tkRoot.game['objects']['starList']:
             if (star['owner'] == tkRoot.playerName):
                 print (star['owner'])
-                print (tkRoot.playerName)
                 labelString = "'%s'    BP left: %d" % (star['name'],
                         star['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
@@ -352,7 +397,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 print (base['owner'])
-                print (tkRoot.playerName)
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
@@ -563,6 +607,12 @@ def main():
     tkRoot.buttonFrame.pack()
     
     tkRoot.hexMap.updateMap(tkRoot.game)
+
+    tkRoot.tooltipX = 0
+    tkRoot.tooltipY = 0
+    tkRoot.tooltipCount = 0
+    tkRoot.tooltip = None
+    tkRoot.after(1000, lambda :tooltip(tkRoot))
 
 
     # at the moment this does nothing valuable
