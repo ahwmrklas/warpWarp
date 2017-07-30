@@ -12,6 +12,7 @@ class loadShipMenu(Dialog):
         self.shipList = shipList
         #TODO: what if hCon is null?
         self.location = [self.ship['location']['x'], self.ship['location']['y']]
+        self.finished = 0 #should the caller use our result?
         Dialog.__init__(self, master)
 
     def body(self, master):
@@ -28,4 +29,8 @@ class loadShipMenu(Dialog):
             Label(text="No ships capable of carrying me!").grid()
             self.bind("<Return>", self.cancel)
             self.apply = self.cancel
+
+    def apply(self):
+        if self.motherVar.get():
+            self.finished = 1
 

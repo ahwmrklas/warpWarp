@@ -187,7 +187,7 @@ def loadShip(tkRoot, ship, shipList):
         #I don't like sending the whole tkRoot here. if you have an idea, do it.
         loadResult = loadShipMenu(tkRoot, ship, shipList)
 
-    if (loadResult is not None):
+    if (loadResult is not None and loadResult.finished):
         sendJson = warpWarCmds().loadShip(tkRoot.playerName, loadResult.ship['name'], loadResult.motherVar.get())
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
