@@ -26,7 +26,7 @@ class loadShipMenu(Dialog):
                     *[ship['name'] for ship in motherList if ship['SR']['cur'] >= 1])
             mother.grid()
         else:
-            Label(text="No ships capable of carrying me!").grid()
+            Label(master, text="No ships capable of carrying me!").grid()
             self.bind("<Return>", self.cancel)
             self.apply = self.cancel
 
