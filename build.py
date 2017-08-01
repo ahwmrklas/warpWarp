@@ -8,6 +8,7 @@ class build(Dialog):
     # RETURNS:
     def __init__(self, master, base):
         self.base = base
+        self.ship = {}
         print(self.base['owner'])
         self.remaining = self.base['BP']['cur']
         Dialog.__init__(self, master)

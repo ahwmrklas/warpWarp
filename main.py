@@ -214,7 +214,7 @@ def buildShip(tkRoot, baseName):
     if (base and tkRoot.hCon is not None):
         buildResult = build(tkRoot, base)
 
-    if (buildResult is not None):
+    if (buildResult is not None and buildResult.ship):
         sendJson = warpWarCmds().buildShip(tkRoot.playerName, buildResult.ship, baseName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
