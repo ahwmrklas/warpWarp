@@ -19,7 +19,7 @@ class HexaCanvas(Canvas):
     def create_hexagone(self, x, y, content = TileContent.NO_ITEMS,
             color = "black", fill="blue",
             color1=None, color2=None, color3=None, color4=None, color5=None,
-            color6=None):
+            color6=None, width=2):
         """ 
         Compute coordinates of 6 points relative to a center position.
         Point are numbered following this schema :
@@ -75,12 +75,12 @@ class HexaCanvas(Canvas):
         if color6 == None:
             color6 = color
 
-        self.create_line(point1, point2, fill=color1, width=2)
-        self.create_line(point2, point3, fill=color2, width=2)
-        self.create_line(point3, point4, fill=color3, width=2)
-        self.create_line(point4, point5, fill=color4, width=2)
-        self.create_line(point5, point6, fill=color5, width=2)
-        self.create_line(point6, point1, fill=color6, width=2)
+        self.create_line(point1, point2, fill=color1, width=width)
+        self.create_line(point2, point3, fill=color2, width=width)
+        self.create_line(point3, point4, fill=color3, width=width)
+        self.create_line(point4, point5, fill=color4, width=width)
+        self.create_line(point5, point6, fill=color5, width=width)
+        self.create_line(point6, point1, fill=color6, width=width)
 
         #set stippling options.
         stipple = TileFiles[content]
@@ -245,7 +245,7 @@ class HexagonalGrid(HexaCanvas):
     def getCurrentPoint(self):
         return self.lastX, self.lastY
 
-    def setBorders(self, x, y, color):
+    def setBorders(self, x, y, color, width=2):
                         self.setCell(x, y,
                                             fill=None,
                                             color1=color,
@@ -253,4 +253,5 @@ class HexagonalGrid(HexaCanvas):
                                             color3=color,
                                             color4=color,
                                             color5=color,
-                                            color6=color)
+                                            color6=color,
+                                            width=width)

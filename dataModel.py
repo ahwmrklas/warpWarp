@@ -118,10 +118,10 @@ def findShip(game, shipName):
 #   (Stars and Bases are mostly interchangeable. They should be in one list)
 # RETURNS: entry of base
 def findBase(game, baseName):
-    for base in game['objects']['starBaseList']:
+    for base in game['objects']['starList']:
         if base['name'] == baseName:
             return base
-    for base in game['objects']['starList']:
+    for base in game['objects']['starBaseList']:
         if base['name'] == baseName:
             return base
     # FIXME ... should we really look in thinglist?
@@ -182,6 +182,29 @@ def playerTableGet(game, playerName):
             return player
 
     return None
+
+# PURPOSE: Get list of all things owned by player
+# RETURNS: list of things (ships, bases, stars, relics)
+def getOwnedList(game, playerName):
+    assert(game and playerName)
+
+    objects = game['objects']
+    assert(objects)
+
+    playerOwns = []
+    for obj in objects['shipList']:
+        if (obj['owner'] == playerName):
+            playerOwns.append(obj)
+    for obj in objects['starList']:
+        if (obj['owner'] == playerName):
+            playerOwns.append(obj)
+    for obj in objects['starBaseList']:
+        if (obj['owner'] == playerName):
+            playerOwns.append(obj)
+    for obj in objects['thingList']:
+        if (obj['owner'] == playerName):
+            playerOwns.append(obj)
+    return playerOwns
 
 # PURPOSE:for sorted() key function
 # RETURNS: key for sorting (only works for 100x100 map or less

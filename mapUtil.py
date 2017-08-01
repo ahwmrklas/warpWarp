@@ -30,9 +30,8 @@ class hexMap(HexagonalGrid):
     # PURPOSE: Add a highlight color to given location
     # A color of "None" erases any hilite for that location
     # RETURN: none
-    def hiliteMap(self, x, y, color, callback):
-        print("HLMap", x,y,color)
-        self.hiliteList.append((x,y,color,callback))
+    def hiliteMap(self, x, y, color, boldness=2, callback=None):
+        self.hiliteList.append((x,y,color,boldness,callback))
 
     # PURPOSE: Erase all hiliting
     # RETURN: none
@@ -51,6 +50,7 @@ class hexMap(HexagonalGrid):
     # RETURN: none
     def updateMap(self, game):
     
+        print("updateMap")
         if (game is None):
             return
     
@@ -58,8 +58,7 @@ class hexMap(HexagonalGrid):
     
         # Draw a pretty colored hilight around all the special hexes
         for hilite in self.hiliteList:
-            print("hilight", hilite)
-            self.setBorders(hilite[0], hilite[1], hilite[2])
+            self.setBorders(hilite[0], hilite[1], hilite[2], hilite[3])
     
         dim = game['map']
         lists = game['objects']

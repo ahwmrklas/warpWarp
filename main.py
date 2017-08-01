@@ -261,7 +261,7 @@ def refresh(tkRoot):
 # RETURNS:
 def popupPlayers(tkRoot):
     popup = Menu(tkRoot, tearoff=0)
-    for player in tkRoot.game['playerList'] :
+    for player in tkRoot.game['playerList']:
         popup.add_command(label = player['name'] +
                            " " + player['phase'])
         print("player",
@@ -363,6 +363,13 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     tkRoot.hexMap.unHiliteMap()
     tkRoot.hexMap.setRightPrivateCallBack(None, None)
 
+    # Want to hilight who owns what on the map
+    if (tkRoot.game):
+        for player in tkRoot.game['playerList']:
+            hiliteList = getOwnedList(tkRoot.game, player['name'])
+            for obj in hiliteList:
+                tkRoot.hexMap.hiliteMap(obj['location']['x'], obj['location']['y'], player['color'], 2, None)
+
     phaseMenuObject = Menu(menuBar)
 
     if (playerPhase == 'waiting'):
@@ -385,6 +392,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'build'):
+        player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(player)
         phaseMenuObject.add_command(label="Bases you own:")
         for star in tkRoot.game['objects']['starList']:
             if (star['owner'] == tkRoot.playerName):
@@ -393,7 +402,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         star['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
                                             command=lambda name=star['name']:buildShip(tkRoot, name))
-                tkRoot.hexMap.hiliteMap(star['location']['x'], star['location']['y'], 'Blue', None)
+                tkRoot.hexMap.hiliteMap(star['location']['x'], star['location']['y'], player['color'], 4, None)
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 print (base['owner'])
@@ -401,7 +410,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
                                             command=lambda name=base['name']:buildShip(tkRoot, name))
-                tkRoot.hexMap.hiliteMap(base['location']['x'], base['location']['y'], 'Blue', None)
+                tkRoot.hexMap.hiliteMap(base['location']['x'], base['location']['y'], player['color'], 4, None)
 
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
@@ -409,6 +418,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     elif (gamePhase == 'move'):
         # is it our turn to move?
         player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        assert(player)
         if player['phase'] == "move":
             phaseMenuObject.add_command(label="Ships you own:")
             for ship in tkRoot.game['objects']['shipList']:
@@ -487,7 +497,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                     for ship in conflictDict[key]:
                         enemyShips.append(ship)
 
-            tkRoot.hexMap.hiliteMap(int(conflict[0]['location']['x']), int(conflict[0]['location']['y']), 'Red', None)
+            tkRoot.hexMap.hiliteMap(int(conflict[0]['location']['x']), int(conflict[0]['location']['y']), 'Red', 4, None)
 
             if enemyShips:
                 labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
