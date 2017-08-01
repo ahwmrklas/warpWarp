@@ -671,9 +671,12 @@ class gameserver:
 
             print("GServer:", " delta", delta, ship['location']['x'], ship['location']['y'],
                                    x, y)
-            ship['location']['x'] = x
-            ship['location']['y'] = y
-            ship['moves']['cur'] = ship['moves']['cur'] -delta
+
+            #can we actually move this far?
+            if (delta * 2 <= ship['moves']['cur']):
+                ship['location']['x'] = x
+                ship['location']['y'] = y
+                ship['moves']['cur'] = ship['moves']['cur'] -delta * 2
 
             #are there any system ships stored on this ship?
             #TODO: make sure we don't move too many ships

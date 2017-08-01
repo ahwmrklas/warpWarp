@@ -10,6 +10,7 @@ from dataModel import *
 from mapUtil import *
 from ijk import *
 from cmds import warpWarCmds
+from math import ceil
 import json
 
 # PURPOSE:
@@ -17,7 +18,7 @@ import json
 def createMoveGraph(tkRoot, game, hexMap, shipName):
     ship = findShip(game, shipName)
     startI, startJ, startK = XYtoIJK(ship['location']['x'], ship['location']['y'])
-    movesLeft = ship['moves']['cur']
+    movesLeft = ceil(ship['moves']['cur']/2)
     for i in range(-movesLeft, movesLeft + 1):
         for j in range(-movesLeft, movesLeft + 1):
             for k in range(-movesLeft, movesLeft + 1):
@@ -45,8 +46,8 @@ def setupRightClickMoveMenu(hexMap, tkRoot):
                 if (ship['owner'] == tkRoot.playerName):
                     if (ship['WG']['cur'] == True):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
-                                                                     ship['moves']['cur'],
-                                                                     ship['PD']['cur'])
+                                                                     ceil(ship['moves']['cur']/2),
+                                                                     ceil(ship['PD']['cur']/2))
                         popup.add_command(label=labelString,
                                   command=lambda game=tkRoot.game,
                                                  hexMap=tkRoot.hexMap,
@@ -77,14 +78,14 @@ def moveOnClick(private, x, y):
 
     si,sj,sk = XYtoIJK(x,y)
     fi,fj,fk = XYtoIJK(cur_x,cur_y)
+        #find the ijk stuff for decrementing the right number of moves
     delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
     if [x,y] in warpEnds:
         delta = 1
     if (delta <= moveLeft):
         ship['location']['x'] = x
         ship['location']['y'] = y
-        #find the ijk stuff for decrementing the right number of moves
-        ship['moves']['cur'] = ship['moves']['cur'] - delta
+        ship['moves']['cur'] = ship['moves']['cur'] - delta*2
 
         # Send the move command to the server
         # We could also Queue up all the move commands
