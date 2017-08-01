@@ -15,6 +15,7 @@ class damageAllocation(Dialog):
     def __init__(self, master, ship):
         self.ship = ship
         self.remaining = self.ship['damage']
+        self.finished = 0
         Dialog.__init__(self, master)
 
     # PURPOSE:
@@ -182,3 +183,4 @@ class damageAllocation(Dialog):
         self.ship['R']['cur']  = self.ship['R']['cur']  - myInt(self.rpSpn.get())
         self.ship['WG']['cur'] = self.ship['WG']['cur'] - myInt(self.warpSpn.get())
         print (self.ship)
+        self.finished = 1

@@ -197,7 +197,7 @@ def damageAllocationMenu(tkRoot, shipName):
         ship = findShip(tkRoot.game, shipName)
         allocationResult = damageAllocation(tkRoot, ship)
 
-        if (allocationResult is not None):
+        if (allocationResult is not None and allocationResult.finished):
             sendJson = warpWarCmds().acceptDamage(tkRoot.playerName, allocationResult.ship)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
