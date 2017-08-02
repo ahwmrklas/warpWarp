@@ -37,6 +37,7 @@ sys.path.append("/home/ahw/views/warpWar/test")
 import json
 import ijk
 import dataModel
+import math
 
 # PURPOSE: look to see if all players are in a given phase
 # RETURNS: true iff all players in game are in phase
@@ -578,7 +579,7 @@ class gameserver:
                     changeAllPlayerPhase(self.game, "waiting", "move")
                     # Reset all ships so that can move again
                     for ship in self.game['objects']['shipList']:
-                        ship['moves']['cur'] = ship['PD']['cur']
+                        ship['moves']['cur'] = math.ceil(ship['PD']['cur']/2)
 
             elif (self.game['state']['phase'] == "move"):
                 # Given player can no longer move and must wait
@@ -671,9 +672,11 @@ class gameserver:
 
             print("GServer:", " delta", delta, ship['location']['x'], ship['location']['y'],
                                    x, y)
-            ship['location']['x'] = x
-            ship['location']['y'] = y
-            ship['moves']['cur'] = ship['moves']['cur'] -delta
+            #can we actually move this far?
+            if (delta <= ship['moves']['cur']):
+                ship['location']['x'] = x
+                ship['location']['y'] = y
+                ship['moves']['cur'] = ship['moves']['cur'] - delta
 
             #are there any system ships stored on this ship?
             #TODO: make sure we don't move too many ships

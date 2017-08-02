@@ -11,6 +11,7 @@ from mapUtil import *
 from ijk import *
 from cmds import warpWarCmds
 import json
+import math
 
 # PURPOSE:
 # RETURNS:
@@ -46,7 +47,7 @@ def setupRightClickMoveMenu(hexMap, tkRoot):
                     if (ship['WG']['cur'] == True):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
                                                                      ship['moves']['cur'],
-                                                                     ship['PD']['cur'])
+                                                                     math.ceil(ship['PD']['cur']/2))
                         popup.add_command(label=labelString,
                                   command=lambda game=tkRoot.game,
                                                  hexMap=tkRoot.hexMap,

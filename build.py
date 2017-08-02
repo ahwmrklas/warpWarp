@@ -1,6 +1,7 @@
 
 import tkinter as tk
 from tkinter.simpledialog import *
+import math
 
 class build(Dialog):
 
@@ -159,6 +160,7 @@ class build(Dialog):
     def apply(self):
         print("apply build")
         print(self.base['owner'])
+        moves = math.ceil(int(self.pwrSpn.get())/2)
         self.ship =  {
              'name': self.shipNameEntry.get(),
              'type': "ship",
@@ -167,7 +169,7 @@ class build(Dialog):
              'owner': self.base['owner'],
              'techLevel': 1,
              'damage': 0,
-             'moves': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},   # relates to PowerDrive
+             'moves': {'max': moves, 'cur': moves},   # relates to PowerDrive
              'PD': {'max': int(self.pwrSpn.get()), 'cur': int(self.pwrSpn.get())},       # PowerDrive
              'WG': {'max': True if int(self.warpSpn.get()) == 1 else False, 'cur': True if int(self.warpSpn.get()) == 1 else False}, # Warp Generator
              'B': {'max':int(self.beamSpn.get()), 'cur':int(self.beamSpn.get())},       # Beams
