@@ -22,7 +22,6 @@ from damage import *
 from cmds import warpWarCmds
 import json
 import getpass
-from math import ceil
 
 # PURPOSE: Timer call back every second to check if the mouse has moved.
 #          If it hasn't moved create a tool tip of info for the given location
@@ -426,8 +425,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 if (ship['owner'] == tkRoot.playerName):
                     if (ship['WG']['cur'] == True):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
-                                                                     ceil(ship['moves']['cur']/2),
-                                                                     ceil(ship['PD']['cur']/2))
+                                                                     ship['moves']['cur'],
+                                                                     ship['PD']['cur'])
                         phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']: moveMenu(tkRoot, name))
                     else:
                         #find a way to get system ships on to warp ships
