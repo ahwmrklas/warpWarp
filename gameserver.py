@@ -38,6 +38,8 @@ import json
 import ijk
 import dataModel
 import math
+import copy
+from dictDiff import *
 
 # PURPOSE: look to see if all players are in a given phase
 # RETURNS: true iff all players in game are in phase
@@ -54,6 +56,7 @@ def changePlayerPhase(game, playerName, start, finish):
     print("GServer:", playerName, " moving from ", start, " to ", finish)
     for player in game['playerList'] :
         if (player['name'] == playerName):
+            print(player)
             assert(player['phase'] == start)
             player['phase'] = finish
             return True
@@ -403,6 +406,9 @@ class gameserver:
         self.gameContinues = True
         self.game = dataModel.emptyGame()
 
+        #Only send people information they don't have
+        self.playerGames = {}
+
         # This is used for debug
         self.cmdStr = None
 
@@ -415,6 +421,19 @@ class gameserver:
     # RETURNS: game state as a JSON string
     def gameJson(self):
         return json.dumps(self.game, ensure_ascii=False)
+
+    # PURPOSE: Return the JSON representing changes in the game
+    # RETURNS: game state as a JSON string
+    def newGameJson(self):
+        newInfo = dictDiff(self.playerGames[self.currentPlayer], self.game)
+        print(newInfo)
+        return json.dumps(newInfo, ensure_ascii=False)
+
+    # PURPOSE: Remember what information we sent
+    # RETURNS: None
+    def updateSent(self):
+        self.playerGames[self.currentPlayer] = copy.deepcopy(self.game)
+
 
     # PURPOSE: Interpret JSON command and do something
     # RETURNS: true for properly parsed command
@@ -430,6 +449,9 @@ class gameserver:
         if (self.cmdStr != cmdStr):
             print("GServer: (%s) CMD: %s PHASE: %s" % (cmd['plid'], cmdStr, self.game['state']['phase']))
         self.cmdStr = cmdStr
+        self.currentPlayer = cmd['plid']
+        if (self.currentPlayer not in self.playerGames.keys()):
+                self.playerGames[self.currentPlayer] = {}
 
         if cmdStr == 'quit':
             print("GServer:", "quitCommandRecieved")
@@ -562,7 +584,9 @@ class gameserver:
             # Based on current phase what do we do?
             if (self.game['state']['phase'] == "creating"):
                 # Record ready for given player
+                print(self.game['playerList'])
                 changePlayerPhase(self.game, playerName, "creating", "waiting")
+                print(self.game['playerList'])
 
                 if areAllPlayersInPhase(self.game, "waiting"):
                     self.game['state']['phase'] = "build"

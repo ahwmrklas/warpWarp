@@ -88,12 +88,14 @@ class playerAiThrd(threading.Thread):
 
         gamePhase = None
         playerPhase = None
+        game = {}
 
         self.hCon = comThrd(self.ipAddr, self.port)
 
         while (self.threadContinue):
             # Ping
-            game = self.ping()
+            newGameInfo = self.ping()
+            game.update(newGameInfo)
 
             playerMe = playerTableGet(game, self.playerName)
             if (playerMe is None):

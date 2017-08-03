@@ -51,7 +51,9 @@ class hexMap(HexagonalGrid):
     def updateMap(self, game):
     
         print("updateMap")
-        if (game is None):
+        if (game is None or \
+                'map' not in game.keys() or \
+                'objects' not in game.keys()):
             return
     
         self.drawGrid('white')

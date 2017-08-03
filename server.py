@@ -65,7 +65,10 @@ class srvrThrd(threading.Thread):
            self.serverContinue = self.gameserver.gameOn()
 
            # Send client the state of the game
-           c.send(self.gameserver.gameJson().encode())
+           c.send(self.gameserver.newGameJson().encode())
+           #if we succeeded, update information sent
+           self.gameserver.updateSent()
+           print("we sent it!")
            c.close()
 
         print("server: socket listen exiting")
