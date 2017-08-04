@@ -19,6 +19,7 @@ from combat import *
 from mapUtil import *
 from connect import *
 from damage import *
+from dictDiff import *
 from cmds import warpWarCmds
 import json
 import getpass
@@ -96,7 +97,7 @@ def connectServer(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -110,13 +111,13 @@ def newGame(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
         sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -141,7 +142,7 @@ def playerOptionMenu(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -181,7 +182,7 @@ def sendCombatReady(tkRoot):
             tkRoot.hCon.sendCmd(sendJson)
             resp = tkRoot.hCon.waitFor(5)
             newGameInfo = json.loads(resp)
-            tkRoot.game.update(newGameInfo)
+            gameUpdate(tkRoot.game, newGameInfo)
 
         # We've sent our orders, erase them
         tkRoot.battleOrders = {}
@@ -192,7 +193,7 @@ def sendCombatReady(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -210,7 +211,7 @@ def damageAllocationMenu(tkRoot, shipName):
             tkRoot.hCon.sendCmd(sendJson)
             resp = tkRoot.hCon.waitFor(5)
             newGameInfo = json.loads(resp)
-            tkRoot.game.update(newGameInfo)
+            gameUpdate(tkRoot.game, newGameInfo)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -228,7 +229,7 @@ def buildShip(tkRoot, baseName):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -246,7 +247,7 @@ def loadShip(tkRoot, ship, shipList):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
@@ -264,7 +265,7 @@ def refresh(tkRoot):
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -306,7 +307,7 @@ def loadGame(tkRoot):
     tkRoot.hCon.sendCmd(sendJson)
     resp = tkRoot.hCon.waitFor(5)
     newGameInfo = json.loads(resp)
-    tkRoot.game.update(newGameInfo)
+    gameUpdate(tkRoot.game, newGameInfo)
 
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -342,7 +343,7 @@ def sendReady(event, tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         newGameInfo = json.loads(resp)
         print(newGameInfo)
-        tkRoot.game.update(newGameInfo)
+        gameUpdate(tkRoot.game, newGameInfo)
 
 # PURPOSE:
 # RETURNS:
@@ -596,7 +597,7 @@ def main():
     tkRoot.title("WarpWar")
     tkRoot.hCon = None
     tkRoot.hexMap = None
-    tkRoot.game = {}
+    tkRoot.game = emptyGame()
 
     # These should be read from a config file or some other saved options.
     tkRoot.playerName = getpass.getuser()

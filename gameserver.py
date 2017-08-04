@@ -425,7 +425,7 @@ class gameserver:
     # PURPOSE: Return the JSON representing changes in the game
     # RETURNS: game state as a JSON string
     def newGameJson(self):
-        newInfo = dictDiff(self.playerGames[self.currentPlayer], self.game)
+        newInfo = gameDiff(self.playerGames[self.currentPlayer], self.game)
         print(newInfo)
         return json.dumps(newInfo, ensure_ascii=False)
 
@@ -451,7 +451,7 @@ class gameserver:
         self.cmdStr = cmdStr
         self.currentPlayer = cmd['plid']
         if (self.currentPlayer not in self.playerGames.keys()):
-                self.playerGames[self.currentPlayer] = {}
+                self.playerGames[self.currentPlayer] = dataModel.emptyGame()
 
         if cmdStr == 'quit':
             print("GServer:", "quitCommandRecieved")

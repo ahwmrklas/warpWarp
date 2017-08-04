@@ -47,6 +47,8 @@ class playerAiThrd(threading.Thread):
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
+        print("playerAi:", end=" ")
+        print(game)
         return game
 
     # PURPOSE: 
@@ -57,6 +59,7 @@ class playerAiThrd(threading.Thread):
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
+        gameUpdate(self.game, game)
         print("playerAi:RESP:", len(resp))
         return game
 
@@ -68,6 +71,7 @@ class playerAiThrd(threading.Thread):
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
+        gameUpdate(self.game, game)
         print("playerAi:RESP:", len(resp))
         return game
 
@@ -88,18 +92,19 @@ class playerAiThrd(threading.Thread):
 
         gamePhase = None
         playerPhase = None
-        game = {}
+        game = emptyGame()
 
         self.hCon = comThrd(self.ipAddr, self.port)
 
         while (self.threadContinue):
             # Ping
-            newGameInfo = self.ping()
-            game.update(newGameInfo)
+            self.ping()
 
             playerMe = playerTableGet(game, self.playerName)
             if (playerMe is None):
                 playerMe = {'phase':None}
+
+            print (playerMe)
 
             # What is the current game state and player state?
             if ( (gamePhase == game['state']['phase']) and
