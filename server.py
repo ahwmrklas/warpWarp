@@ -11,7 +11,6 @@
 import socket
 import tkinter as tk
 import threading
-import queue as Q
 import gameserver
 from cmds import warpWarCmds
 
