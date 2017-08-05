@@ -36,26 +36,14 @@ class comThrd(threading.Thread):
     def quitCmd(self):
         self.sendQ.put("quit")
 
-    # PURPOSE: Get items from the Q
-    # RETURNS: return a string
-    def pull(self):
-        if (not self.rcvQ.empty()):
-            return self.rcvQ.get()
-        return None
-
     # PURPOSE: wait for a response in Q
     # RETURNS: return a string
     def waitFor(self, count):
-        resp = self.pull()
-        tooMany = count
-        while (resp is None):
-            if (tooMany <= 0):
-                print("Failed to connect")
-                return ""
-            tooMany -= 1
-            # print("sleeping")
-            time.sleep(1)
-            resp = self.pull()
+        try:
+            resp = self.rcvQ.get(True, count)
+        except Queue.Empty:
+            resp = ""
+            print("Failed waiting for message")
 
         # print("RESP:", len(resp))
         return resp
