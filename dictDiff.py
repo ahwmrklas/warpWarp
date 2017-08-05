@@ -82,7 +82,7 @@ def gameDiffHelper(oldPiece, newPiece):
                 #we recurse on lists or dicts
                 recurseResult = gameDiffHelper(oldPiece[key], newPiece[key])
                 for result in recurseResult:
-                    diffList.append(([key, *result[0]], result[1]))
+                    diffList.append((result[0].append(key), result[1]))
             else:
                 #sweet, we found a base case
                 diffList.append([key], newPiece[key])
