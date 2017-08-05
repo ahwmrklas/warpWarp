@@ -1,6 +1,5 @@
 from hexgrid import *
 from tkinter import *
-from overlay import *
 from hexinfo import *
 import dataModel
 
@@ -53,34 +52,39 @@ class hexMap(HexagonalGrid):
         print("updateMap")
         if (game is None):
             return
-    
+
+        # Basic grid is at bottom
         self.drawGrid('white')
     
-        # Draw a pretty colored hilight around all the special hexes
-        for hilite in self.hiliteList:
-            self.setBorders(hilite[0], hilite[1], hilite[2], hilite[3])
-    
-        dim = game['map']
-        lists = game['objects']
-        starList = lists['starList']
-        thingList = lists['thingList']
-        shipList = lists['shipList']
-        starBaseList = lists['starBaseList']
-        warpLineList = lists['warpLineList']
-    
-        # Break up the objectlists into a 2D array. I don't like this
-        # but for the moment it works
-        objArray = DrawArray(dim['width'], dim['height'], game['objects'])
-    
-        self.drawObjects(objArray)
-    
-        for line in warpLineList:
+        # Draw the warp lines
+        for line in game['objects']['warpLineList']:
             base1 = dataModel.findBase(game, line['start'])
             base2 = dataModel.findBase(game, line['end'])
             if (base1 and base2):
                 self.drawLine(base1['location']['x'], base1['location']['y'],
                                 base2['location']['x'], base2['location']['y'])
+    
+        # Draw All the unique objects (plants, ships)
+        allList = (game['objects']['starList'] +
+                   game['objects']['thingList'] +
+                   game['objects']['shipList'] +
+                   game['objects']['starBaseList'])
 
+        # Convert object list to something hexgrid can handle
+        listForHexGrid = []
+        for obj in allList:
+            x = obj['location']['x']
+            y = obj['location']['y']
+            listForHexGrid.append((x,y,obj['image']))
+    
+        self.drawObjects(listForHexGrid)
+    
+        # Draw a pretty colored hilight around all the special hexes
+        for hilite in self.hiliteList:
+            self.setBorders(hilite[0], hilite[1], hilite[2], hilite[3])
+
+        print("five")
+    
     # PURPOSE:
     # RETURNS: Nothing ... but a return might be useful
     def clickHex(self, tkRoot, x, y):
