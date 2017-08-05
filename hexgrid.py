@@ -8,6 +8,7 @@ class HexaCanvas(Canvas):
     def __init__(self, master, *args, **kwargs):
         Canvas.__init__(self, master, *args, **kwargs)
 
+        self.photoList = {}
         self.hexaSize = 20
         self.setHexaSize(self.hexaSize)
 
@@ -19,7 +20,7 @@ class HexaCanvas(Canvas):
     def create_hexagone(self, x, y, content = TileContent.NO_ITEMS,
             color = "black", fill="blue",
             color1=None, color2=None, color3=None, color4=None, color5=None,
-            color6=None, width=2):
+            color6=None, width=2, tags=None):
         """ 
         Compute coordinates of 6 points relative to a center position.
         Point are numbered following this schema :
@@ -75,19 +76,19 @@ class HexaCanvas(Canvas):
         if color6 == None:
             color6 = color
 
-        self.create_line(point1, point2, fill=color1, width=width)
-        self.create_line(point2, point3, fill=color2, width=width)
-        self.create_line(point3, point4, fill=color3, width=width)
-        self.create_line(point4, point5, fill=color4, width=width)
-        self.create_line(point5, point6, fill=color5, width=width)
-        self.create_line(point6, point1, fill=color6, width=width)
+        self.create_line(point1, point2, fill=color1, width=width, tags=tags)
+        self.create_line(point2, point3, fill=color2, width=width, tags=tags)
+        self.create_line(point3, point4, fill=color3, width=width, tags=tags)
+        self.create_line(point4, point5, fill=color4, width=width, tags=tags)
+        self.create_line(point5, point6, fill=color5, width=width, tags=tags)
+        self.create_line(point6, point1, fill=color6, width=width, tags=tags)
 
         #set stippling options.
         stipple = TileFiles[content]
 
         if fill != None:
             self.create_polygon(point1, point2, point3, point4, point5, point6,
-                    fill=fill, stipple=stipple)
+                    fill=fill, stipple=stipple, tags=tags)
 
 
 # HexagonalGrid inherits from HexaCanvas
@@ -122,38 +123,37 @@ class HexagonalGrid(HexaCanvas):
         self.create_hexagone(pix_x, pix_y, *args, **kwargs)
 
     # PURPOSE: Draw the entire grid with the given color
-    def drawGrid(self, color):
+    def drawGrid(self, color, tags=None):
         for x in range(0, self.grid_width):
             for y in range(0, self.grid_height):
-                self.setCell(x,y, fill=color)
+                self.setCell(x,y, fill=color, tags=tags)
 
     #PURPOSE: read the dictionary and display it
     #RETURNS: Nothing
-    def drawObjects(self, drawArray):
-        self.photoList = []
-        for x in range(self.grid_width):
-            for y in range (self.grid_height):
-                self.drawObject(x, y, drawArray.array[x][y][0])
+    def drawObjects(self, drawList, tags=None):
+        for x in drawList:
+            self.drawObject(x[0], x[1], x[2], tags)
 
     #PURPOSE: Draw an object on top of a hex grid
     #RETURNS: Nothing
-    def drawObject(self, xCell, yCell, imageStr):
+    def drawObject(self, xCell, yCell, imageStr, tags=None):
         #did we get a real image?
         if imageStr == "":
             return
         #compute pixel coordinate of the center of the cell:
+        fileName = "resource/images/" + imageStr
+        if (fileName not in self.photoList):
+            photo = PhotoImage(file=fileName)
+            self.photoList[fileName] = photo.subsample(int(photo.width()/self.hexaSize))
         [pix_x, pix_y] = self.findPixel(xCell, yCell)
-        photo = PhotoImage(file="resource/images/" + imageStr)
-        self.photoList.append(
-                photo.subsample(int(photo.width()/self.hexaSize)))
-        self.create_image(pix_x,pix_y,image=self.photoList[-1])
+        self.create_image(pix_x,pix_y,image=self.photoList[fileName], tags=tags)
 
     # PURPOSE: Draw line from then center of one cell to another
     # RETURNS: None
-    def drawLine(self, xStart, yStart, xEnd, yEnd):
+    def drawLine(self, xStart, yStart, xEnd, yEnd, tags=None):
         startpix_x, startpix_y = self.findPixel(xStart, yStart)
         endpix_x,   endpix_y   = self.findPixel(xEnd,   yEnd)
-        self.create_line((startpix_x, startpix_y), (endpix_x, endpix_y), fill="Yellow", width=2)
+        self.create_line((startpix_x, startpix_y), (endpix_x, endpix_y), fill="Yellow", width=2, tags=tags)
 
     def findPixel(self, xCell, yCell):
         size = self.hexaSize
@@ -245,7 +245,7 @@ class HexagonalGrid(HexaCanvas):
     def getCurrentPoint(self):
         return self.lastX, self.lastY
 
-    def setBorders(self, x, y, color, width=2):
+    def setBorders(self, x, y, color, width=2, tags=None):
                         self.setCell(x, y,
                                             fill=None,
                                             color1=color,
@@ -254,4 +254,5 @@ class HexagonalGrid(HexaCanvas):
                                             color4=color,
                                             color5=color,
                                             color6=color,
-                                            width=width)
+                                            width=width,
+                                            tags=tags)

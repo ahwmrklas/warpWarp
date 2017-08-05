@@ -10,7 +10,6 @@ from hexgrid import *
 from tkinter import *
 from tkinter import filedialog
 from dataModel import *
-from overlay import *
 from hexinfo import *
 from build import *
 from move import *
