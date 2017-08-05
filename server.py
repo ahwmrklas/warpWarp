@@ -68,7 +68,6 @@ class srvrThrd(threading.Thread):
            c.send(self.gameserver.newGameJson().encode())
            #if we succeeded, update information sent
            self.gameserver.updateSent()
-           print("we sent it!")
            c.close()
 
         print("server: socket listen exiting")
