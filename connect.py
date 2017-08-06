@@ -15,6 +15,7 @@ class connect(Dialog):
         self.name.set(defaultName)
         self.startBases = StringVar()
         self.startBases.set("Ur Mosul Larsu") #Someday be a drop downlist
+        self.startBaseList = ["Ur Mosul Larsu", "Nineveh Babylon Ugarit"]
         self.color = StringVar()
         self.color.set("Red")
         self.ip = StringVar()
@@ -46,7 +47,7 @@ class connect(Dialog):
         tmp = Label(master, text="PlayerBases")
         tmp.pack()
 
-        tmp = tk.Entry(master, textvariable=self.startBases)
+        tmp = tk.OptionMenu(master, self.startBases, *self.startBaseList)
         tmp.pack()
 
         tmp = Label(master, text="SeverIP")
