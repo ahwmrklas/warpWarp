@@ -84,10 +84,13 @@ def connectServer(tkRoot):
     print("connectServer")
     if (tkRoot.hCon is not None):
         tkRoot.hCon.quitCmd()
+        tkRoot.hCon = None
 
     tmp = connect(tkRoot, tkRoot.playerName, "127.0.1.1", "12345")
     if (tmp is not None):
         tkRoot.hCon = tmp.result
+
+    if (tkRoot.hCon is not None):
         tkRoot.playerName = tmp.playerName
 
         sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)

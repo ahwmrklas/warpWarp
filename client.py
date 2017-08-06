@@ -41,7 +41,7 @@ class comThrd(threading.Thread):
     def waitFor(self, count):
         try:
             resp = self.rcvQ.get(True, count)
-        except Queue.Empty:
+        except Q.Empty:
             resp = ""
             print("Failed waiting for message")
 
