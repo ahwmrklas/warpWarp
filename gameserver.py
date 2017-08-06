@@ -457,7 +457,6 @@ class gameserver:
             player = dataModel.playerTableGet(self.game, newPlayer)
 
             if player is None:
-                print("making new player")
                 self.game['playerList'].append({'name':  newPlayer,
                                                 'phase': "creating",
                                                 'color': color})
@@ -483,8 +482,6 @@ class gameserver:
             # What to do? Offer to save current game? NO! this is the server,
             # do as commanded
             # erase current game/dictionary
-            # except for our current player list. people might have already joined
-            playerList = self.game['playerList']
             # Start empty
             # Input? Would be list of options for game
             # Should we prevent this? Perhaps block it? Only permit it
@@ -494,8 +491,6 @@ class gameserver:
             # Warn/Error if current game hasn't been saved (is dirty)
             gameName = cmd['name']
             self.game = dataModel.defaultGame()
-            #put back the playerList
-            self.game['playerList'] = playerList
             self.game['state']['phase'] = "creating"
             # TODO probably need things like game options???
             # TODO lots of options, right?
