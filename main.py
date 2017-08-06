@@ -92,6 +92,8 @@ def connectServer(tkRoot):
 
     if (tkRoot.hCon is not None):
         tkRoot.playerName = tmp.playerName
+        tkRoot.playerStartBases = tmp.playerStartBases
+        tkRoot.playerColor = tmp.playerColor
 
         sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         print(" main sending: ", sendJson)
@@ -128,8 +130,8 @@ def sendReadyMenu(tkRoot):
 
 # PURPOSE:
 # RETURNS:
-def playerOptionMenu(tkRoot):
-    print("playerOptionMenu")
+def playerJoinMenu(tkRoot):
+    print("playerJoinMenu")
     print("Should launch dialog to pick")
     if (tkRoot.hCon is not None):
         sendJson = warpWarCmds().removePlayer(tkRoot.playerName, tkRoot.playerName)
@@ -390,8 +392,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             phaseMenuObject.add_command(label="Open",
                                   command=lambda:loadGame(tkRoot))
     elif (gamePhase == 'creating'):
-        phaseMenuObject.add_command(label="Options",
-                              command=lambda:playerOptionMenu(tkRoot))
+        phaseMenuObject.add_command(label="Join",
+                              command=lambda:playerJoinMenu(tkRoot))
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'build'):
@@ -589,8 +591,8 @@ def main():
 
     # These should be read from a config file or some other saved options.
     tkRoot.playerName = getpass.getuser()
-    tkRoot.playerStartBases = ['Ur', 'Mosul', 'Larsu']
-    tkRoot.playerColor = 'Red'
+    tkRoot.playerStartBases = None
+    tkRoot.playerColor = None
 
     tkRoot.battleOrders = {}
     tkRoot.bind("<<updateWWMenu>>", lambda event :updateWWMenu(event, tkRoot))

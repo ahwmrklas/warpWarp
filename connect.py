@@ -13,6 +13,11 @@ class connect(Dialog):
     def __init__(self, master, defaultName, defaultIP, defaultPort):
         self.name = StringVar()
         self.name.set(defaultName)
+        self.startBases = StringVar()
+        self.startBases.set("Ur Mosul Larsu") #Someday be a drop downlist
+        self.color = StringVar()
+        self.color.set("Red")
+        self.ip = StringVar()
         self.ip = StringVar()
         self.ip.set(defaultIP)
         self.port = IntVar()
@@ -30,6 +35,18 @@ class connect(Dialog):
         tmp.pack()
 
         tmp = tk.Entry(master, textvariable=self.name)
+        tmp.pack()
+
+        tmp = Label(master, text="PlayerColor")
+        tmp.pack()
+
+        tmp = tk.Entry(master, textvariable=self.color)
+        tmp.pack()
+
+        tmp = Label(master, text="PlayerBases")
+        tmp.pack()
+
+        tmp = tk.Entry(master, textvariable=self.startBases)
         tmp.pack()
 
         tmp = Label(master, text="SeverIP")
@@ -68,3 +85,6 @@ class connect(Dialog):
         print("return the client")
         self.result = self.client
         self.playerName = self.name.get()
+        tmp = self.startBases.get()
+        self.playerStartBases = tmp.split()
+        self.playerColor = self.color.get()

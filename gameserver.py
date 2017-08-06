@@ -464,6 +464,7 @@ class gameserver:
                 player['color'] = color
                 for base in startingBases:
                     ownIt = dataModel.findBase(self.game, base)
+                    print(newPlayer, "owns", base)
                     if ownIt:
                         ownIt['owner'] = newPlayer
             else:
