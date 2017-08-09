@@ -89,10 +89,17 @@ class warpWarCmds():
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
-    # PURPOSE: Create the move ship string
+    # PURPOSE: Create the load ship string
     # RETURNS: string with json
     def loadShip(self, plid, shipName, motherName):
         cmd  = { 'cmd' : {'cmd':"loadship", 'plid':plid, 'shipName':shipName, 'motherName':motherName} }
+        jsonStr = json.dumps(cmd, ensure_ascii=False)
+        return jsonStr
+
+    # PURPOSE: Create the unload ship string
+    # RETURNS: string with json
+    def unloadShip(self, plid, shipName, motherName):
+        cmd  = { 'cmd' : {'cmd':"unloadship", 'plid':plid, 'shipName':shipName, 'motherName':motherName} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 

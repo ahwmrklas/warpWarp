@@ -237,7 +237,12 @@ def loadShip(tkRoot, ship, shipList):
         loadResult = loadShipMenu(tkRoot, ship, shipList)
 
     if (loadResult is not None and loadResult.finished):
-        sendJson = warpWarCmds().loadShip(tkRoot.playerName, loadResult.ship['name'], loadResult.motherVar.get())
+        if loadResult.motherVar.get() == "unload":
+            motherName = findMother(tkRoot.game['objects']['shipList'], loadResult.ship['name'])
+            print(motherName)
+            sendJson = warpWarCmds().unloadShip(tkRoot.playerName, loadResult.ship['name'], motherName)
+        else:
+            sendJson = warpWarCmds().loadShip(tkRoot.playerName, loadResult.ship['name'], loadResult.motherVar.get())
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)

@@ -23,7 +23,7 @@ class loadShipMenu(Dialog):
         nameList = [ship['name'] for ship in motherList if ship['SR']['cur'] >= 1]
         if len(nameList) > 0:
             mother = OptionMenu(master, self.motherVar, 
-                    *[ship['name'] for ship in motherList if ship['SR']['cur'] >= 1])
+                    *[ship['name'] for ship in motherList if ship['SR']['cur'] >= 1] + ["unload"])
             mother.grid()
         else:
             Label(master, text="No ships capable of carrying me!").grid()
@@ -34,3 +34,8 @@ class loadShipMenu(Dialog):
         if self.motherVar.get():
             self.finished = 1
 
+def findMother(listOfShips, child):
+    for ship in listOfShips:
+        print (ship)
+        if child in ship['carried_ships']:
+            return ship['name']

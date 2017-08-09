@@ -710,6 +710,13 @@ class gameserver:
             if ship['location']['x'] == mother['location']['x'] and ship['location']['y'] == mother['location']['y']:
                 mother['carried_ships'].append(ship['name'])
 
+        elif cmdStr == 'unloadship':
+            #this is as simple as can be.
+            #find the mother, and remove the name of the first ship
+            mother = dataModel.findShip(self.game, cmd['motherName'])
+            #are these guys in the same square
+            mother['carried_ships'].remove(cmd['shipName'])
+
         elif cmdStr == 'combatorders': # Per ship? All ships?
             # A combat instruction
             # Check for proper state. Are there existing orders?
