@@ -10,16 +10,17 @@ class hexMap(HexagonalGrid):
         self.anchorFrame = tkRoot.mapFrame
         self.callbackData = tkRoot
 
-        self.initMap(width, height)
+        self.__initMap(width, height)
+        self.pack(fill=BOTH, expand=YES)
 
     # PURPOSE:
     # RETURNS: hexMap handle
-    def initMap(self, width, height):
+    def __initMap(self, width, height):
 
         # create a hex map that is the basis of our game display
         HexagonalGrid.__init__(self, master = self.anchorFrame, scale = 20,
                                grid_width=width,
-                               grid_height=height)
+                               grid_height=height, highlightthickness=0)
 
         self.setLeftPrivateCallBack(self.clickHex, self.callbackData)
 
@@ -42,7 +43,8 @@ class hexMap(HexagonalGrid):
     def resizeMap(self, width, height):
         # don't resize if it is already the same size?
         if ((width != self.grid_width) or (height != self.grid_height)):
-            self.initMap(width, height)
+            self.__initMap(width, height)
+            self.pack(fill=BOTH, expand=YES)
             self.unHiliteMap()
 
     # PURPOSE:

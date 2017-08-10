@@ -608,6 +608,13 @@ def addMenus(tkRoot):
     tkRoot.config(menu=menuBar)
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
+# handle Configure event
+# Redraw the map after a window resize
+def Configure(event, tkRoot):
+    if (tkRoot.configureDelay):
+        tkRoot.after_cancel(tkRoot.configureDelay)
+    tkRoot.configureDelay = tkRoot.after(500, lambda : tkRoot.event_generate("<<updateWWMenu>>", when='tail'))
+
 # PURPOSE: Just make a function out of the main code. It doesn't
 #          seem right without that.
 # RETURNS: ?? hmmm
@@ -619,6 +626,7 @@ def main():
     tkRoot.hCon = None
     tkRoot.hexMap = None
     tkRoot.game = None
+    tkRoot.configureDelay = None
 
     # These should be read from a config file or some other saved options.
     tkRoot.playerName = getpass.getuser()
@@ -634,8 +642,10 @@ def main():
     addMenus(tkRoot)
 
     tkRoot.mapFrame = Frame(tkRoot)
+    tkRoot.mapFrame.bind("<Configure>", lambda event, tkRoot=tkRoot :Configure(event, tkRoot))
+
     tkRoot.hexMap = hexMap(tkRoot, 10, 10)
-    tkRoot.mapFrame.pack()
+    tkRoot.mapFrame.pack(fill=BOTH, expand=YES)
 
     tkRoot.buttonFrame = Frame(tkRoot)
     # Create a quit button (obviously to exit the program)

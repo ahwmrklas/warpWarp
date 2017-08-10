@@ -1,6 +1,7 @@
 from tkinter import *
 from xbm import TileContent
 from xbm import TileFiles
+import math
 
 # HexaCanvas inherits from Canvas
 class HexaCanvas(Canvas):
@@ -101,6 +102,7 @@ class HexagonalGrid(HexaCanvas):
         Δx     = (scale**2 - (scale/2.0)**2)**0.5
         width  = 2 * Δx * grid_width + Δx
         height = 1.5 * scale * grid_height + 0.5 * scale
+        print("scale", scale, "deltaX", Δx, "width", width, "height", height)
         self.rightExternalCallBack = None
         self.lastX = 0
         self.lastY = 0
@@ -110,6 +112,7 @@ class HexagonalGrid(HexaCanvas):
         self.bind("<Button-3>", self.rightClickCallback)
         self.bind("<Enter>", self.Enter)
         self.bind("<Leave>", self.Leave)
+        self.bind("<Configure>", self.Configure)
         self.setHexaSize(scale)
 
     def setCell(self, xCell, yCell, *args, **kwargs ):
@@ -241,6 +244,32 @@ class HexagonalGrid(HexaCanvas):
         self.unbind("<Motion>")
         self.lastX = -1
         self.lastY = -1
+
+    def Configure(self, event):
+        # print("<Configure>", event.width)
+        # The size of a hex is determined by "scale"
+        # The size of a single hex determines the size of the whole grid.
+        # So given the new width (ignore height) and knowing the original
+        # number of grid elements ... compute the new scale ...
+        # I had to remember a lot of algebra for this.
+        #newdelta               = (scale**2 - (scale/2.0)**2)**0.5
+        #newdelta**2            = (scale**2 - (scale/2.0)**2)
+        #newdelta**2            = scale**2 - (scale**2)/2.0**2
+        #newdelta**2            = scale**2 - (scale**2)/4.0
+        #4*newdelta**2          = 4scale**2 - (scale**2)
+        #4*newdelta**2          = 3*scale**2
+        #4*newdelta**2/3        = scale**2
+        #(4*newdelta**2/3)**0.5 = scale
+        newdelta = event.width / (2 * self.grid_width + 1)
+        newscale = (4*newdelta**2/3)**0.5
+        print("newdelta", newdelta, "newscale", newscale)
+
+        # If the new scale differs by more than 1 from the old,
+        # Set up a new scale and trigger rewrite of map
+        if (self.hexaSize != math.floor(newscale)):
+            self.setHexaSize(math.floor(newscale))
+            self.photoList = {}
+            self.delete("all")
 
     def getCurrentPoint(self):
         return self.lastX, self.lastY
