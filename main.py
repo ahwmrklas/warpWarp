@@ -14,6 +14,7 @@ from hexinfo import *
 from build import *
 from move import *
 from loadShip import *
+from loadCargo import *
 from combat import *
 from mapUtil import *
 from connect import *
@@ -251,6 +252,21 @@ def loadShip(tkRoot, ship, shipList):
 
 # PURPOSE:
 # RETURNS:
+def loadCargo(tkRoot, star, ship):
+    print("cargoMenu")
+    if (star and ship and tkRoot.hCon is not None):
+        cargoResult = loadCargoMenu(tkRoot, star, ship)
+
+    if (cargoResult is not None and cargoResult.shipment != 0):
+        sendJson = warpWarCmds().loadCargo(tkRoot.playerName, star['name'], ship['name'], cargoResult.shipment)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+        resp = tkRoot.hCon.waitFor(5)
+        tkRoot.game = json.loads(resp)
+
+        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
+# PURPOSE:
+# RETURNS:
 def moveMenu(tkRoot, shipName):
     print("moveMenu", shipName)
     createMoveGraph(tkRoot, tkRoot.game, tkRoot.hexMap, shipName)
@@ -405,9 +421,9 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         player = playerTableGet(tkRoot.game, tkRoot.playerName)
         assert(player)
         phaseMenuObject.add_command(label="Bases you own:")
+        #Technically, its only bases that can do this
         for star in tkRoot.game['objects']['starList']:
             if (star['owner'] == tkRoot.playerName):
-                print (star['owner'])
                 labelString = "'%s'    BP left: %d" % (star['name'],
                         star['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
@@ -421,7 +437,18 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 phaseMenuObject.add_command(label=labelString, 
                                             command=lambda name=base['name']:buildShip(tkRoot, name))
                 tkRoot.hexMap.hiliteMap(base['location']['x'], base['location']['y'], player['color'], 4, None)
+        phaseMenuObject.add_separator()
+        for ship in tkRoot.game['objects']['shipList']:
+            #if we own this star, and have a hold, we should be able to load/unload goods.
+            star = findStarAtLoc(tkRoot.game['objects']['starList'],ship['location']['x'], ship['location']['y'])
+            if (star and star['owner'] == tkRoot.playerName and ship['H']['cur']*10 > ship['Hauled']):
+                labelString = "'%s'    Hauling: %d/%d" % (ship['name'],
+                        ship['Hauled'], ship['H']['cur'] * 10)
+                phaseMenuObject.add_command(label=labelString,
+                        command=lambda thisShip=ship, thisStar=star:loadCargo(tkRoot,thisStar,thisShip))
+                tkRoot.hexMap.hiliteMap(ship['location']['x'], ship['location']['y'], player['color'], 2, None)
 
+        phaseMenuObject.add_separator()
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
         #TODO: enable the move right click stuff.
@@ -547,7 +574,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         print("BAD PHASE", gamePhase)
         gamePhase = ""
 
-    phaseMenuObject.add_separator()
     phaseMenuObject.add_command(label="Refresh", command=lambda:refresh(tkRoot))
 
     menuBar.add_cascade(label="Phase " + gamePhase, menu=phaseMenuObject)

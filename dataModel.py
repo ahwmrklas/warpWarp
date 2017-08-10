@@ -114,6 +114,11 @@ def findShip(game, shipName):
             return ship
     return None
 
+def findStarAtLoc(starList, x,y):
+    for star in starList:
+        if star['location']['x'] == x and star['location']['y'] == y:
+            return star
+    return None
 # PURPOSE: look up base name in game base & star list
 #   (Stars and Bases are mostly interchangeable. They should be in one list)
 # RETURNS: entry of base

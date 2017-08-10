@@ -103,6 +103,13 @@ class warpWarCmds():
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
+    # PURPOSE: Create the load cargo string
+    # RETURNS: string with json
+    def loadCargo(self, plid, starName, shipName, shipment):
+        cmd  = { 'cmd' : {'cmd':"loadcargo", 'plid':plid, 'starName':starName, 'shipName':shipName, 'shipment':shipment} }
+        jsonStr = json.dumps(cmd, ensure_ascii=False)
+        return jsonStr
+
     # PURPOSE: Create the endmove string
     #    FIXME TODO -- duplicate of ready?
     # RETURNS: string with json

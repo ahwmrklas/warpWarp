@@ -182,6 +182,7 @@ class build(Dialog):
              'SH':{'max':int(self.shellSpn.get()) * 6, 'cur':int(self.shellSpn.get()) * 6},       # Shells (New)
              'SR':{'max':int(self.srSpn.get()), 'cur':int(self.srSpn.get())},       # System Ship Racks
              'H': {'max':int(self.holdSpn.get()), 'cur':int(self.holdSpn.get())},       # Holds (New)
+             'Hauled':0, #Are any BP being hauled?
              'R': {'max':int(self.rpSpn.get()), 'cur':int(self.rpSpn.get())},       # Repair Bays (New)
              'visibility':[ {'player':self.base['owner'],  'percent':10}],
              'carried_ships' :[],

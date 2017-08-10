@@ -717,6 +717,18 @@ class gameserver:
             #are these guys in the same square
             mother['carried_ships'].remove(cmd['shipName'])
 
+        elif cmdStr == 'loadcargo':
+            #this is as simple as can be.
+            #find both ships, add the name of 1 to the carried list of 2
+            ship = dataModel.findShip(self.game, cmd['shipName'])
+            star = dataModel.findStarAtLoc(self.game['objects']['starList'], ship['location']['x'], ship['location']['y'])
+            shipment = int(cmd['shipment'])
+            #are these guys in the same square
+            if ship['location']['x'] == star['location']['x'] and ship['location']['y'] == star['location']['y']:
+                star['BP']['cur'] -= shipment
+                ship['Hauled'] += shipment
+
+
         elif cmdStr == 'combatorders': # Per ship? All ships?
             # A combat instruction
             # Check for proper state. Are there existing orders?
