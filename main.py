@@ -422,13 +422,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         assert(player)
         phaseMenuObject.add_command(label="Bases you own:")
         #Technically, its only bases that can do this
-        for star in tkRoot.game['objects']['starList']:
-            if (star['owner'] == tkRoot.playerName):
-                labelString = "'%s'    BP left: %d" % (star['name'],
-                        star['BP']['cur'])
-                phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda name=star['name']:buildShip(tkRoot, name))
-                tkRoot.hexMap.hiliteMap(star['location']['x'], star['location']['y'], player['color'], 4, None)
         for base in tkRoot.game['objects']['starBaseList']:
             if (base['owner'] == tkRoot.playerName):
                 print (base['owner'])

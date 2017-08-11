@@ -467,6 +467,11 @@ class gameserver:
                     print(newPlayer, "owns", base)
                     if ownIt:
                         ownIt['owner'] = newPlayer
+                        #give them everything at that base
+                        baseItems = dataModel.findObjectsAt(self.game, ownIt['location']['x'], ownIt['location']['y'])
+                        for baseItem in baseItems:
+                            baseItem['owner'] = newPlayer
+
             else:
                 # Normally the player shouldn't exist! But they do for the
                 # sample game (or if reconnecting to a game)
