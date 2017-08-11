@@ -434,7 +434,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         for ship in tkRoot.game['objects']['shipList']:
             #if we own this star, and have a hold, we should be able to load/unload goods.
             star = findStarAtLoc(tkRoot.game['objects']['starList'],ship['location']['x'], ship['location']['y'])
-            if (star and star['owner'] == tkRoot.playerName and ship['H']['cur']*10 > ship['Hauled']):
+            if (star and star['owner'] == tkRoot.playerName and ship['H']['cur'] > 0):
                 labelString = "'%s'    Hauling: %d/%d" % (ship['name'],
                         ship['Hauled'], ship['H']['cur'] * 10)
                 phaseMenuObject.add_command(label=labelString,

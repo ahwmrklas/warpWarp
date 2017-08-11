@@ -359,6 +359,7 @@ def harvest(game):
         for thing in dataModel.findObjectsAt(game, star['location']['x'], star['location']['y']):
             #is this thing a ship?
             if thing['type'] == "ship":
+                print(star['name'], " is giving stuff to ", thing['name'])
                 #dump stuff in the cargo hold
                 oldHauled = thing['Hauled']
                 thing['Hauled'] = min([oldHauled + remaining, thing['H']['cur'] * 10])
