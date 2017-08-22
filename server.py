@@ -9,6 +9,7 @@
 
 # Imports
 import socket
+import json
 import tkinter as tk
 import threading
 import gameserver
@@ -60,9 +61,18 @@ class srvrThrd(threading.Thread):
            #print("Rcvd:", cmd.decode())
            self.hGUI.displayAddr(addr)
            self.hGUI.displayMsg(cmd.decode())
-           self.gameserver.parseCmd(cmd.decode())
+           parseStatus = self.gameserver.parseCmd(cmd.decode())
            self.serverContinue = self.gameserver.gameOn()
 
+           #what was the command? pings are processed differntly.
+           if self.gameserver.cmdStr == "poll":
+               if parseStatus:
+                   print ("Stop waiting!")
+               else:
+                   print ("Keep waiting!")
+                   c.send(json.dumps(dict(), ensure_ascii=False).encode())
+                   c.close()
+                   continue
            # Send client the state of the game
            c.send(self.gameserver.gameJson().encode())
            c.close()

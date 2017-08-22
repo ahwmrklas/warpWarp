@@ -456,6 +456,15 @@ class gameserver:
             # print("GServer:", "ping")
             pass
 
+        elif cmdStr == 'poll':
+            # the user is waiting for the other player
+            # are they still wating?
+            player = dataModel.playerTableGet(self.game, cmd['plid'])
+            if player['phase'] == 'waiting':
+                return False
+            else:
+                return True
+
         elif cmdStr == 'newplayer':
             # New player requests to join.
             # I guess we would look at the game state? Hmmm
