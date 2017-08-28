@@ -452,6 +452,12 @@ class gameserver:
             newPlayer = cmd['name']
             startingBases = cmd['bases']
             color = cmd['color']
+
+            if int(cmd['plid']) == 0:
+                plid = max([0] + [player['plid'] for player in self.game['playerList']]) + 1
+            else:
+                plid = cmd['plid']
+
             print("GServer:", "newPlayer", newPlayer)
 
             player = dataModel.playerTableGet(self.game, newPlayer)
@@ -459,7 +465,8 @@ class gameserver:
             if player is None:
                 self.game['playerList'].append({'name':  newPlayer,
                                                 'phase': "creating",
-                                                'color': color})
+                                                'color': color,
+                                                'plid' : plid})
                 player = dataModel.playerTableGet(self.game, newPlayer)
                 player['color'] = color
                 for base in startingBases:

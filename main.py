@@ -96,11 +96,13 @@ def connectServer(tkRoot):
         tkRoot.playerStartBases = tmp.playerStartBases
         tkRoot.playerColor = tmp.playerColor
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        sendJson = warpWarCmds().newPlayer(0, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
+        tkRoot.plid = tkRoot.game['playerList'][-1]['plid']
+        print ("tkroot.plid: %d" % tkRoot.plid)
 
         tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
@@ -115,7 +117,7 @@ def newGame(tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
@@ -623,6 +625,7 @@ def main():
 
     # These should be read from a config file or some other saved options.
     tkRoot.playerName = getpass.getuser()
+    tkRoot.plid = 0
     tkRoot.playerStartBases = None
     tkRoot.playerColor = None
 
