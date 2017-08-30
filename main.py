@@ -111,7 +111,7 @@ def connectServer(tkRoot):
 def newGame(tkRoot):
     print("newGame")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().newGame(tkRoot.playerName, "foo")
+        sendJson = warpWarCmds().newGame(tkRoot.plid, "foo")
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -137,11 +137,11 @@ def playerJoinMenu(tkRoot):
     print("playerJoinMenu")
     print("Should launch dialog to pick")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().removePlayer(tkRoot.playerName, tkRoot.playerName)
+        sendJson = warpWarCmds().removePlayer(tkRoot.plid, tkRoot.playerName)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.playerName, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
@@ -179,7 +179,7 @@ def sendCombatReady(tkRoot):
     if (tkRoot.hCon is not None):
 
         if (tkRoot.battleOrders):
-            sendJson = warpWarCmds().combatOrders(tkRoot.playerName, tkRoot.playerName, tkRoot.battleOrders)
+            sendJson = warpWarCmds().combatOrders(tkRoot.plid, tkRoot.playerName, tkRoot.battleOrders)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
             resp = tkRoot.hCon.waitFor(5)
@@ -189,7 +189,7 @@ def sendCombatReady(tkRoot):
         tkRoot.battleOrders = {}
 
         # Send ready because we are done with this round of combat
-        sendJson = warpWarCmds().ready(tkRoot.playerName, tkRoot.playerName)
+        sendJson = warpWarCmds().ready(tkRoot.plid, tkRoot.playerName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -206,7 +206,7 @@ def damageAllocationMenu(tkRoot, shipName):
         allocationResult = damageAllocation(tkRoot, ship)
 
         if (allocationResult is not None and allocationResult.finished):
-            sendJson = warpWarCmds().acceptDamage(tkRoot.playerName, allocationResult.ship)
+            sendJson = warpWarCmds().acceptDamage(tkRoot.plid, allocationResult.ship)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
             resp = tkRoot.hCon.waitFor(5)
@@ -223,7 +223,7 @@ def buildShip(tkRoot, baseName):
         buildResult = build(tkRoot, base)
 
     if (buildResult is not None and buildResult.ship):
-        sendJson = warpWarCmds().buildShip(tkRoot.playerName, buildResult.ship, baseName)
+        sendJson = warpWarCmds().buildShip(tkRoot.plid, buildResult.ship, baseName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -243,9 +243,9 @@ def loadShip(tkRoot, ship, shipList):
         if loadResult.motherVar.get() == "unload":
             motherName = findMother(tkRoot.game['objects']['shipList'], loadResult.ship['name'])
             print(motherName)
-            sendJson = warpWarCmds().unloadShip(tkRoot.playerName, loadResult.ship['name'], motherName)
+            sendJson = warpWarCmds().unloadShip(tkRoot.plid, loadResult.ship['name'], motherName)
         else:
-            sendJson = warpWarCmds().loadShip(tkRoot.playerName, loadResult.ship['name'], loadResult.motherVar.get())
+            sendJson = warpWarCmds().loadShip(tkRoot.plid, loadResult.ship['name'], loadResult.motherVar.get())
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -260,7 +260,7 @@ def loadCargo(tkRoot, star, ship):
         cargoResult = loadCargoMenu(tkRoot, star, ship)
 
     if (cargoResult is not None and cargoResult.shipment != 0):
-        sendJson = warpWarCmds().loadCargo(tkRoot.playerName, star['name'], ship['name'], cargoResult.shipment)
+        sendJson = warpWarCmds().loadCargo(tkRoot.plid, star['name'], ship['name'], cargoResult.shipment)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -278,7 +278,7 @@ def moveMenu(tkRoot, shipName):
 def refresh(tkRoot):
     print("refresh")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ping(tkRoot.playerName)
+        sendJson = warpWarCmds().ping(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
@@ -318,7 +318,7 @@ def loadGame(tkRoot):
     gameDict = json.loads(gameString)
 
     #send the game to the server.
-    sendJson = warpWarCmds().restoreGame(tkRoot.playerName, gameDict)
+    sendJson = warpWarCmds().restoreGame(tkRoot.plid, gameDict)
     print (sendJson)
     tkRoot.hCon.sendCmd(sendJson)
     resp = tkRoot.hCon.waitFor(5)
@@ -352,7 +352,7 @@ def helpHelp():
 def sendReady(event, tkRoot):
     print("sendReady:", event)
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ready(tkRoot.playerName, tkRoot.playerName)
+        sendJson = warpWarCmds().ready(tkRoot.plid, tkRoot.playerName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
