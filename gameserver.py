@@ -320,7 +320,7 @@ def resolveCombat(game, orders):
                 for baseName in shipOrders['conquer']:
                     print(player, "ship:", myShip, "conquer", baseName)
                     base = dataModel.findBase(game, baseName)
-                    base['owner'] = player
+                    base['owner'] = game['playerList'][player]['plid']
                 continue
             pretty = dataModel.prettyOrders(shipOrders)
             print(player, "ship:", myShip, "order:", pretty)
@@ -473,11 +473,11 @@ class gameserver:
                     ownIt = dataModel.findBase(self.game, base)
                     print(newPlayer, "owns", base)
                     if ownIt:
-                        ownIt['owner'] = newPlayer
+                        ownIt['owner'] = plid
                         #give them everything at that base
                         baseItems = dataModel.findObjectsAt(self.game, ownIt['location']['x'], ownIt['location']['y'])
                         for baseItem in baseItems:
-                            baseItem['owner'] = newPlayer
+                            baseItem['owner'] = plid
 
             else:
                 # Normally the player shouldn't exist! But they do for the

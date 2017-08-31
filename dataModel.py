@@ -190,24 +190,24 @@ def playerTableGet(game, playerName):
 
 # PURPOSE: Get list of all things owned by player
 # RETURNS: list of things (ships, bases, stars, relics)
-def getOwnedList(game, playerName):
-    assert(game and playerName)
+def getOwnedList(game, plid):
+    assert(game and plid)
 
     objects = game['objects']
     assert(objects)
 
     playerOwns = []
     for obj in objects['shipList']:
-        if (obj['owner'] == playerName):
+        if (obj['owner'] == plid):
             playerOwns.append(obj)
     for obj in objects['starList']:
-        if (obj['owner'] == playerName):
+        if (obj['owner'] == plid):
             playerOwns.append(obj)
     for obj in objects['starBaseList']:
-        if (obj['owner'] == playerName):
+        if (obj['owner'] == plid):
             playerOwns.append(obj)
     for obj in objects['thingList']:
-        if (obj['owner'] == playerName):
+        if (obj['owner'] == plid):
             playerOwns.append(obj)
     return playerOwns
 
