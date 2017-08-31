@@ -320,7 +320,7 @@ def resolveCombat(game, orders):
                 for baseName in shipOrders['conquer']:
                     print(player, "ship:", myShip, "conquer", baseName)
                     base = dataModel.findBase(game, baseName)
-                    base['owner'] = player
+                    base['owner'] = game['playerList'][player]['plid']
                 continue
             pretty = dataModel.prettyOrders(shipOrders)
             print(player, "ship:", myShip, "order:", pretty)
@@ -452,6 +452,12 @@ class gameserver:
             newPlayer = cmd['name']
             startingBases = cmd['bases']
             color = cmd['color']
+
+            if int(cmd['plid']) == 0:
+                plid = max([0] + [player['plid'] for player in self.game['playerList']]) + 1
+            else:
+                plid = cmd['plid']
+
             print("GServer:", "newPlayer", newPlayer)
 
             player = dataModel.playerTableGet(self.game, newPlayer)
@@ -459,18 +465,19 @@ class gameserver:
             if player is None:
                 self.game['playerList'].append({'name':  newPlayer,
                                                 'phase': "creating",
-                                                'color': color})
+                                                'color': color,
+                                                'plid' : plid})
                 player = dataModel.playerTableGet(self.game, newPlayer)
                 player['color'] = color
                 for base in startingBases:
                     ownIt = dataModel.findBase(self.game, base)
                     print(newPlayer, "owns", base)
                     if ownIt:
-                        ownIt['owner'] = newPlayer
+                        ownIt['owner'] = plid
                         #give them everything at that base
                         baseItems = dataModel.findObjectsAt(self.game, ownIt['location']['x'], ownIt['location']['y'])
                         for baseItem in baseItems:
-                            baseItem['owner'] = newPlayer
+                            baseItem['owner'] = plid
 
             else:
                 # Normally the player shouldn't exist! But they do for the
