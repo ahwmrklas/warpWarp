@@ -20,6 +20,7 @@ from mapUtil import *
 from connect import *
 from damage import *
 from cmds import warpWarCmds
+from pollThread import PollThread
 import json
 import getpass
 import math
@@ -130,6 +131,12 @@ def sendReadyMenu(tkRoot):
     print("sendReadyMenu")
     tkRoot.event_generate("<<sendReady>>", when='tail')
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
+
+def pollServer(tkRoot):
+    print("pollServer")
+    if (tkRoot.hCon is not None):
+        PollThread(tkRoot.playerName, tkRoot)
+
 
 # PURPOSE:
 # RETURNS:
@@ -358,6 +365,11 @@ def sendReady(event, tkRoot):
         resp = tkRoot.hCon.waitFor(5)
         tkRoot.game = json.loads(resp)
 
+        #Are we in a waiting phase? then poll the server
+        player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        if player['phase'] == 'waiting':
+            pollServer(tkRoot)
+
 # PURPOSE:
 # RETURNS:
 def updateWWMenu(event, tkRoot):
@@ -403,6 +415,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     if (playerPhase == 'waiting'):
         # Player is waiting on opponent. All they can do is refresh.
         phaseMenuObject.add_command(label="WAITING on opponent")
+        phaseMenuObject.add_command(label="poll",
+                              command=lambda:pollServer(tkRoot))
     elif (gamePhase == None):
         if (tkRoot.hCon is None):
             gamePhase = "connect"

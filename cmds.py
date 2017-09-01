@@ -25,6 +25,14 @@ class warpWarCmds():
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
+    # PURPOSE: Bug the server for our updates
+    # RETURNS: string with json.
+    # SERVER RESPONSE: either a blank dictionary or the new game data
+    def poll(self, plid):
+        cmd  = { 'cmd' : {'cmd': "poll", 'plid': plid} }
+        jsonStr = json.dumps(cmd, ensure_ascii=False)
+        return jsonStr
+
     # PURPOSE: Create a new game string
     #          (moves to creating phase)
     # RETURNS: string with json
