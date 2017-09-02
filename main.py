@@ -20,9 +20,11 @@ from mapUtil import *
 from connect import *
 from damage import *
 from cmds import warpWarCmds
+from ConfigHandler import ConfigHandler
 import json
 import getpass
 import math
+
 
 # PURPOSE: Timer call back every second to check if the mouse has moved.
 #          If it hasn't moved create a tool tip of info for the given location
@@ -624,10 +626,11 @@ def main():
     tkRoot.configureDelay = None
 
     # These should be read from a config file or some other saved options.
-    tkRoot.playerName = getpass.getuser()
-    tkRoot.plid = 0
     tkRoot.playerStartBases = None
     tkRoot.playerColor = None
+
+    #get the user's profile.
+    ConfigHandler(tkRoot)
 
     tkRoot.battleOrders = {}
     tkRoot.bind("<<updateWWMenu>>", lambda event :updateWWMenu(event, tkRoot))
