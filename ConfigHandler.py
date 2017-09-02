@@ -36,7 +36,7 @@ class ConfigHandler(Dialog):
             configParser = configparser.ConfigParser()
             configParser.read(loadFileName)
             self.tkRoot.playerName = configParser.get('profile', 'name')
-            self.tkRoot.plid = int(configParser.get('profile', 'plid'))
+            self.tkRoot.plid = configParser.get('profile', 'plid')
             #we are done here. kill the window
             self.cancel()
         else:
