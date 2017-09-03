@@ -98,7 +98,7 @@ def connectServer(tkRoot):
         tkRoot.playerStartBases = tmp.playerStartBases
         tkRoot.playerColor = tmp.playerColor
 
-        sendJson = warpWarCmds().newPlayer(0, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -365,7 +365,7 @@ def sendReady(event, tkRoot):
 def updateWWMenu(event, tkRoot):
     print("updateWWMenu:", event)
 
-    pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+    pt = playerTableGet(tkRoot.game, tkRoot.plid)
     playerPhase = None
     if (pt):
         playerPhase = pt['phase']
@@ -422,7 +422,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'build'):
-        player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        player = playerTableGet(tkRoot.game, tkRoot.plid)
         assert(player)
         phaseMenuObject.add_command(label="Bases you own:")
         #Technically, its only bases that can do this
@@ -451,7 +451,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         #TODO: enable the move right click stuff.
     elif (gamePhase == 'move'):
         # is it our turn to move?
-        player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        player = playerTableGet(tkRoot.game, tkRoot.plid)
         assert(player)
         if player['phase'] == "move":
             phaseMenuObject.add_command(label="Ships you own:")

@@ -460,14 +460,14 @@ class gameserver:
 
             print("GServer:", "newPlayer", newPlayer)
 
-            player = dataModel.playerTableGet(self.game, newPlayer)
+            player = dataModel.playerTableGet(self.game, plid)
 
             if player is None:
                 self.game['playerList'].append({'name':  newPlayer,
                                                 'phase': "creating",
                                                 'color': color,
                                                 'plid' : plid})
-                player = dataModel.playerTableGet(self.game, newPlayer)
+                player = dataModel.playerTableGet(self.game, plid)
                 player['color'] = color
                 for base in startingBases:
                     ownIt = dataModel.findBase(self.game, base)
