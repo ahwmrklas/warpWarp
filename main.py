@@ -99,6 +99,7 @@ def connectServer(tkRoot):
         tkRoot.playerColor = tmp.playerColor
 
         sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -625,7 +626,6 @@ def main():
     tkRoot.game = None
     tkRoot.configureDelay = None
 
-    # These should be read from a config file or some other saved options.
     tkRoot.playerStartBases = None
     tkRoot.playerColor = None
 

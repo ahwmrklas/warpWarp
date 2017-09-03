@@ -352,8 +352,21 @@ def harvest(game):
     # For now even unowned locations increase BuildPoints every turn
     # That will make unowned locations pile up wealth. Is that good
     # for the game? We could have only "owned" locations do that.
-    for thing in game['objects']['starList']:
-        thing['BP']['cur'] = thing['BP']['cur'] + thing['BP']['perturn']
+    for star in game['objects']['starList']:
+        #un based star BP can only go directly into ship holds
+        #We fill up the first ship, and then go on the next
+        remaining = star['BP']['perturn']
+        for thing in dataModel.findObjectsAt(game, star['location']['x'], star['location']['y']):
+            #is this thing a ship?
+            if thing['type'] == "ship":
+                print(star['name'], " is giving stuff to ", thing['name'])
+                #dump stuff in the cargo hold
+                oldHauled = thing['Hauled']
+                thing['Hauled'] = min([oldHauled + remaining, thing['H']['cur'] * 10])
+                remaining -= thing['Hauled'] - oldHauled
+
+
+        star['BP']['cur'] = star['BP']['cur'] + star['BP']['perturn']
     for thing in game['objects']['starBaseList']:
         thing['BP']['cur'] = thing['BP']['cur'] + thing['BP']['perturn']
     for thing in game['objects']['thingList']:
