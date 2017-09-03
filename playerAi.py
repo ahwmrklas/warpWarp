@@ -14,6 +14,7 @@ from client import comThrd
 import queue as Q
 import gameserver
 import json
+import time
 from cmds import warpWarCmds
 from dataModel import *
 
@@ -24,7 +25,7 @@ class playerAiThrd(threading.Thread):
     # RETURNS: none
     def __init__(self, name, ipAddr, port):
         self.playerName = name
-        self.plid = 0
+        self.plid = 123
         self.startingBases = ['Babylon', 'Nineveh', 'Ugarit']
         self.color = 'Green'
         self.ipAddr = ipAddr
@@ -44,7 +45,7 @@ class playerAiThrd(threading.Thread):
     # PURPOSE: Simple ping to the server to read game state
     # RETURNS: game object
     def ping(self):
-        sendJson = warpWarCmds().ping(self.playerName)
+        sendJson = warpWarCmds().ping(self.plid)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
@@ -52,21 +53,21 @@ class playerAiThrd(threading.Thread):
 
     # PURPOSE: 
     # RETURNS: game object
-    def newPlayer(self, name):
+    def newPlayer(self):
         print("playerAi: newPlayer")
-        sendJson = warpWarCmds().newPlayer(self.plid, name, self.startingBases, self.color)
+        sendJson = warpWarCmds().newPlayer(self.plid, self.playerName, self.startingBases, self.color)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
         self.plid = game['playerList'][-1]['plid']
-        print("playerAi:RESP:", len(resp))
+        print("playerAi:RESP:", len(resp), "plid", self.plid)
         return game
 
     # PURPOSE: 
     # RETURNS: game object
-    def ready(self, name):
+    def ready(self):
         print("playerAi: ready")
-        sendJson = warpWarCmds().ready(self.playerName, name)
+        sendJson = warpWarCmds().ready(self.plid, self.playerName)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
@@ -75,9 +76,9 @@ class playerAiThrd(threading.Thread):
 
     # PURPOSE: 
     # RETURNS: game object
-    def combatOrders(self, name):
+    def combatOrders(self):
         print("playerAi: combatOrders (nothing right now)")
-        #sendJson = warpWarCmds().combatOrders(self.playerName, self.playerName, tkRoot.battleOrders)
+        #sendJson = warpWarCmds().combatOrders(self.plid, self.playerName, tkRoot.battleOrders)
         #self.hCon.sendCmd(sendJson)
         #resp = self.hCon.waitFor(5)
         #game = json.loads(resp)
@@ -96,8 +97,9 @@ class playerAiThrd(threading.Thread):
         while (self.threadContinue):
             # Ping
             game = self.ping()
+            time.sleep(1)
 
-            playerMe = playerTableGet(game, self.playerName)
+            playerMe = playerTableGet(game, self.plid)
             if (playerMe is None):
                 playerMe = {'phase':None}
 
@@ -113,22 +115,22 @@ class playerAiThrd(threading.Thread):
             print("playerAi:GP ", gamePhase, " PP ", playerPhase)
             if (gamePhase == "creating"):
                 if ( (playerPhase is None) or (playerPhase == "nil")):
-                    self.newPlayer(self.playerName)
+                    self.newPlayer()
                 elif (playerPhase == "creating"):
-                    self.ready(self.playerName)
+                    self.ready()
             elif (gamePhase == "build"):
                 if (playerPhase == "build"):
-                    self.ready(self.playerName)
+                    self.ready()
             elif (gamePhase == "move"):
                 if (playerPhase == "move"):
-                    self.ready(self.playerName)
+                    self.ready()
             elif (gamePhase == "combat"):
                 if (playerPhase == "combat"):
-                    self.combatOrders(self.playerName)
-                    self.ready(self.playerName)
+                    self.combatOrders()
+                    self.ready()
             elif (gamePhase == "damageselection"):
                 if (playerPhase == "damageselection"):
-                    self.ready(self.playerName)
+                    self.ready()
 
         self.hCon.quitCmd()
 

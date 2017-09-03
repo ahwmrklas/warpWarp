@@ -382,7 +382,7 @@ def checkForVictory(game):
     # reset victory points to zero
     players = {}
     for player in game['playerList']:
-        players[player['name']] = 0
+        players[player['plid']] = 0
 
     for thing in game['objects']['starList']:
         if (thing['owner']):
@@ -391,12 +391,12 @@ def checkForVictory(game):
 
     #does only one player have a base?
     possibleWinner = None
-    for name, bases in players.items():
+    for plid, bases in players.items():
         if bases:
             if possibleWinner:
                 return None #multiple people have a base. We are still in this!
             else:
-                possibleWinner = name
+                possibleWinner = plid
 
     #if we get here, only one player has a base!
     #maybe.

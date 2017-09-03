@@ -87,6 +87,9 @@ def moveOnClick(private, x, y):
         #find the ijk stuff for decrementing the right number of moves
         ship['moves']['cur'] = ship['moves']['cur'] - delta
 
+        # Restore the old call back
+        tkRoot.hexMap.setLeftPrivateCallBack(original[0], original[1])
+
         # Send the move command to the server
         # We could also Queue up all the move commands
         # and play them out to the server later.
@@ -96,10 +99,3 @@ def moveOnClick(private, x, y):
         if (tkRoot.hCon is not None):
             sendJson = warpWarCmds().moveShip(ship['owner'], shipName, x, y)
             tkRoot.hCon.sendCmd(sendJson)
-            resp = tkRoot.hCon.waitFor(5)
-            tkRoot.game = json.loads(resp)
-
-        # Restore the old call back
-        tkRoot.hexMap.setLeftPrivateCallBack(original[0], original[1])
-        #send event
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')

@@ -94,6 +94,7 @@ def connectServer(tkRoot):
         tkRoot.hCon = tmp.result
 
     if (tkRoot.hCon is not None):
+        tkRoot.hCon.setCallback(lambda data: newDataForGame(tkRoot, data))
         tkRoot.playerName = tmp.playerName
         tkRoot.playerStartBases = tmp.playerStartBases
         tkRoot.playerColor = tmp.playerColor
@@ -101,13 +102,8 @@ def connectServer(tkRoot):
         sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
 
         print(" main sending: ", sendJson)
-        tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-        tkRoot.plid = tkRoot.game['playerList'][-1]['plid']
         print ("tkroot.plid: %d" % tkRoot.plid)
-
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
+        tkRoot.hCon.sendCmd(sendJson)
 
 # PURPOSE:
 # RETURNS:
@@ -117,22 +113,15 @@ def newGame(tkRoot):
         sendJson = warpWarCmds().newGame(tkRoot.plid, "foo")
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
 
         sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
 def sendReadyMenu(tkRoot):
     print("sendReadyMenu")
     tkRoot.event_generate("<<sendReady>>", when='tail')
-    tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -142,14 +131,9 @@ def playerJoinMenu(tkRoot):
     if (tkRoot.hCon is not None):
         sendJson = warpWarCmds().removePlayer(tkRoot.plid, tkRoot.playerName)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
 
         sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -185,8 +169,6 @@ def sendCombatReady(tkRoot):
             sendJson = warpWarCmds().combatOrders(tkRoot.plid, tkRoot.playerName, tkRoot.battleOrders)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
-            resp = tkRoot.hCon.waitFor(5)
-            tkRoot.game = json.loads(resp)
 
         # We've sent our orders, erase them
         tkRoot.battleOrders = {}
@@ -195,10 +177,6 @@ def sendCombatReady(tkRoot):
         sendJson = warpWarCmds().ready(tkRoot.plid, tkRoot.playerName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -212,10 +190,6 @@ def damageAllocationMenu(tkRoot, shipName):
             sendJson = warpWarCmds().acceptDamage(tkRoot.plid, allocationResult.ship)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
-            resp = tkRoot.hCon.waitFor(5)
-            tkRoot.game = json.loads(resp)
-
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -229,10 +203,6 @@ def buildShip(tkRoot, baseName):
         sendJson = warpWarCmds().buildShip(tkRoot.plid, buildResult.ship, baseName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE: opens the load ship menu and sends the command
 # RETURNS: none
@@ -251,9 +221,6 @@ def loadShip(tkRoot, ship, shipList):
             sendJson = warpWarCmds().loadShip(tkRoot.plid, loadResult.ship['name'], loadResult.motherVar.get())
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -266,10 +233,7 @@ def loadCargo(tkRoot, star, ship):
         sendJson = warpWarCmds().loadCargo(tkRoot.plid, star['name'], ship['name'], cargoResult.shipment)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
 
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 # PURPOSE:
 # RETURNS:
 def moveMenu(tkRoot, shipName):
@@ -283,10 +247,6 @@ def refresh(tkRoot):
     if (tkRoot.hCon is not None):
         sendJson = warpWarCmds().ping(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
-
-        tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -324,10 +284,6 @@ def loadGame(tkRoot):
     sendJson = warpWarCmds().restoreGame(tkRoot.plid, gameDict)
     print (sendJson)
     tkRoot.hCon.sendCmd(sendJson)
-    resp = tkRoot.hCon.waitFor(5)
-    tkRoot.game = json.loads(resp)
-
-    tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # I don't like these. They don't seem very objecty
 def saveGame(game):
@@ -358,8 +314,16 @@ def sendReady(event, tkRoot):
         sendJson = warpWarCmds().ready(tkRoot.plid, tkRoot.playerName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
-        resp = tkRoot.hCon.waitFor(5)
-        tkRoot.game = json.loads(resp)
+
+# PURPOSE: THis is called in the context of the client socket receiving thread
+# We shouldn't alter tkRoot.game here because that is used in the GUI thread.
+# (But at the moment I do)
+# RETURNS:
+def newDataForGame(tkRoot, data):
+    print("newDataForGame")
+    jsonStr = data.decode()
+    tkRoot.game = json.loads(jsonStr)
+    tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE:
 # RETURNS:
@@ -397,7 +361,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     # Want to hilight who owns what on the map
     if (tkRoot.game):
         for player in tkRoot.game['playerList']:
-            hiliteList = getOwnedList(tkRoot.game, tkRoot.plid)
+            hiliteList = getOwnedList(tkRoot.game, player['plid'])
             for obj in hiliteList:
                 tkRoot.hexMap.hiliteMap(obj['location']['x'], obj['location']['y'], player['color'], 2, None)
 
@@ -507,7 +471,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         if (not conflictList):
             print("conflicts are empty. send the ready command and redo menus")
             tkRoot.event_generate("<<sendReady>>", when='tail')
-            tkRoot.event_generate("<<updateWWMenu>>", when='tail')
             print("conflicts are empty. post send event")
 
         # I want to display each battle location in the phase menu and

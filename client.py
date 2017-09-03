@@ -20,8 +20,15 @@ class comThrd(threading.Thread):
         self.rcvQ = Q.Queue()
         self.ip = ip
         self.port = port
+        self.callbackWithData = self.defaultCB
         threading.Thread.__init__(self, name="ClientComThrd")
         self.start()
+
+    # PURPOSE: Set the callback function which will be called
+    # when we get data from the other end of the socket
+    # RETURNS: none
+    def setCallback(self, callback):
+        self.callbackWithData = callback
 
     # PURPOSE: For external parties to send a "text" message
     #    send a msg via our Q for our thread to handle
@@ -35,6 +42,14 @@ class comThrd(threading.Thread):
     # RETURNS: none
     def quitCmd(self):
         self.sendQ.put("quit")
+
+    # PURPOSE: Default callback. Put data in internal Q
+    # RETURNS: return nothing
+    def defaultCB(self, data):
+        jsonStr = data.decode()
+        # print("client received (", len(jsonStr), "):\n")
+        # print(jsonStr)
+        self.rcvQ.put(jsonStr)
 
     # PURPOSE: wait for a response in Q
     # RETURNS: return a string
@@ -61,10 +76,7 @@ class comThrd(threading.Thread):
             s.connect((self.ip, self.port))
             s.send(msg.encode())
             cmd = s.recv(8192)
-            jsonStr = cmd.decode()
-            # print("client received (", len(jsonStr), "):\n")
-            # print(jsonStr)
-            self.rcvQ.put(jsonStr)
+            self.callbackWithData(cmd)
         except Exception as error:
             returnMe = error
             print("Socket error: ", error, "\n")
