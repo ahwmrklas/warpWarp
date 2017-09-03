@@ -20,9 +20,11 @@ from mapUtil import *
 from connect import *
 from damage import *
 from cmds import warpWarCmds
+from ConfigHandler import ConfigHandler
 import json
 import getpass
 import math
+
 
 # PURPOSE: Timer call back every second to check if the mouse has moved.
 #          If it hasn't moved create a tool tip of info for the given location
@@ -96,7 +98,8 @@ def connectServer(tkRoot):
         tkRoot.playerStartBases = tmp.playerStartBases
         tkRoot.playerColor = tmp.playerColor
 
-        sendJson = warpWarCmds().newPlayer(0, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
         resp = tkRoot.hCon.waitFor(5)
@@ -363,7 +366,7 @@ def sendReady(event, tkRoot):
 def updateWWMenu(event, tkRoot):
     print("updateWWMenu:", event)
 
-    pt = playerTableGet(tkRoot.game, tkRoot.playerName)
+    pt = playerTableGet(tkRoot.game, tkRoot.plid)
     playerPhase = None
     if (pt):
         playerPhase = pt['phase']
@@ -394,7 +397,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
     # Want to hilight who owns what on the map
     if (tkRoot.game):
         for player in tkRoot.game['playerList']:
-            hiliteList = getOwnedList(tkRoot.game, player['name'])
+            hiliteList = getOwnedList(tkRoot.game, tkRoot.plid)
             for obj in hiliteList:
                 tkRoot.hexMap.hiliteMap(obj['location']['x'], obj['location']['y'], player['color'], 2, None)
 
@@ -420,12 +423,12 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'build'):
-        player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        player = playerTableGet(tkRoot.game, tkRoot.plid)
         assert(player)
         phaseMenuObject.add_command(label="Bases you own:")
         #Technically, its only bases that can do this
         for base in tkRoot.game['objects']['starBaseList']:
-            if (base['owner'] == tkRoot.playerName):
+            if (base['owner'] == tkRoot.plid):
                 print (base['owner'])
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['BP']['cur'])
@@ -436,7 +439,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         for ship in tkRoot.game['objects']['shipList']:
             #if we own this star, and have a hold, we should be able to load/unload goods.
             star = findStarAtLoc(tkRoot.game['objects']['starList'],ship['location']['x'], ship['location']['y'])
-            if (star and star['owner'] == tkRoot.playerName and ship['H']['cur'] > 0):
+            if (star and star['owner'] == tkRoot.plid and ship['H']['cur']*10 > ship['Hauled']):
                 labelString = "'%s'    Hauling: %d/%d" % (ship['name'],
                         ship['Hauled'], ship['H']['cur'] * 10)
                 phaseMenuObject.add_command(label=labelString,
@@ -449,12 +452,12 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         #TODO: enable the move right click stuff.
     elif (gamePhase == 'move'):
         # is it our turn to move?
-        player = playerTableGet(tkRoot.game, tkRoot.playerName)
+        player = playerTableGet(tkRoot.game, tkRoot.plid)
         assert(player)
         if player['phase'] == "move":
             phaseMenuObject.add_command(label="Ships you own:")
             for ship in tkRoot.game['objects']['shipList']:
-                if (ship['owner'] == tkRoot.playerName):
+                if (ship['owner'] == tkRoot.plid):
                     if (ship['WG']['cur'] == True):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
                                                                      ship['moves']['cur'],
@@ -556,7 +559,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # each attacks results. Then you select your own ship and
         # get a dialog to allocate the damage results.
         for ship in tkRoot.game['objects']['shipList']:
-            if (ship['owner'] == tkRoot.playerName):
+            if (ship['owner'] == tkRoot.plid):
                 if (ship['damage'] >= 0):
                     labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
                     phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
@@ -623,11 +626,11 @@ def main():
     tkRoot.game = None
     tkRoot.configureDelay = None
 
-    # These should be read from a config file or some other saved options.
-    tkRoot.playerName = getpass.getuser()
-    tkRoot.plid = 0
     tkRoot.playerStartBases = None
     tkRoot.playerColor = None
+
+    #get the user's profile.
+    ConfigHandler(tkRoot)
 
     tkRoot.battleOrders = {}
     tkRoot.bind("<<updateWWMenu>>", lambda event :updateWWMenu(event, tkRoot))
