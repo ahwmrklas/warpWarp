@@ -50,10 +50,10 @@ def areAllPlayersInPhase(game, phase):
 
 # PURPOSE: Change given player from startphase to finishphase
 # RETURNS: true if successfully moved
-def changePlayerPhase(game, playerName, start, finish):
-    print("GServer:", playerName, " moving from ", start, " to ", finish)
+def changePlayerPhase(game, plid, start, finish):
+    print("GServer:", plid, " moving from ", start, " to ", finish)
     for player in game['playerList'] :
-        if (player['name'] == playerName):
+        if (player['plid'] == plid):
             assert(player['phase'] == start)
             player['phase'] = finish
             return True
@@ -582,13 +582,13 @@ class gameserver:
 
         elif cmdStr == 'ready':
             # A generic cmd used to end several phases
-            playerName = cmd['name']
-            print("GServer:", "player", playerName, "done with phase", self.game['state']['phase'])
+            plid = cmd['plid']
+            print("GServer:", "player", plid, "done with phase", self.game['state']['phase'])
 
             # Based on current phase what do we do?
             if (self.game['state']['phase'] == "creating"):
                 # Record ready for given player
-                changePlayerPhase(self.game, playerName, "creating", "waiting")
+                changePlayerPhase(self.game, plid, "creating", "waiting")
 
                 if areAllPlayersInPhase(self.game, "waiting"):
                     self.game['state']['phase'] = "build"
@@ -598,7 +598,7 @@ class gameserver:
                 # Given player can no longer build and must wait
                 # When all players ready AUTO move to move phase
                 # Record ready for given player
-                changePlayerPhase(self.game, playerName, "build", "waiting")
+                changePlayerPhase(self.game, plid, "build", "waiting")
 
                 if areAllPlayersInPhase(self.game, "waiting"):
                     self.game['state']['phase'] = "move"
@@ -609,7 +609,7 @@ class gameserver:
 
             elif (self.game['state']['phase'] == "move"):
                 # Given player can no longer move and must wait
-                changePlayerPhase(self.game, playerName, "move", "waiting")
+                changePlayerPhase(self.game, plid, "move", "waiting")
 
                 # When all players ready AUTO move to combat phase
                 if areAllPlayersInPhase(self.game, "waiting"):
@@ -618,7 +618,7 @@ class gameserver:
 
             elif (self.game['state']['phase'] == "combat"):
                 # Given player finished submitting orders must wait
-                changePlayerPhase(self.game, playerName, "combat", "waiting")
+                changePlayerPhase(self.game, plid, "combat", "waiting")
 
                 # When all players ready AUTO move to ... something
                 # damage selection phase if there was combat
@@ -649,7 +649,7 @@ class gameserver:
 
             elif (self.game['state']['phase'] == "damageselection"):
                 # Given player finished allocating damge to ships
-                changePlayerPhase(self.game, playerName, "damageselection", "waiting")
+                changePlayerPhase(self.game, plid, "damageselection", "waiting")
 
                 # When all players ready AUTO move to the next round of combat
                 if areAllPlayersInPhase(self.game, "waiting"):
