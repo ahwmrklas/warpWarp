@@ -40,10 +40,10 @@ orders -- This is for storing the orders for ships in a battle
 """
 
 class GameInfo():
-    def __init__(self, width, height, playerNames, options=0):
+    def __init__(self, width, height, plids, options=0):
         self.gameMap = (width, height) #X and Y dimensions of the board
         self.initOptions(options) #Game specific options
-        self.initPlayers(playerNames) #set player specific information
+        self.initPlayers(plids) #set player specific information
         self.initObjects() #create objects and place them on the map
         self.initGameState() #set it to start of the game
 
@@ -62,7 +62,7 @@ class GameInfo():
             print ("Unrecognized game option")
             return
 
-    def initPlayers(self, playerNames):
+    def initPlayers(self, plids):
         """
         This initilizes the player list
 
@@ -71,8 +71,8 @@ class GameInfo():
 
         self.playerList = []
 
-        for name in playerNames:
-            self.playerList.append(Player(name))
+        for plid in plids:
+            self.playerList.append(Player(plid))
 
     def initObjects(self):
         """
@@ -93,8 +93,8 @@ class GameInfo():
 
 
 class Player():
-    def __init__(self, name, resources=20, ships=[], bases=[]):
-        self.name = name
+    def __init__(self, plid, resources=20, ships=[], bases=[]):
+        self.plid = plid
         self.resources = resources
         self.shipList = ships
         self.baseList = bases
