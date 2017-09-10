@@ -9,6 +9,8 @@ import socket         # Import socket module
 import threading
 import queue as Q
 import time
+import zlib
+
 
 # Socket thread
 class comThrd(threading.Thread):
@@ -75,7 +77,8 @@ class comThrd(threading.Thread):
             s = socket.socket()
             s.connect((self.ip, self.port))
             s.send(msg.encode())
-            cmd = s.recv(8192)
+            compressed = s.recv(8192)
+            cmd = zlib.decompress(compressed)
             self.callbackWithData(cmd)
         except Exception as error:
             returnMe = error

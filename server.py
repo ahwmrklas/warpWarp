@@ -12,6 +12,7 @@ import socket
 import tkinter as tk
 import threading
 import gameserver
+import zlib
 from cmds import warpWarCmds
 
 # server thread for sending data to and fro
@@ -64,7 +65,9 @@ class srvrThrd(threading.Thread):
            self.serverContinue = self.gameserver.gameOn()
 
            # Send client the state of the game
-           c.send(self.gameserver.gameJson().encode())
+           string = self.gameserver.gameJson().encode()
+           compressed = zlib.compress(string)
+           c.send(compressed)
            c.close()
 
         print("server: socket listen exiting")

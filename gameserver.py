@@ -320,7 +320,7 @@ def resolveCombat(game, orders):
                 for baseName in shipOrders['conquer']:
                     print(player, "ship:", myShip, "conquer", baseName)
                     base = dataModel.findBase(game, baseName)
-                    base['owner'] = game['playerList'][player]['plid']
+                    base['owner'] = player
                 continue
             pretty = dataModel.prettyOrders(shipOrders)
             print(player, "ship:", myShip, "order:", pretty)
@@ -869,5 +869,10 @@ class gameserver:
         else:
             print("GServer:", "Not a legal command '", cmdStr, "'")
             return False
+
+        if (cmdStr != 'ping'):
+            if (len(self.game['history']) > 10):
+                self.game['history'].pop(0)
+            self.game['history'].append(cmd)
 
         return True

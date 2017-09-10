@@ -10,7 +10,6 @@ from dataModel import *
 from mapUtil import *
 from ijk import *
 from cmds import warpWarCmds
-import json
 import math
 
 # PURPOSE:

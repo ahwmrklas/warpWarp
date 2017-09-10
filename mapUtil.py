@@ -85,6 +85,8 @@ class hexMap(HexagonalGrid):
         for hilite in self.hiliteList:
             self.setBorders(hilite[0], hilite[1], hilite[2], hilite[3])
 
+        for hist in game['history']:
+            print(hist)
         print("five")
     
     # PURPOSE:
