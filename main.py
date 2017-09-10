@@ -129,7 +129,7 @@ def playerJoinMenu(tkRoot):
     print("playerJoinMenu")
     print("Should launch dialog to pick")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().removePlayer(tkRoot.plid, tkRoot.playerName)
+        sendJson = warpWarCmds().removePlayer(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
 
         sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
@@ -166,7 +166,7 @@ def sendCombatReady(tkRoot):
     if (tkRoot.hCon is not None):
 
         if (tkRoot.battleOrders):
-            sendJson = warpWarCmds().combatOrders(tkRoot.plid, tkRoot.playerName, tkRoot.battleOrders)
+            sendJson = warpWarCmds().combatOrders(tkRoot.plid, tkRoot.battleOrders)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
 
@@ -174,7 +174,7 @@ def sendCombatReady(tkRoot):
         tkRoot.battleOrders = {}
 
         # Send ready because we are done with this round of combat
-        sendJson = warpWarCmds().ready(tkRoot.plid, tkRoot.playerName)
+        sendJson = warpWarCmds().ready(tkRoot.plid)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -311,7 +311,7 @@ def helpHelp():
 def sendReady(event, tkRoot):
     print("sendReady:", event)
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ready(tkRoot.plid, tkRoot.playerName)
+        sendJson = warpWarCmds().ready(tkRoot.plid)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 

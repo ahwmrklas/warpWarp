@@ -42,7 +42,7 @@ def setupRightClickMoveMenu(hexMap, tkRoot):
         popup.add_command(label="Ships in this sector:")
         for ship in tkRoot.game['objects']['shipList']:
             if ship['location']['x'] == hex_x and ship['location']['y'] == hex_y:
-                if (ship['owner'] == tkRoot.playerName):
+                if (ship['owner'] == tkRoot.plid):
                     if (ship['WG']['cur'] == True):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
                                                                      ship['moves']['cur'],

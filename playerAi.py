@@ -67,7 +67,7 @@ class playerAiThrd(threading.Thread):
     # RETURNS: game object
     def ready(self):
         print("playerAi: ready")
-        sendJson = warpWarCmds().ready(self.plid, self.playerName)
+        sendJson = warpWarCmds().ready(self.plid)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
@@ -78,7 +78,7 @@ class playerAiThrd(threading.Thread):
     # RETURNS: game object
     def combatOrders(self):
         print("playerAi: combatOrders (nothing right now)")
-        #sendJson = warpWarCmds().combatOrders(self.plid, self.playerName, tkRoot.battleOrders)
+        #sendJson = warpWarCmds().combatOrders(self.plid, tkRoot.battleOrders)
         #self.hCon.sendCmd(sendJson)
         #resp = self.hCon.waitFor(5)
         #game = json.loads(resp)

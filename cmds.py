@@ -53,16 +53,16 @@ class warpWarCmds():
 
     # PURPOSE: Remove the player from the game (only during create)
     # RETURNS: string with json
-    def removePlayer(self, plid, name):
-        cmd  = { 'cmd' : {'cmd': "removeplayer", 'plid':plid, 'name': name} }
+    def removePlayer(self, plid):
+        cmd  = { 'cmd' : {'cmd': "removeplayer", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
     # PURPOSE: Generic ready command.
     #          Given player is ready for next phase
     # RETURNS: string with json
-    def ready(self, plid, player):
-        cmd  = { 'cmd' : {'cmd': "ready", 'plid':plid, 'name': player} }
+    def ready(self, plid):
+        cmd  = { 'cmd' : {'cmd': "ready", 'plid':plid } }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
@@ -113,8 +113,8 @@ class warpWarCmds():
     # PURPOSE: Create the endmove string
     #    FIXME TODO -- duplicate of ready?
     # RETURNS: string with json
-    def endMove(self, plid, name, x, y):
-        cmd  = { 'cmd' : {'cmd':"endmove", 'plid':plid, 'player':name} }
+    def endMove(self, plid, x, y):
+        cmd  = { 'cmd' : {'cmd':"endmove", 'plid':plid} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
@@ -122,8 +122,8 @@ class warpWarCmds():
     #       TODO    This is going to have many arguments!
     #       TODO    For all involved ships?
     # RETURNS: string with json
-    def combatOrders(self, plid, player, battleOrders):
-        cmd  = { 'cmd' : {'cmd': "combatorders", 'plid': plid, 'name': player, 'battleOrders': battleOrders} }
+    def combatOrders(self, plid, battleOrders):
+        cmd  = { 'cmd' : {'cmd': "combatorders", 'plid': plid, 'battleOrders': battleOrders} }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
