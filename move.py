@@ -32,35 +32,6 @@ def createMoveGraph(tkRoot, game, hexMap, shipName):
     private = [tkRoot, shipName, tkRoot.hexMap.getLeftPrivateCallBack(), warpEnds]
     hexMap.setLeftPrivateCallBack(moveOnClick, private)
 
-#set the new onclick listener
-def setupRightClickMoveMenu(hexMap, tkRoot):
-
-    # create a menu
-    def do_popup(private, pixel_X, pixel_Y, hex_x, hex_y):
-        # display the popup menu
-        popup = Menu(tkRoot, tearoff=0)
-        popup.add_command(label="Ships in this sector:")
-        for ship in tkRoot.game['objects']['shipList']:
-            if ship['location']['x'] == hex_x and ship['location']['y'] == hex_y:
-                if (ship['owner'] == tkRoot.plid):
-                    if (ship['WG']['cur'] == True):
-                        labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
-                                                                     ship['moves']['cur'],
-                                                                     math.ceil(ship['PD']['cur']/2))
-                        popup.add_command(label=labelString,
-                                  command=lambda game=tkRoot.game,
-                                                 hexMap=tkRoot.hexMap,
-                                                 shipName=ship['name']:
-                                                 createMoveGraph(tkRoot, game, hexMap, shipName))
-        try:
-            #disable left click
-            popup.post(pixel_X, pixel_Y)
-        finally:
-            popup.grab_set()
-            pass
-
-    hexMap.setRightPrivateCallBack(do_popup, None)
-
 def moveOnClick(private, x, y):
     tkRoot = private[0]
     shipName = private[1]

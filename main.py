@@ -344,6 +344,132 @@ def updateWWMenu(event, tkRoot):
     phaseMenu(tkRoot, gamePhase, playerPhase)
     tkRoot.hexMap.updateMap(tkRoot.game)
 
+# PURPOSE: popup a right click
+# RETURNS: None
+def buildPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
+    tkRoot = private
+    popup = Menu(tkRoot, tearoff=0)
+    popup.add_command(label="Bases in this sector:")
+    for base in tkRoot.game['objects']['starBaseList']:
+        if ( (base['owner'] == tkRoot.plid) and
+             (base['location']['x'] == hex_x) and
+             (base['location']['y'] == hex_y)
+           ):
+            labelString = "'%s'    BP left: %d" % (base['name'],
+                    base['BP']['cur'])
+            popup.add_command(label=labelString, 
+                              command=lambda baseName=base['name']:buildShip(tkRoot, baseName))
+
+    try:
+        #disable left click
+        popup.post(pixel_X, pixel_Y)
+    finally:
+        popup.grab_set()
+        pass
+
+# PURPOSE: popup the move menu on right click
+# RETURNS: None
+def movePopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
+    # display the popup menu
+    tkRoot = private
+    popup = Menu(tkRoot, tearoff=0)
+    popup.add_command(label="Ships in this sector:")
+    for ship in tkRoot.game['objects']['shipList']:
+        if ( (ship['owner'] == tkRoot.plid) and
+             (ship['location']['x'] == hex_x) and
+             (ship['location']['y'] == hex_y)
+           ):
+            if (ship['WG']['cur'] == True):
+                labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
+                                                             ship['moves']['cur'],
+                                                             math.ceil(ship['PD']['cur']/2))
+                popup.add_command(label=labelString,
+                          command=lambda tkRoot=tkRoot,
+                                         shipName=ship['name']:
+                                         moveMenu(tkRoot, shipName))
+    try:
+        #disable left click
+        popup.post(pixel_X, pixel_Y)
+    finally:
+        popup.grab_set()
+        pass
+
+# PURPOSE: popup the combat menu on right click
+# RETURNS: None
+def combatPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
+    tkRoot = private
+    popup = Menu(tkRoot, tearoff=0)
+    popup.add_command(label="Combat in this sector:")
+
+    objs = findObjectsAt(tkRoot.game, hex_x, hex_y)
+    friendlyShip = []
+    friendlyOther = []
+    enemyShip    = []
+    enemyOther    = []
+    for obj in objs:
+        if ( (obj['owner'] == tkRoot.plid) and
+             (obj['location']['x'] == hex_x) and
+             (obj['location']['y'] == hex_y)
+           ):
+            if (obj['type'] == 'ship'):
+                friendlyShip.append(obj)
+            else:
+                friendlyOther.append(obj)
+        else:
+            if (obj['type'] == 'ship'):
+                enemyShip.append(obj)
+            else:
+                enemyOther.append(obj)
+
+    if ( (len(friendlyShip) > 0) and (len(enemyShip) > 0) ):
+        labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShip), len(enemeyShip))
+        popup.add_command(label=labelString, command=lambda friendlyShip=friendlyShip, enemyShip=enemyShip:combatAtLocation(tkRoot, friendlyShip, enemyShip))
+    if ( (len(friendlyShip) > 0) and (len(enemyOther) > 0) ):
+        tmp = 'normal'
+        if (len(enemyShip) > 0):
+            tmp = 'disable'
+        labelString = "%d Friendlies can counquer this sector" % (len(friendlyShip))
+        bases = []
+        for base in enemyOther:
+            bases.append(base['name'])
+        popup.add_command(label=labelString, state=tmp, command=lambda friendlyShip=friendlyShip, bases=bases:conquestAtLocation(tkRoot, friendlyShip, bases))
+    if ( (len(friendlyOther) > 0) and (len(enemyShip) > 0) ):
+        labelString = "%d Enemies can counquer this sector" % (len(enemyShip))
+        popup.add_command(label=labelString, state='disable', command=lambda friendlyShip=friendlyShip :conquestAtLocation(tkRoot, enemyShip, 'unused'))
+
+    try:
+        #disable left click
+        popup.post(pixel_X, pixel_Y)
+    finally:
+        popup.grab_set()
+        pass
+
+# PURPOSE: popup a right click
+# RETURNS: None
+def damageSelectionPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
+    tkRoot = private
+    popup = Menu(tkRoot, tearoff=0)
+    popup.add_command(label="Damaged Ships in this sector:")
+
+    objs = findObjectsAt(tkRoot.game, hex_x, hex_y)
+    for ship in objs:
+        if ( (ship['owner'] == tkRoot.plid) and
+             (ship['location']['x'] == hex_x) and
+             (ship['location']['y'] == hex_y)
+           ):
+            if (ship['type'] == 'ship'):
+                if (ship['damage'] > 0):
+                    labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
+                    popup.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
+
+    try:
+        #disable left click
+        popup.post(pixel_X, pixel_Y)
+    finally:
+        popup.grab_set()
+        pass
+
+
 # PURPOSE: Delete previous and set new, phase menu
 # RETURNS: none
 def phaseMenu(tkRoot, gamePhase, playerPhase):
@@ -397,7 +523,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
-                                            command=lambda name=base['name']:buildShip(tkRoot, name))
+                                            command=lambda baseName=base['name']:buildShip(tkRoot, baseName))
                 tkRoot.hexMap.hiliteMap(base['location']['x'], base['location']['y'], player['color'], 4, None)
         phaseMenuObject.add_separator()
         for ship in tkRoot.game['objects']['shipList']:
@@ -413,7 +539,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_separator()
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
-        #TODO: enable the move right click stuff.
+        tkRoot.hexMap.setRightPrivateCallBack(buildPopUp, tkRoot)
+
     elif (gamePhase == 'move'):
         # is it our turn to move?
         player = playerTableGet(tkRoot.game, tkRoot.plid)
@@ -426,7 +553,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
                                                                      ship['moves']['cur'],
                                                                      math.ceil(ship['PD']['cur']/2))
-                        phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']: moveMenu(tkRoot, name))
+                        phaseMenuObject.add_command(label=labelString, command=lambda shipName=ship['name']: moveMenu(tkRoot, shipName))
                     else:
                         #find a way to get system ships on to warp ships
                         labelString = "\tSystem Ship:'%s'    Moves left: N/A" % (ship['name'])
@@ -438,7 +565,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             phaseMenuObject.add_command(label="Ready",
                                   command=lambda:sendReadyMenu(tkRoot))
             #enable the move right click stuff.
-            setupRightClickMoveMenu(tkRoot.hexMap, tkRoot)
+            tkRoot.hexMap.setRightPrivateCallBack(movePopUp, tkRoot)
+
     elif (gamePhase == 'combat'):
 
         # They make their choices and submit orders.
@@ -512,6 +640,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendCombatReady(tkRoot))
 
+        tkRoot.hexMap.setRightPrivateCallBack(combatPopUp, tkRoot)
+
     elif (gamePhase == 'damageselection'):
         # Find all of *my* ships that are damaged
         # Pop up a menu with each damaged ship? (Each location with
@@ -523,12 +653,13 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # get a dialog to allocate the damage results.
         for ship in tkRoot.game['objects']['shipList']:
             if (ship['owner'] == tkRoot.plid):
-                if (ship['damage'] >= 0):
+                if (ship['damage'] > 0):
                     labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
                     phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
 
         phaseMenuObject.add_command(label="Ready",
                                       command=lambda:sendReadyMenu(tkRoot))
+        tkRoot.hexMap.setRightPrivateCallBack(damageSelectionPopUp, tkRoot)
     elif (gamePhase == 'victory'):
         gamePhase = "Game Over. You are a " + playerPhase
     else:
