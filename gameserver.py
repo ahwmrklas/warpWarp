@@ -870,7 +870,7 @@ class gameserver:
             print("GServer:", "Not a legal command '", cmdStr, "'")
             return False
 
-        if (cmdStr != 'ping'):
+        if (cmdStr != 'ping' and cmdStr != 'restoregame'):
             if (len(self.game['history']) > 10):
                 self.game['history'].pop(0)
             self.game['history'].append(cmd)

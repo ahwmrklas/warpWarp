@@ -76,7 +76,8 @@ class comThrd(threading.Thread):
         try:
             s = socket.socket()
             s.connect((self.ip, self.port))
-            s.send(msg.encode())
+            compressed = zlib.compress(msg.encode())
+            s.send(compressed)
             compressed = s.recv(8192)
             cmd = zlib.decompress(compressed)
             self.callbackWithData(cmd)
