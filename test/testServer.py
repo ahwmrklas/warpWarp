@@ -11,6 +11,7 @@ import socket
 import threading
 import queue as Q
 import getpass
+import time
 # GUI thread for management
 class ServerTestApp(threading.Thread):
     
@@ -26,14 +27,13 @@ class ServerTestApp(threading.Thread):
     # PURPOSE: Button handler. The Quit button
     #          call this when "Quit" button clicked
     # RETURNS: I don't know.
-    def quitCB(self):
+    def quit(self):
         print("STest: quiting?")
-        if (self.hNET is not None) :
-            self.hNET.quit()
-        if (self.root is not None) :
-            self.root.quit()
         if (self.hPlayerAi is not None) :
             self.hPlayerAi.quit()
+            time.sleep(2)
+        if (self.hNET is not None) :
+            self.hNET.quit()
         print("STest: Server Gui exit")
 
     # PURPOSE: Start the network server thread
@@ -94,7 +94,7 @@ class ServerTestApp(threading.Thread):
     def run(self):
         self.initValues()
         self.startServer()
-        self.startAI()
+        #self.startAI()
         print("STest: POLL is done?")
         #self.root.mainloop()
 
