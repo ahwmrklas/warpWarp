@@ -29,11 +29,11 @@ class ServerTestApp(threading.Thread):
     # RETURNS: I don't know.
     def quit(self):
         print("STest: quiting?")
-        if (self.hPlayerAi is not None) :
-            self.hPlayerAi.quit()
-            time.sleep(2)
         if (self.hNET is not None) :
             self.hNET.quit()
+        if (self.hPlayerAi is not None) :
+            print("player AI found and being killed")
+            self.hPlayerAi.quit()
         print("STest: Server Gui exit")
 
     # PURPOSE: Start the network server thread
