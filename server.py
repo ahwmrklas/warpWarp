@@ -39,7 +39,7 @@ class srvrThrd(threading.Thread):
             tmp = warpWarCmds()
             sendJson = tmp.quitGame('STest')
 
-            s.send(sendJson.encode())
+            s.send(zlib.compress(sendJson.encode()))
             s.close()
         except:
             print("server: Socket error. Only GUI closes")
