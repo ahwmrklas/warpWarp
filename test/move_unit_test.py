@@ -9,5 +9,5 @@ assert(foo.loadedGame['objects']['shipList'][0]['location']['x'] == 2 and foo.lo
 foo.restoreGame()
 assert(foo.game['objects']['shipList'][0]['location']['x'] == 2 and foo.game['objects']['shipList'][0]['location']['y'] == 12)
 foo.sendCmd(warpWarCmds().moveShip(_plid, shipName, 5, 14))
-foo.finishTest()
 assert(foo.game['objects']['shipList'][0]['location']['x'] == 5 and foo.game['objects']['shipList'][0]['location']['y'] == 14)
+foo.finishTest()
