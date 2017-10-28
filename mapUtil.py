@@ -5,13 +5,12 @@ import dataModel
 
 
 class hexMap(HexagonalGrid):
-    def __init__(self, tkRoot, width, height):
+    def __init__(self, frame, tkRoot, width, height):
         self.hiliteList = []
-        self.anchorFrame = tkRoot.mapFrame
+        self.anchorFrame = frame
         self.callbackData = tkRoot
 
         self.__initMap(width, height)
-        self.pack(fill=BOTH, expand=YES)
 
     # PURPOSE:
     # RETURNS: hexMap handle
@@ -24,9 +23,6 @@ class hexMap(HexagonalGrid):
 
         self.setLeftPrivateCallBack(self.clickHex, self.callbackData)
 
-        # Locate the hexmap on the tkinter "grid"
-        self.grid(row=0, column=0, padx=10, pady=10)
-
     # PURPOSE: Add a highlight color to given location
     # A color of "None" erases any hilite for that location
     # RETURN: none
@@ -37,15 +33,6 @@ class hexMap(HexagonalGrid):
     # RETURN: none
     def unHiliteMap(self):
         self.hiliteList = []
-
-    # PURPOSE: Only resize if needed
-    # RETURN: none
-    def resizeMap(self, width, height):
-        # don't resize if it is already the same size?
-        if ((width != self.grid_width) or (height != self.grid_height)):
-            self.__initMap(width, height)
-            self.pack(fill=BOTH, expand=YES)
-            self.unHiliteMap()
 
     # PURPOSE:
     # RETURN: none
@@ -85,8 +72,6 @@ class hexMap(HexagonalGrid):
         for hilite in self.hiliteList:
             self.setBorders(hilite[0], hilite[1], hilite[2], hilite[3])
 
-        for hist in game['history']:
-            print(hist)
         print("five")
     
     # PURPOSE:
@@ -102,4 +87,4 @@ class hexMap(HexagonalGrid):
         xyList = []
         xyList.extend(dataModel.findObjectsAt(tkRoot.game, x, y))
 
-        hexInfo(tkRoot.mapFrame, xyList)
+        hexInfo(self.anchorFrame, xyList)

@@ -112,7 +112,6 @@ class HexagonalGrid(HexaCanvas):
         self.bind("<Button-3>", self.rightClickCallback)
         self.bind("<Enter>", self.Enter)
         self.bind("<Leave>", self.Leave)
-        self.bind("<Configure>", self.Configure)
         self.setHexaSize(scale)
 
     def setCell(self, xCell, yCell, *args, **kwargs ):
@@ -245,8 +244,8 @@ class HexagonalGrid(HexaCanvas):
         self.lastX = -1
         self.lastY = -1
 
-    def Configure(self, event):
-        # print("<Configure>", event.width)
+    def handleResizeEvent(self, event):
+        #print("<Configure>", event.width)
         # The size of a hex is determined by "scale"
         # The size of a single hex determines the size of the whole grid.
         # So given the new width (ignore height) and knowing the original

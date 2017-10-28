@@ -438,6 +438,8 @@ class gameserver:
             print("GServer:", "JSON parse error for ", jsonStr, "\n")
             return False
 
+        self.game['state']['seqid'] += 1
+
         cmd = root['cmd']
         cmdStr = cmd['cmd']
         if (self.cmdStr != cmdStr):
@@ -873,6 +875,6 @@ class gameserver:
         if (cmdStr != 'ping' and cmdStr != 'restoregame'):
             if (len(self.game['history']) > 10):
                 self.game['history'].pop(0)
-            self.game['history'].append(cmd)
+            self.game['history'].append({'seqid':self.game['state']['seqid'], 'cmd':cmd})
 
         return True

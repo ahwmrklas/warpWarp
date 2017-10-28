@@ -21,6 +21,7 @@ from connect import *
 from damage import *
 from cmds import warpWarCmds
 from ConfigHandler import ConfigHandler
+import history
 import json
 import getpass
 import math
@@ -339,7 +340,19 @@ def updateWWMenu(event, tkRoot):
 
     if (tkRoot.game):
         gamePhase = tkRoot.game['state']['phase']
-        tkRoot.hexMap.resizeMap(tkRoot.game['map']['width'], tkRoot.game['map']['height'])
+        for hist in tkRoot.game['history']:
+            tkRoot.hist.set(hist['seqid'], str(hist['cmd']) + "\n")
+        if ((tkRoot.game['map']['width']  != tkRoot.hexMap.grid_width) or
+            (tkRoot.game['map']['height'] != tkRoot.hexMap.grid_height)
+           ):
+            tkRoot.hexMap.unbind("<Configure>")
+            tkRoot.topPane.remove(tkRoot.hexMap)
+            tkRoot.hexMap = hexMap(tkRoot.topPane, tkRoot,
+                                   tkRoot.game['map']['width'],
+                                   tkRoot.game['map']['height'])
+            tkRoot.topPane.add(tkRoot.hexMap, stretch='always', before=tkRoot.infoPane)
+
+            tkRoot.hexMap.bind("<Configure>", lambda event, tkRoot=tkRoot :Configure(event, tkRoot))
 
     phaseMenu(tkRoot, gamePhase, playerPhase)
     tkRoot.hexMap.updateMap(tkRoot.game)
@@ -705,6 +718,7 @@ def addMenus(tkRoot):
 def Configure(event, tkRoot):
     if (tkRoot.configureDelay):
         tkRoot.after_cancel(tkRoot.configureDelay)
+    tkRoot.hexMap.handleResizeEvent(event)
     tkRoot.configureDelay = tkRoot.after(500, lambda : tkRoot.event_generate("<<updateWWMenu>>", when='tail'))
 
 # PURPOSE: Just make a function out of the main code. It doesn't
@@ -734,27 +748,64 @@ def main():
     # menu bar
     addMenus(tkRoot)
 
-    tkRoot.mapFrame = Frame(tkRoot)
-    tkRoot.mapFrame.bind("<Configure>", lambda event, tkRoot=tkRoot :Configure(event, tkRoot))
+    # Create A "PanedWindow" on top of a frame to fit everything into
+    #
+    # +------------------------------------+
+    # |    PANED WINDOW                    |
+    # |                                    |
+    # |                                    |
+    # +------------------------------------+
+    # |       button frame                 |
+    # +------------------------------------+
+    tkRoot.topPane = PanedWindow(tkRoot, orient='horizontal', bg='blue')
+    tkRoot.bottomFrame = Frame(tkRoot)
+    tkRoot.bottomFrame.pack(side="bottom")
 
-    tkRoot.hexMap = hexMap(tkRoot, 10, 10)
-    tkRoot.mapFrame.pack(fill=BOTH, expand=YES)
+    # It is important to pack the topPane LAST (but at the top) so that
+    # the buttons don't disappear when shrinking the whole window
+    tkRoot.topPane.pack(side="top", expand=YES, fill=BOTH)
 
-    tkRoot.buttonFrame = Frame(tkRoot)
-    # Create a quit button (obviously to exit the program)
-    # Locate the button on the tkinter "grid"
-    tkRoot.quitButton = Button(tkRoot.buttonFrame, text = "Quit",
+    # Create add a map to the top paned window on the left
+    # and add another paned window on the right
+    # +------------------------------------+
+    # |                     |              |
+    # |   map window        |  info pane   |
+    # |                     |              |
+    # +------------------------------------+
+    tkRoot.hexMap = hexMap(tkRoot.topPane, tkRoot, 10, 10)
+    tkRoot.infoPane = PanedWindow(tkRoot, orient='vertical')
+    tkRoot.topPane.add(tkRoot.hexMap, stretch='always')
+    tkRoot.topPane.add(tkRoot.infoPane, stretch='always')
+
+    # Call back for when the map grows/shrinks
+    tkRoot.hexMap.bind("<Configure>", lambda event, tkRoot=tkRoot :Configure(event, tkRoot))
+
+
+    # Create anaother Pane in the right PanedWindow(infoPane)
+    # for displaying history. There is only one pane in this infoPane for now
+    # ... but we can add others
+    # +--------------------+
+    # |                    |
+    # |   Future pane1     |
+    # +------------------- +
+    # |   Future pane2     |
+    # +------------------- +
+    # |                    |
+    # |   history pane     |
+    # +--------------------+
+    tkRoot.hist = history.history(tkRoot.infoPane)
+    tkRoot.infoPane.add(tkRoot.hist, stretch='always')
+
+    # Put buttons into the button frame
+    tkRoot.quitButton = Button(tkRoot.bottomFrame, text = "Quit",
                   command = lambda :exitProgram(tkRoot))
-    #tkRoot.quitButton.grid(row=1, column=0)
     tkRoot.quitButton.pack(side="left")
 
-    tkRoot.playersButton = Button(tkRoot.buttonFrame, text = "Players",
+    tkRoot.playersButton = Button(tkRoot.bottomFrame, text = "Players",
                                   command = lambda :popupPlayers(tkRoot))
-    #tkRoot.playersButton.grid(row=1, column=1)
     tkRoot.playersButton.pack(side="right")
 
-    tkRoot.buttonFrame.pack()
-    
+    # Display default game info on the map
     tkRoot.hexMap.updateMap(tkRoot.game)
 
     tkRoot.tooltipX = 0

@@ -313,6 +313,7 @@ def emptyGame():
             'turnNumber': 0,
             'phase': None,
             'activePlayer': None,
+            'seqid': 0,
         },
         'orders': {
         },
@@ -351,6 +352,7 @@ def defaultGame():
             'turnNumber': 0,
             'phase': None,
             'activePlayer': None,
+            'seqid': 0,
         },
         'orders': {
         },
