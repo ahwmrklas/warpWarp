@@ -188,6 +188,15 @@ def playerTableGet(game, plid):
 
     return None
 
+# PURPOSE: Get the players name
+# RETURNS: A string
+def playerNameGet(game, plid):
+    pt = playerTableGet(game, plid)
+    if (pt is None) or (pt['name'] is None):
+        return "PlayerUnknow"
+
+    return pt['name']
+
 # PURPOSE: Get list of all things owned by player
 # RETURNS: list of things (ships, bases, stars, relics)
 def getOwnedList(game, plid):
@@ -313,7 +322,6 @@ def emptyGame():
             'turnNumber': 0,
             'phase': None,
             'activePlayer': None,
-            'seqid': 0,
         },
         'orders': {
         },
@@ -352,7 +360,6 @@ def defaultGame():
             'turnNumber': 0,
             'phase': None,
             'activePlayer': None,
-            'seqid': 0,
         },
         'orders': {
         },

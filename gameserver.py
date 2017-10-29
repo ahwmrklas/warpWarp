@@ -216,7 +216,7 @@ def findTargetShipOrders(shipName, orders):
 # RETURNS:
 # passing in "game" and "orders" seems overkill. Just pass in game
 # and find the orders ... buy that also seems weird
-def figureStuffOut(game, orders, myShipName, myPower, myTactic, myDrive, myTarget):
+def figureStuffOut(logger, game, orders, myShipName, myPower, myTactic, myDrive, myTarget):
 
     targetShipOrders = findTargetShipOrders(myTarget, orders)
     if (targetShipOrders):
@@ -239,7 +239,6 @@ def figureStuffOut(game, orders, myShipName, myPower, myTactic, myDrive, myTarge
     # We know what the offense is doing, we know what the defense is doing
     # rock, paper, scissors the results
     result = combatChartLookup(myTactic, myDrive, targetTactic, targetDrive)
-    print("%s Beam/Missile '%s' %s" % (myShipName, result, myTarget))
 
     # ugly if statement on results
     # combatChartLookup should probably just return the number
@@ -255,6 +254,8 @@ def figureStuffOut(game, orders, myShipName, myPower, myTactic, myDrive, myTarge
         damage = -1
     else:
         print('ERROR!')
+    logger.log("  " + myShipName + " " + result + " " + myTarget + " for " + str(damage) + " damge")
+    print("%s Beam/Missile '%s' %s" % (myShipName, result, myTarget))
 
     # A negative number means the target
     # has escaped. BUT it can't escape unless EVERY attack results in "escape"
@@ -289,7 +290,7 @@ def figureStuffOut(game, orders, myShipName, myPower, myTactic, myDrive, myTarge
 
 # PURPOSE:
 # RETURNS:
-def resolveCombat(game, orders):
+def resolveCombat(logger, game, orders):
     # For testing
     #for ship in game['objects']['shipList']:
     #    ship['damage'] = 5
@@ -318,19 +319,19 @@ def resolveCombat(game, orders):
             if 'conquer' in shipOrders:
                 # This is a change of ownership.
                 for baseName in shipOrders['conquer']:
-                    print(player, "ship:", myShip, "conquer", baseName)
+                    logger.log(dataModel.playerNameGet(game, player) + ": conquers " + baseName + " with " + myShip)
                     base = dataModel.findBase(game, baseName)
                     base['owner'] = player
                 continue
             pretty = dataModel.prettyOrders(shipOrders)
-            print(player, "ship:", myShip, "order:", pretty)
+            logger.log(dataModel.playerNameGet(game, player) + ": " + myShip + ": " + pretty)
             myPower  = shipOrders['beams'][1]
             if (myPower > 0):
                 myTactic     = shipOrders['tactic'][0]
                 myDrive      = shipOrders['tactic'][1]
                 myTarget     = shipOrders['beams'][0]
 
-                figureStuffOut(game, orders, myShip, myPower, myTactic, myDrive, myTarget)
+                figureStuffOut(logger, game, orders, myShip, myPower, myTactic, myDrive, myTarget)
 
             else:
                 # Need ship to deduct missiles
@@ -344,7 +345,7 @@ def resolveCombat(game, orders):
                     if (myDrive > 0):
                         assert(ship['M']['cur'] > 0)
                         ship['M']['cur'] -= 1
-                        figureStuffOut(game, orders, myShip, myPower, myTactic, myDrive, myTarget)
+                        figureStuffOut(logger, game, orders, myShip, myPower, myTactic, myDrive, myTarget)
 
 # PURPOSE:
 # RETURNS:
@@ -416,6 +417,8 @@ class gameserver:
         self.gameContinues = True
         self.game = dataModel.emptyGame()
 
+        self.seqid = 0
+
         # This is used for debug
         self.cmdStr = None
 
@@ -429,6 +432,14 @@ class gameserver:
     def gameJson(self):
         return json.dumps(self.game, ensure_ascii=False)
 
+    # PURPOSE: Log a history item
+    # RETURNS: None
+    def log(self, msg):
+        if (len(self.game['history']) > 10):
+            self.game['history'].pop(0)
+        self.game['history'].append({'seqid':self.seqid, 'cmd':msg})
+        self.seqid += 1
+
     # PURPOSE: Interpret JSON command and do something
     # RETURNS: true for properly parsed command
     def parseCmd(self, jsonStr):
@@ -438,8 +449,6 @@ class gameserver:
             print("GServer:", "JSON parse error for ", jsonStr, "\n")
             return False
 
-        self.game['state']['seqid'] += 1
-
         cmd = root['cmd']
         cmdStr = cmd['cmd']
         if (self.cmdStr != cmdStr):
@@ -448,6 +457,7 @@ class gameserver:
 
         if cmdStr == 'quit':
             print("GServer:", "quitCommandRecieved")
+            self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Ended the game")
 
             # This cmd doesn't save anything. Call save if you want to save
             self.game['state']['phase'] = None
@@ -484,6 +494,7 @@ class gameserver:
                                                 'plid' : plid})
                 player = dataModel.playerTableGet(self.game, plid)
                 player['color'] = color
+                self.log(newPlayer + " is "  + color + " and starts with" + str(startingBases))
                 for base in startingBases:
                     ownIt = dataModel.findBase(self.game, base)
                     print(newPlayer, "owns", base)
@@ -504,7 +515,7 @@ class gameserver:
                     player['phase'] = "creating"
                     print("GServer: I don't think this should happen anymore")
                 else:
-                    print("GServer:", "player", newPlayer, "must be rejoining game???!!!")
+                    self.log(newPlayer + "is rejoining game")
 
         elif cmdStr == 'newgame':
             # What to do? Offer to save current game? NO! this is the server,
@@ -517,6 +528,7 @@ class gameserver:
             #
             # Need to be given the name of the game?
             # Warn/Error if current game hasn't been saved (is dirty)
+            self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Created a new game")
             gameName = cmd['name']
             self.game = dataModel.defaultGame()
             self.game['state']['phase'] = "creating"
@@ -526,6 +538,7 @@ class gameserver:
         elif cmdStr == 'start':
             # Basically just change state so players can begin building
             # and playing
+            self.log("Start command is unused?")
             assert(self.game['state']['phase'] == "creating")
             self.game['state']['phase'] = "build"
 
@@ -563,6 +576,8 @@ class gameserver:
                 cost += 5
 
             print ("GServer cost:", cost)
+
+            self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Built the '" + ship['name'] + "' at " + baseName)
 
             #TODO: This next section is bad. we don't check to see if the player
             #who sent the command owns the base, or is in the right spot.
@@ -627,7 +642,7 @@ class gameserver:
                 # end turn if there wasn't
                 if areAllPlayersInPhase(self.game, "waiting"):
                     if (self.game['orders']):
-                        resolveCombat(self.game, self.game['orders'])
+                        resolveCombat(self, self.game, self.game['orders'])
                         self.game['state']['phase'] = "damageselection"
                         changeAllPlayerPhase(self.game, "waiting", "damageselection")
                     else:
@@ -642,6 +657,7 @@ class gameserver:
                             self.game['state']['phase'] = "victory"
                             changeAllPlayerPhase(self.game, "waiting", "loser")
                             changePlayerPhase(self.game, winner, "loser", "winner")
+                            self.log("Admiral " + playerNameGet(self.game, winner) + " is victorious")
                         else:
                             self.game['state']['phase'] = "build"
                             changeAllPlayerPhase(self.game, "waiting", "build")
@@ -702,6 +718,9 @@ class gameserver:
                                    x, y)
             #can we actually move this far?
             if (delta <= ship['moves']['cur']):
+                self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Moved the '" + name
+                          + "' from (" + str(ship['location']['x']) + "," + str(ship['location']['y'] ) + ")"
+                          + " to (" + str(x) + "," + str(y) + ")")
                 ship['location']['x'] = x
                 ship['location']['y'] = y
                 ship['moves']['cur'] = ship['moves']['cur'] - delta
@@ -736,6 +755,9 @@ class gameserver:
             #are these guys in the same square
             if ship['location']['x'] == mother['location']['x'] and ship['location']['y'] == mother['location']['y']:
                 mother['carried_ships'].append(ship['name'])
+                self.log(dataModel.playerNameGet(self.game, cmd['plid'])
+                         + " loaded the '" + cmd['shipName'] 
+                         + " onto the '" + cmd['motherName'] )
 
         elif cmdStr == 'unloadship':
             #this is as simple as can be.
@@ -743,6 +765,9 @@ class gameserver:
             mother = dataModel.findShip(self.game, cmd['motherName'])
             #are these guys in the same square
             mother['carried_ships'].remove(cmd['shipName'])
+            self.log(dataModel.playerNameGet(self.game, cmd['plid'])
+                         + " unloaded the '" + cmd['shipName'] 
+                         + " from the '" + cmd['motherName'] )
 
         elif cmdStr == 'loadcargo':
             #this is as simple as can be.
@@ -806,7 +831,7 @@ class gameserver:
             if (newShip['damage'] > 0):
                 # the damage must have been more than the ship
                 # could take; therefore, destroy it.
-                print("ship:", newShip['name'], "Explodes!!")
+                self.log("The '" + newShip['name'] + " Exploded!")
                 del self.game['objects']['shipList'][index]
             else:
                 # Replace existing ship
@@ -829,6 +854,7 @@ class gameserver:
             #
             # Server does nothing with saveGame. The client must save the game
             print("GServer:", "saveGame")
+            self.log("savegame isn't implemented")
 
         elif cmdStr == 'restoregame':
             # Because games are saved/restored on client ...
@@ -838,6 +864,7 @@ class gameserver:
             # restore that game overwriting the current game
             # Warn/Error if current game hasn't been saved (is dirty)
             print("GServer:", "restoreGame")
+            self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Restored a saved game")
             self.game = cmd['game']
 
         elif cmdStr == 'listgames':
@@ -846,6 +873,7 @@ class gameserver:
             #
             # List all of the saved games
             print("GServer:", "listGames")
+            self.log("listgames isn't implemented")
 
         elif cmdStr == 'loadgame':
             # Offer to save current game?
@@ -860,6 +888,7 @@ class gameserver:
             #
             # Warn/Error if current game hasn't been saved (is dirty)
             print("GServer:", "loadGame")
+            self.log("loadgame isn't implemented")
 
         elif cmdStr == 'playerleave':
             # Player is quiting
@@ -867,14 +896,10 @@ class gameserver:
             # This is informational
             # Input? Player name? Some unique player key code for security?
             print("GServer:", "playerLeaving")
+            self.log("playerleave isn't implemented")
 
         else:
             print("GServer:", "Not a legal command '", cmdStr, "'")
             return False
-
-        if (cmdStr != 'ping' and cmdStr != 'restoregame'):
-            if (len(self.game['history']) > 10):
-                self.game['history'].pop(0)
-            self.game['history'].append({'seqid':self.game['state']['seqid'], 'cmd':cmd})
 
         return True
