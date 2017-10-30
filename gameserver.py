@@ -515,7 +515,7 @@ class gameserver:
                     player['phase'] = "creating"
                     print("GServer: I don't think this should happen anymore")
                 else:
-                    self.log(newPlayer + "is rejoining game")
+                    self.log(newPlayer + " is rejoining game")
 
         elif cmdStr == 'newgame':
             # What to do? Offer to save current game? NO! this is the server,
@@ -657,7 +657,7 @@ class gameserver:
                             self.game['state']['phase'] = "victory"
                             changeAllPlayerPhase(self.game, "waiting", "loser")
                             changePlayerPhase(self.game, winner, "loser", "winner")
-                            self.log("Admiral " + playerNameGet(self.game, winner) + " is victorious")
+                            self.log("Admiral " + dataModel.playerNameGet(self.game, winner) + " is victorious")
                         else:
                             self.game['state']['phase'] = "build"
                             changeAllPlayerPhase(self.game, "waiting", "build")

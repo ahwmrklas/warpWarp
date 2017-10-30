@@ -19,5 +19,5 @@ class history(Frame):
     def set(self, seqid, newText):
         if (seqid > self.lastSeqid):
             self.lastSeqid = seqid
-            self.text.insert(INSERT, str(seqid) + newText)
+            self.text.insert(INSERT, str(seqid) + ": " + newText)
             print("text", newText)

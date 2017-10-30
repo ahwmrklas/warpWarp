@@ -242,28 +242,42 @@ def getConflictList(objects):
     starBaseList = objects['starBaseList']
 
     allList = starList + thingList + shipList + starBaseList
+
+    # sortedList is ALL objects sorted in location order
     sortedList = sorted(allList, key=myCmp)
     if (sortedList):
-        last = sortedList[0]
-    conflicts = []
+        # "Last" is the comparison object.
+        # Look for other objects at this location
+        Last = sortedList[0]
+
+    conflictList = []
     listOfLists = []
     for obj in sortedList:
-        if last['location'] == obj['location']:
-            if (conflicts):
+        if Last['location'] == obj['location']:
+            if (conflictList):
                 # There is already a conflict here. That means everyone
                 # is in conflict
-                conflicts.append(obj)
+                conflictList.append(obj)
                 continue
-            if last['owner'] != obj['owner']:
+            if Last['owner'] != obj['owner']:
                 print("conflict")
-                # what about "last"?
-                conflicts.append(last)
-                conflicts.append(obj)
+                # what about "Last"?
+                conflictList.append(Last)
+                conflictList.append(obj)
         else:
-            if (conflicts):
-                listOfLists.append(conflicts)
-                conflicts = []
-        last = obj
+            # Location change means a new conflict list
+            if (conflictList):
+                listOfLists.append(conflictList)
+                conflictList = []
+        Last = obj
+
+    # Make certain we get the last conflictList
+    # This can happen if the last item is the one that
+    # creates the conflict
+    if (conflictList):
+        listOfLists.append(conflictList)
+        conflictList = []
+
     return listOfLists
 
 # PURPOSE: turn a conflict  into a list of ships on each side
