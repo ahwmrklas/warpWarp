@@ -10,13 +10,14 @@
 # Imports
 import socket
 import threading
-from client import comThrd
 import queue as Q
 import gameserver
 import json
 import time
+import dataModel
+import math
 from cmds import warpWarCmds
-from dataModel import *
+from client import comThrd
 
 # thread for the player
 class playerAiThrd(threading.Thread):
@@ -26,6 +27,7 @@ class playerAiThrd(threading.Thread):
     def __init__(self, name, ipAddr, port):
         self.playerName = name
         self.plid = 123
+        self.nameCnt = 0
         self.startingBases = ['Babylon', 'Nineveh', 'Ugarit']
         self.color = 'Green'
         self.ipAddr = ipAddr
@@ -74,6 +76,67 @@ class playerAiThrd(threading.Thread):
         print("playerAi:RESP:", len(resp))
         return game
 
+    # PURPOSE: Build a "random ship"
+    #          Doesn't need to be in class
+    # RETURNS: none
+    def createShip(self, BP, x, y):
+        self.nameCnt += 1
+        name = "W" + str(self.nameCnt)
+        PD = 5
+        WG = True
+        B = 3
+        S = 3
+        T = 2
+        M = 2
+        SR = 0
+        H = 0
+
+        moves = math.ceil(int(PD/2))
+        ship =  {
+             'name': name,
+             'type': "ship",
+             'location': {'x':x, 'y':y},
+             'image':"ship1.png",
+             'owner': self.plid,
+             'techLevel': 1,
+             'damage': 0,
+             'moves': {'max': moves, 'cur': moves },
+             'PD': {'max': PD, 'cur': PD },       # PowerDrive
+             'WG': {'max': WG, 'cur': WG }, # Warp Generator
+             'B':  {'max':B, 'cur':B },       # Beams
+             'S':  {'max':S, 'cur':S },       # Screens (Shields)
+             'E':  {'max':0, 'cur':0 },       # Electronic Counter Measures (New)
+             'T':  {'max':T, 'cur':T },       # Tubes
+             'M':  {'max':M * 3, 'cur':M * 3 },       # Missiles
+             'A':  {'max':0, 'cur':0 },       # Armor (New)
+             'C':  {'max':0, 'cur':0 },       # Cannons (New)
+             'SH': {'max':0 * 6, 'cur':0 * 6 },       # Shells (New)
+             'SR': {'max':SR, 'cur':SR },       # System Ship Racks
+             'H':  {'max':H, 'cur':H },       # Holds (New)
+             'Hauled':0,
+             'R': {'max':0, 'cur':0 },       # Repair Bays (New)
+             'visibility':[ {'player':self.plid,  'percent':100}],
+             'carried_ships' :[],
+            }
+        return ship
+
+
+    # PURPOSE: 
+    # RETURNS: none
+    def buildThings(self, game):
+        # Loop through every base I own
+        baseList = dataModel.getOwnedListOfType(game, self.plid, 'starBaseList')
+        for base in baseList:
+            # Take the points at that base and build a ship there
+            print("build something at ", base['name'], " for ", base['BP']['cur'])
+            ship = self.createShip(base['BP']['cur'], base['location']['x'],
+                                                      base['location']['y'])
+            if ship:
+                sendJson = warpWarCmds().buildShip(self.plid, ship, base['name'])
+                self.hCon.sendCmd(sendJson)
+                resp = self.hCon.waitFor(5)
+                game = json.loads(resp)
+
     # PURPOSE: 
     # RETURNS: game object
     def combatOrders(self):
@@ -99,7 +162,7 @@ class playerAiThrd(threading.Thread):
             game = self.ping()
             time.sleep(1)
 
-            playerMe = playerTableGet(game, self.plid)
+            playerMe = dataModel.playerTableGet(game, self.plid)
             if (playerMe is None):
                 playerMe = {'phase':None}
 
@@ -120,6 +183,7 @@ class playerAiThrd(threading.Thread):
                     self.ready()
             elif (gamePhase == "build"):
                 if (playerPhase == "build"):
+                    self.buildThings(game)
                     self.ready()
             elif (gamePhase == "move"):
                 if (playerPhase == "move"):

@@ -63,7 +63,7 @@ class build(Dialog):
 
         tmpLbl = Label(spinFrame, text="ELECTRONIC COUNTERMEASURES")
         tmpLbl.grid(row=5, column=0)
-        self.ecmSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
+        self.ecmSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
         self.ecmSpn.grid(row=5, column=1)
         self.spinList.append(self.ecmSpn)
 
@@ -81,19 +81,19 @@ class build(Dialog):
 
         tmpLbl = Label(spinFrame, text="ARMOR (x2)")
         tmpLbl.grid(row=8, column=0)
-        self.armorSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
+        self.armorSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
         self.armorSpn.grid(row=8, column=1)
         self.spinList.append(self.armorSpn)
 
         tmpLbl = Label(spinFrame, text="CANNONS")
         tmpLbl.grid(row=9, column=0)
-        self.cannonSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
+        self.cannonSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
         self.cannonSpn.grid(row=9, column=1)
         self.spinList.append(self.cannonSpn)
 
         tmpLbl = Label(spinFrame, text="SHELLS (x6)")
         tmpLbl.grid(row=10, column=0)
-        self.shellSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
+        self.shellSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
         self.shellSpn.grid(row=10, column=1)
         self.spinList.append(self.shellSpn)
 
@@ -111,7 +111,7 @@ class build(Dialog):
 
         tmpLbl = Label(spinFrame, text="REPAIR BAYS (1/5 BP)")
         tmpLbl.grid(row=13, column=0)
-        self.rpSpn = Spinbox(spinFrame, from_=0, to=int(self.remaining / 5), state="readonly", command=self.updateSpinners)
+        self.rpSpn = Spinbox(spinFrame, from_=0, to=int(self.remaining / 5), state="disabled", command=self.updateSpinners)
         self.rpSpn.grid(row=13, column=1)
         #self.spinList.append(self.rpSpn) we treat this one special
 

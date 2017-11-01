@@ -197,6 +197,21 @@ def playerNameGet(game, plid):
 
     return pt['name']
 
+# PURPOSE: Get list of all things  *of type objType* owned by player
+# RETURNS: list of things of given objType
+def getOwnedListOfType(game, plid, objType):
+    assert(game and plid and objType)
+
+    objects = game['objects']
+    assert(objects)
+
+    playerOwns = []
+    for obj in objects[objType] :
+        if (obj['owner'] == plid):
+            playerOwns.append(obj)
+
+    return playerOwns
+
 # PURPOSE: Get list of all things owned by player
 # RETURNS: list of things (ships, bases, stars, relics)
 def getOwnedList(game, plid):
@@ -206,18 +221,11 @@ def getOwnedList(game, plid):
     assert(objects)
 
     playerOwns = []
-    for obj in objects['shipList']:
-        if (obj['owner'] == plid):
-            playerOwns.append(obj)
-    for obj in objects['starList']:
-        if (obj['owner'] == plid):
-            playerOwns.append(obj)
-    for obj in objects['starBaseList']:
-        if (obj['owner'] == plid):
-            playerOwns.append(obj)
-    for obj in objects['thingList']:
-        if (obj['owner'] == plid):
-            playerOwns.append(obj)
+    playerOwns.extend(getOwnedListOfType(game, plid, 'shipList'))
+    playerOwns.extend(getOwnedListOfType(game, plid, 'starList'))
+    playerOwns.extend(getOwnedListOfType(game, plid, 'starBaseList'))
+    playerOwns.extend(getOwnedListOfType(game, plid, 'thingList'))
+
     return playerOwns
 
 # PURPOSE:for sorted() key function
