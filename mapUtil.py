@@ -87,4 +87,4 @@ class hexMap(HexagonalGrid):
         xyList = []
         xyList.extend(dataModel.findObjectsAt(tkRoot.game, x, y))
 
-        hexInfo(self.anchorFrame, xyList)
+        hexInfo(self.anchorFrame, tkRoot.game, xyList)

@@ -577,8 +577,6 @@ class gameserver:
 
             print ("GServer cost:", cost)
 
-            self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Built the '" + ship['name'] + "' at " + baseName)
-
             #TODO: This next section is bad. we don't check to see if the player
             #who sent the command owns the base, or is in the right spot.
             #what we should really do is have this command only take the ship,
@@ -596,6 +594,9 @@ class gameserver:
                     print (base)
                     #and build the ship!
                     self.game['objects']['shipList'].append(ship)
+                    self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Built the '" + ship['name'] + "' at " + baseName)
+                else:
+                    print ("GServer cheater!:", "base can't afford ship")
 
         elif cmdStr == 'ready':
             # A generic cmd used to end several phases
