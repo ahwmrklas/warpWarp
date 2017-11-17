@@ -22,6 +22,7 @@ from damage import *
 from cmds import warpWarCmds
 from ConfigHandler import ConfigHandler
 import history
+import hexpane
 import json
 import getpass
 import math
@@ -68,9 +69,11 @@ def tooltip(tkRoot):
                 height = label.winfo_reqheight()
                 tkRoot.tooltip.wm_geometry("+%d+%d" % (x, y-height))
                 label.pack(ipadx=1)
+                tkRoot.hexpane.update(objs)
 
 
-    tkRoot.after(1000, lambda :tooltip(tkRoot))
+
+    tkRoot.after(10, lambda :tooltip(tkRoot))
 
 # PURPOSE: Button handler. The Quit button
 #          call this when "Quit" button clicked
@@ -793,6 +796,8 @@ def main():
     # |                    |
     # |   history pane     |
     # +--------------------+
+    tkRoot.hexpane = hexpane.hexpane(tkRoot.infoPane)
+    tkRoot.infoPane.add(tkRoot.hexpane, stretch='always')
     tkRoot.hist = history.history(tkRoot.infoPane)
     tkRoot.infoPane.add(tkRoot.hist, stretch='always')
 
