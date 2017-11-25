@@ -2,16 +2,16 @@
 # Simple scrolling window to display history of game
 # Could probably use this for debug
 #
-from tkinter import *
+import tkinter as TK
 
-class history(Frame):
+class history(TK.Frame):
 
     # PURPOSE:
     # RETURNS:
     def __init__(self, master):
-        Frame.__init__(self, master)
-        self.text = Text(self, width=30)
-        self.text.pack(expand=YES, fill=BOTH)
+        TK.Frame.__init__(self, master)
+        self.text = TK.Text(self, width=30, state=TK.DISABLED)
+        self.text.pack(expand=TK.YES, fill=TK.BOTH)
         self.lastSeqid = 0
 
     # PURPOSE:
@@ -19,5 +19,7 @@ class history(Frame):
     def set(self, seqid, newText):
         if (seqid > self.lastSeqid):
             self.lastSeqid = seqid
-            self.text.insert(INSERT, str(seqid) + ": " + newText)
+            self.text.config(state=TK.NORMAL)
+            self.text.insert(TK.END, str(seqid) + ": " + newText)
+            self.text.config(state=TK.DISABLED)
             print("text", newText)
