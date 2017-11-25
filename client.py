@@ -78,6 +78,7 @@ class comThrd(threading.Thread):
             s.connect((self.ip, self.port))
             compressed = zlib.compress(msg.encode())
             s.send(compressed)
+            time.sleep(0.1)#TODO: fix hack
             compressed = s.recv(8192)
             cmd = zlib.decompress(compressed)
             self.callbackWithData(cmd)
