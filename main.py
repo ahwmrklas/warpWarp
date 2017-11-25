@@ -508,7 +508,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                 tkRoot.hexMap.hiliteMap(obj['location']['x'], obj['location']['y'], player['color'], 2, None)
 
     phaseMenuObject = Menu(menuBar)
-
+    player = playerTableGet(tkRoot.game, tkRoot.plid)
     if (playerPhase == 'waiting'):
         # Player is waiting on opponent. All they can do is refresh.
         phaseMenuObject.add_command(label="WAITING on opponent")
@@ -523,13 +523,15 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                                   command=lambda:newGame(tkRoot))
             phaseMenuObject.add_command(label="Open",
                                   command=lambda:loadGame(tkRoot))
+    elif (player is None):
+        phaseMenuObject.add_command(label="Join",
+                              command=lambda:playerJoinMenu(tkRoot))
     elif (gamePhase == 'creating'):
         phaseMenuObject.add_command(label="Join",
                               command=lambda:playerJoinMenu(tkRoot))
         phaseMenuObject.add_command(label="Ready",
                               command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'build'):
-        player = playerTableGet(tkRoot.game, tkRoot.plid)
         assert(player)
         phaseMenuObject.add_command(label="Bases you own:")
         #Technically, its only bases that can do this
@@ -559,7 +561,6 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
 
     elif (gamePhase == 'move'):
         # is it our turn to move?
-        player = playerTableGet(tkRoot.game, tkRoot.plid)
         assert(player)
         if player['phase'] == "move":
             phaseMenuObject.add_command(label="Ships you own:")
