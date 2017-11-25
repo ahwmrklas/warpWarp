@@ -628,7 +628,8 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # on the location so it brings up the battle screen.
         phaseMenuObject.add_command(label="Conflicts:")
         for conflict in conflictList:
-            conflictDict, nonShipList = organizeConflict(conflict(tkRoot.cfg.Profile.playerName))
+            conflictDict, nonShipList = organizeConflict(conflict)
+            print(tkRoot.cfg.Profile.playerName)
             print(conflictDict)
             print("NONSHIP")
             print(nonShipList)
