@@ -488,22 +488,30 @@ class gameserver:
             player = dataModel.playerTableGet(self.game, plid)
 
             if player is None:
-                self.game['playerList'].append({'name':  newPlayer,
-                                                'phase': "creating",
-                                                'color': color,
-                                                'plid' : plid})
-                player = dataModel.playerTableGet(self.game, plid)
-                player['color'] = color
-                self.log(newPlayer + " is "  + color + " and starts with" + str(startingBases))
-                for base in startingBases:
-                    ownIt = dataModel.findBase(self.game, base)
-                    print(newPlayer, "owns", base)
-                    if ownIt:
-                        ownIt['owner'] = plid
-                        #give them everything at that base
-                        baseItems = dataModel.findObjectsAt(self.game, ownIt['location']['x'], ownIt['location']['y'])
-                        for baseItem in baseItems:
-                            baseItem['owner'] = plid
+                if ((self.game['state']['phase'] is None) or
+                    (self.game['state']['phase'] == "creating")):
+                    
+                    self.game['playerList'].append({'name':  newPlayer,
+                                                    'phase': "creating",
+                                                    'color': color,
+                                                    'plid' : plid})
+                    player = dataModel.playerTableGet(self.game, plid)
+                    player['color'] = color
+                    self.log(newPlayer + " is "  + color + " and starts with" + str(startingBases))
+                    for base in startingBases:
+                        ownIt = dataModel.findBase(self.game, base)
+                        print(newPlayer, "owns", base)
+                        if ownIt:
+                            ownIt['owner'] = plid
+                            #give them everything at that base
+                            baseItems = dataModel.findObjectsAt(self.game, ownIt['location']['x'],
+                                                                ownIt['location']['y'])
+                            for baseItem in baseItems:
+                                baseItem['owner'] = plid
+                else:
+                    print("GServer:", "may not join on going game!")
+                    self.log(newPlayer + " rejected from game in phase " +
+                             self.game['state']['phase'])
 
             else:
                 # Normally the player shouldn't exist! But they do for the
