@@ -6,37 +6,57 @@ import os
 
 from uuid import getnode as get_mac
 
-class ConfigHandler():
-    def __init__(self, tkRoot):
-        self.tkRoot = tkRoot
-        if (os.path.isfile("warpwar.ini")):
-            self.loadConfig()
-        else:
-            self.createConfig()
 
+class ConfigHandler():
+    class Profile():
+        def __init__(self):
+            self.playerName = getpass.getuser()
+            self.plid = int(str(get_mac()) + str(int(time.time())))
+    class Client():
+        def __init__(self):
+            self.serverIP = "localhost"
+            self.serverPort = 12345
+    class Server():
+        def __init__(self):
+            self.serverIP = "localhost"
+            self.serverPort = 12345
+
+    def __init__(self, filename):
+        self.filename = filename
+        self.Profile = ConfigHandler.Profile()
+        self.Client = ConfigHandler.Client()
+        self.Server = ConfigHandler.Server()
+        if (os.path.isfile(filename)):
+            self.loadConfig()
 
     def loadConfig(self):
         print("loadConfig")
         #so we need to open a file select menu, filtering for .wwp
         #and then we load our options
-        loadFileName = "warpwar.ini"
+        loadFileName = self.filename
         if (loadFileName):
             configParser = configparser.ConfigParser()
             configParser.read(loadFileName)
-            self.tkRoot.playerName = configParser.get('profile', 'name')
-            self.tkRoot.plid = int(configParser.get('profile', 'plid'))
+            self.Profile.playerName = configParser.get('profile', 'name')
+            self.Profile.plid = int(configParser.get('profile', 'plid'))
+            self.Client.serverIP = configParser.get('client', 'serverIP')
+            self.Client.serverPort = int(configParser.get('client', 'serverPort'))
+            self.Server.serverIP = configParser.get('server', 'serverIP')
+            self.Server.serverPort = int(configParser.get('server', 'serverPort'))
             #we are done here.
         else:
             pass
             #if we get here, we messed up
 
-    def createConfig(self):
-        self.tkRoot.playerName = getpass.getuser()
-        self.tkRoot.plid = int(str(get_mac()) + str(int(time.time())))
-        saveFileName = "warpwar.ini"
+    def saveConfig(self):
+        saveFileName = self.filename
         configParser = configparser.ConfigParser()
-        configParser['profile'] = {'name' : self.tkRoot.playerName,
-                                   'plid' : self.tkRoot.plid}
+        configParser['profile'] = {'name' : self.Profile.playerName,
+                                   'plid' : self.Profile.plid}
+        configParser['client'] = {'serverIP' : self.Client.serverIP,
+                                  'serverPort' : self.Client.serverPort}
+        configParser['server'] = {'serverIP' : self.Server.serverIP,
+                                  'serverPort' : self.Server.serverPort}
         if (saveFileName):
             with open(saveFileName, 'w') as saveFile:
                 configParser.write(saveFile)
