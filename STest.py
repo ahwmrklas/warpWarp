@@ -12,6 +12,7 @@ import tkinter as tk
 import threading
 import queue as Q
 import getpass
+import ConfigHandler
 
 # GUI thread for management
 class MyTkApp(threading.Thread):
@@ -22,6 +23,8 @@ class MyTkApp(threading.Thread):
         self.Q = Q.Queue()
         self.hNET = None
         self.hPlayerAi = None
+        self.cfg = ConfigHandler.ConfigHandler('warpwar.ini')
+
         threading.Thread.__init__(self, name="ServerMyTkApp")
         self.start()
         
@@ -42,7 +45,10 @@ class MyTkApp(threading.Thread):
     # RETURNS: nothing
     def startServer(self):
         print("STest: start server")
-        self.hNET = srvrThrd(self.host.get(), int(self.port.get()), self)
+        self.cfg.Server.serverIP = self.host.get()
+        self.cfg.Server.serverPort = self.port.get()
+        self.cfg.saveConfig()
+        self.hNET = srvrThrd(self.cfg.Server.serverIP, int(self.cfg.Server.serverPort), self)
 
     # PURPOSE: Start the AI Player
     # RETURNS: nothing
@@ -62,15 +68,13 @@ class MyTkApp(threading.Thread):
         tmp = tk.Label(self.root, text="Server: ")
         tmp.grid(row=1, column=0)
 
-        host = socket.gethostbyname(socket.gethostname())
         self.host = tk.StringVar()
-        self.host.set(host)
+        self.host.set(self.cfg.Server.serverIP)
         self.serverEntry = tk.Entry(self.root, textvariable=self.host)
         self.serverEntry.grid(row=1, column=1)
 
-        port = '12345'
         self.port = tk.StringVar()
-        self.port.set(port)
+        self.port.set(self.cfg.Server.serverPort)
         self.portEntry = tk.Entry(self.root, textvariable=self.port)
         self.portEntry.grid(row=1, column=2)
 

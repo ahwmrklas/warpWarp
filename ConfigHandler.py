@@ -33,33 +33,41 @@ class ConfigHandler():
         print("loadConfig")
         #so we need to open a file select menu, filtering for .wwp
         #and then we load our options
-        loadFileName = self.filename
-        if (loadFileName):
-            configParser = configparser.ConfigParser()
-            configParser.read(loadFileName)
-            self.Profile.playerName = configParser.get('profile', 'name')
-            self.Profile.plid = int(configParser.get('profile', 'plid'))
-            self.Client.serverIP = configParser.get('client', 'serverIP')
-            self.Client.serverPort = int(configParser.get('client', 'serverPort'))
-            self.Server.serverIP = configParser.get('server', 'serverIP')
-            self.Server.serverPort = int(configParser.get('server', 'serverPort'))
+        if (self.filename):
+            cfgParser = configparser.ConfigParser()
+            cfgParser.read(self.filename)
+
+            if cfgParser.has_option('profile', 'name'):
+                self.Profile.playerName = cfgParser.get('profile', 'name')
+            if cfgParser.has_option('profile', 'plid'):
+                self.Profile.plid = int(cfgParser.get('profile', 'plid'))
+
+            if cfgParser.has_option('client', 'serverIP'):
+                self.Client.serverIP = cfgParser.get('client', 'serverIP')
+            if cfgParser.has_option('client', 'serverPort'):
+                self.Client.serverPort = int(cfgParser.get('client', 'serverPort'))
+
+            if cfgParser.has_option('server', 'serverIP'):
+                self.Server.serverIP = cfgParser.get('server', 'serverIP')
+            if cfgParser.has_option('server', 'serverPort'):
+                    self.Server.serverPort = int(cfgParser.get('server', 'serverPort'))
+
             #we are done here.
         else:
             pass
             #if we get here, we messed up
 
     def saveConfig(self):
-        saveFileName = self.filename
-        configParser = configparser.ConfigParser()
-        configParser['profile'] = {'name' : self.Profile.playerName,
+        cfgParser = configparser.ConfigParser()
+        cfgParser['profile'] = {'name' : self.Profile.playerName,
                                    'plid' : self.Profile.plid}
-        configParser['client'] = {'serverIP' : self.Client.serverIP,
+        cfgParser['client'] = {'serverIP' : self.Client.serverIP,
                                   'serverPort' : self.Client.serverPort}
-        configParser['server'] = {'serverIP' : self.Server.serverIP,
+        cfgParser['server'] = {'serverIP' : self.Server.serverIP,
                                   'serverPort' : self.Server.serverPort}
-        if (saveFileName):
-            with open(saveFileName, 'w') as saveFile:
-                configParser.write(saveFile)
+        if (self.filename):
+            with open(self.filename, 'w') as saveFile:
+                cfgParser.write(saveFile)
         else:
             pass
             #if we get here, we messed up.
