@@ -508,7 +508,9 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         for player in tkRoot.game['playerList']:
             hiliteList = getOwnedList(tkRoot.game, player['plid'])
             for obj in hiliteList:
-                tkRoot.hexMap.hiliteMap(obj['location']['x'], obj['location']['y'], player['color'], 2, None)
+                tkRoot.hexMap.hiliteMap(obj['location']['x'],
+                                        obj['location']['y'],
+                                        player['color'], 2, None)
 
     phaseMenuObject = Menu(menuBar)
     player = playerTableGet(tkRoot.game, tkRoot.cfg.Profile.plid)
@@ -545,7 +547,9 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         base['BP']['cur'])
                 phaseMenuObject.add_command(label=labelString, 
                                             command=lambda baseName=base['name']:buildShip(tkRoot, baseName))
-                tkRoot.hexMap.hiliteMap(base['location']['x'], base['location']['y'], player['color'], 4, None)
+                tkRoot.hexMap.hiliteMap(base['location']['x'],
+                                        base['location']['y'],
+                                        player['color'], 4, None)
         phaseMenuObject.add_separator()
         for ship in tkRoot.game['objects']['shipList']:
             #if we own this star, and have a hold, we should be able to load/unload goods.
@@ -557,7 +561,9 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         ship['Hauled'], ship['H']['cur'] * 10)
                 phaseMenuObject.add_command(label=labelString,
                         command=lambda thisShip=ship, thisStar=star:loadCargo(tkRoot,thisStar,thisShip))
-                tkRoot.hexMap.hiliteMap(ship['location']['x'], ship['location']['y'], player['color'], 2, None)
+                tkRoot.hexMap.hiliteMap(ship['location']['x'],
+                                        ship['location']['y'],
+                                        player['color'], 2, None)
 
         phaseMenuObject.add_separator()
         phaseMenuObject.add_command(label="Ready",
@@ -591,6 +597,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
 
     elif (gamePhase == 'combat'):
 
+        assert(player)
         # They make their choices and submit orders.
         # The user will still need to select all the other locations and
         # give orders. Then they will have to wait for results. (That
@@ -645,7 +652,9 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                     for ship in conflictDict[key]:
                         enemyShips.append(ship)
 
-            tkRoot.hexMap.hiliteMap(int(conflict[0]['location']['x']), int(conflict[0]['location']['y']), 'Red', 4, None)
+            tkRoot.hexMap.hiliteMap(int(conflict[0]['location']['x']),
+                                    int(conflict[0]['location']['y']),
+                                    player['color'], 4, None)
 
             if enemyShips:
                 labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))

@@ -20,12 +20,16 @@ class ConfigHandler():
         def __init__(self):
             self.serverIP = "localhost"
             self.serverPort = 12345
+    class PlayerAI():
+        def __init__(self):
+            self.name = "PlayerAI"
 
     def __init__(self, filename):
         self.filename = filename
         self.Profile = ConfigHandler.Profile()
         self.Client = ConfigHandler.Client()
         self.Server = ConfigHandler.Server()
+        self.PlayerAI = ConfigHandler.PlayerAI()
         if (os.path.isfile(filename)):
             self.loadConfig()
 
@@ -52,6 +56,9 @@ class ConfigHandler():
             if cfgParser.has_option('server', 'serverPort'):
                     self.Server.serverPort = int(cfgParser.get('server', 'serverPort'))
 
+            if cfgParser.has_option('playerai', 'name'):
+                self.PlayerAI.name = cfgParser.get('playerai', 'name')
+
             #we are done here.
         else:
             pass
@@ -60,11 +67,12 @@ class ConfigHandler():
     def saveConfig(self):
         cfgParser = configparser.ConfigParser()
         cfgParser['profile'] = {'name' : self.Profile.playerName,
-                                   'plid' : self.Profile.plid}
-        cfgParser['client'] = {'serverIP' : self.Client.serverIP,
-                                  'serverPort' : self.Client.serverPort}
-        cfgParser['server'] = {'serverIP' : self.Server.serverIP,
-                                  'serverPort' : self.Server.serverPort}
+                                'plid' : self.Profile.plid}
+        cfgParser['client']  = {'serverIP' : self.Client.serverIP,
+                                'serverPort' : self.Client.serverPort}
+        cfgParser['server']  = {'serverIP' : self.Server.serverIP,
+                                'serverPort' : self.Server.serverPort}
+        cfgParser['playerai'] = {'name' : self.PlayerAI.name}
         if (self.filename):
             with open(self.filename, 'w') as saveFile:
                 cfgParser.write(saveFile)

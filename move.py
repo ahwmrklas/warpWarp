@@ -6,7 +6,7 @@ Purpose: move the selected ship.
 from hexgrid import *
 from tkinter import *
 from xbm import TileContent
-from dataModel import *
+import dataModel
 from mapUtil import *
 from ijk import *
 from cmds import warpWarCmds
@@ -15,22 +15,31 @@ import math
 # PURPOSE:
 # RETURNS:
 def createMoveGraph(tkRoot, game, hexMap, shipName):
-    ship = findShip(game, shipName)
+    ship = dataModel.findShip(game, shipName)
     startI, startJ, startK = XYtoIJK(ship['location']['x'], ship['location']['y'])
     movesLeft = ship['moves']['cur']
+
+    hiliteColor = 'Green'
+    player = dataModel.playerTableGet(game, tkRoot.cfg.Profile.plid)
+    if (player):
+        hiliteColor = player['color']
+
     for i in range(-movesLeft, movesLeft + 1):
         for j in range(-movesLeft, movesLeft + 1):
             for k in range(-movesLeft, movesLeft + 1):
                 if i+j+k==0:
                     x,y = IJKtoXY(startI + i, startJ + j, startK + k)
-                    hexMap.setBorders(x, y, 'Green')
+                    hexMap.setBorders(x, y, hiliteColor)
 
-    #if they go to one of these locations, it only costs one
-    warpEnds = getWarpLineEnd(game, ship['location']['x'], ship['location']['y'])
-    for warpEnd in warpEnds:
-            hexMap.setBorders(warpEnd[0], warpEnd[1], 'Yellow')
-    private = [tkRoot, shipName, tkRoot.hexMap.getLeftPrivateCallBack(), warpEnds]
-    hexMap.setLeftPrivateCallBack(moveOnClick, private)
+    if (movesLeft > 0):
+        #if they go to one of these locations, it only costs one
+        warpEnds = dataModel.getWarpLineEnd(game,
+                                            ship['location']['x'],
+                                            ship['location']['y'])
+        for warpEnd in warpEnds:
+            hexMap.setBorders(warpEnd[0], warpEnd[1], hiliteColor)
+        private = [tkRoot, shipName, tkRoot.hexMap.getLeftPrivateCallBack(), warpEnds]
+        hexMap.setLeftPrivateCallBack(moveOnClick, private)
 
 def moveOnClick(private, x, y):
     tkRoot = private[0]
@@ -39,7 +48,7 @@ def moveOnClick(private, x, y):
     warpEnds = private[3]
     #write the ship where it should be.
     print("Left Click to Move", shipName)
-    ship = findShip(tkRoot.game, shipName)
+    ship = dataModel.findShip(tkRoot.game, shipName)
 
     #can we move there?
     moveLeft = ship['moves']['cur']

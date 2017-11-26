@@ -11,7 +11,6 @@ import socket
 import tkinter as tk
 import threading
 import queue as Q
-import getpass
 import ConfigHandler
 
 # GUI thread for management
@@ -47,6 +46,7 @@ class MyTkApp(threading.Thread):
         print("STest: start server")
         self.cfg.Server.serverIP = self.host.get()
         self.cfg.Server.serverPort = self.port.get()
+        self.cfg.PlayerAI.name = self.player2Name.get()
         self.cfg.saveConfig()
         self.hNET = srvrThrd(self.cfg.Server.serverIP, int(self.cfg.Server.serverPort), self)
 
@@ -78,18 +78,11 @@ class MyTkApp(threading.Thread):
         self.portEntry = tk.Entry(self.root, textvariable=self.port)
         self.portEntry.grid(row=1, column=2)
 
-        # Who am I? Pick the other guy
-        myName = getpass.getuser()
-        if (myName == "ahw"):
-            yourName = "bearda"
-        else:
-            yourName = "ahw"
-
         # for starting the AI player
         tmp = tk.Label(self.root, text="AI Name: ")
         tmp.grid(row=2, column=0)
         self.player2Name = tk.StringVar()
-        self.player2Name.set(yourName)
+        self.player2Name.set(self.cfg.PlayerAI.name)
         self.player2Entry = tk.Entry(self.root, textvariable=self.player2Name)
         self.player2Entry.grid(row=2, column=1)
         # Create a Start button
