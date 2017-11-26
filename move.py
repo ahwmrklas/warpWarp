@@ -67,5 +67,5 @@ def moveOnClick(private, x, y):
         # mind about a move and cancel it before it is
         # permanent
         if (tkRoot.hCon is not None):
-            sendJson = warpWarCmds().moveShip(ship['owner'], shipName, x, y)
+            sendJson = warpWarCmds().moveShip(tkRoot.cfg.Profile.plid, shipName, x, y)
             tkRoot.hCon.sendCmd(sendJson)

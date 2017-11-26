@@ -28,16 +28,24 @@ class hexInfo(Dialog):
             text  =  "System" + entry['type']
 
         title = "techLevel " + str(entry['techLevel'])
-        text1  =  "Moves left: " + str(entry['moves']['cur'])
-        text2  =  "PowerDrive: " +  str(entry['PD']['cur']) + "(" + str(entry['PD']['max']) + ")"
+
+        text1  = "Moves left: " + str(entry['moves']['cur'])
+        text1 += ", "
+        text1 += "PowerDrive: " +  str(entry['PD']['cur']) + "/" + str(entry['PD']['max'])
+
+        text2  =  "Shields " +  str(entry['S']['cur']) + "/" + str(entry['S']['max'])
         text2 +=  ", "
-        text2 +=  "Shields " +  str(entry['S']['cur']) + "(" + str(entry['S']['max']) + ")"
-        text3  =  "SystemRacks: " +  str(entry['SR']['cur']) + "(" + str(entry['SR']['max']) + ")"
-        text3 +=  ", "
-        text3 +=  "Beams: " +  str(entry['B']['cur']) + "(" + str(entry['B']['max']) + ")"
-        text4  =  "Tubes: " +  str(entry['T']['cur']) + "(" + str(entry['T']['max']) + ")"
-        text4 +=  " - "
-        text4 +=  "Missiles: " +  str(entry['M']['cur']) + "(" + str(entry['M']['max']) + ")"
+        text2 +=  "Beams: " +  str(entry['B']['cur']) + "/" + str(entry['B']['max'])
+
+        text3  =  "Tubes: " +  str(entry['T']['cur']) + "/" + str(entry['T']['max'])
+        text3 +=  " - "
+        text3 +=  "Missiles: " +  str(entry['M']['cur']) + "/" + str(entry['M']['max'])
+
+        text4  =  "SystemRacks: " +  str(entry['SR']['cur']) + "/" + str(entry['SR']['max'])
+        text4 +=  ", "
+        text4 +=  "Holds: " +  str(entry['H']['cur']) + "/" + str(entry['H']['max'])
+        text4 +=  "[" +  str(entry['Hauled']) + "]"
+
         owner = dataModel.playerNameGet(self.game, entry['owner'])
         base = tree.insert("", 'end', image=self.photo,
                            text=entry['name'],

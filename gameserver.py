@@ -254,7 +254,7 @@ def figureStuffOut(logger, game, orders, myShipName, myPower, myTactic, myDrive,
         damage = -1
     else:
         print('ERROR!')
-    logger.log("  " + myShipName + " " + result + " " + myTarget + " for " + str(damage) + " damge")
+    logger.log("  " + myShipName + " " + result + " " + myTarget + " for " + str(damage) + " damage")
     print("%s Beam/Missile '%s' %s" % (myShipName, result, myTarget))
 
     # A negative number means the target
@@ -357,21 +357,33 @@ def harvest(game):
         #un based star BP can only go directly into ship holds
         #We fill up the first ship, and then go on the next
         remaining = star['BP']['perturn']
-        for thing in dataModel.findObjectsAt(game, star['location']['x'], star['location']['y']):
-            #is this thing a ship?
-            if thing['type'] == "ship":
-                print(star['name'], " is giving stuff to ", thing['name'])
-                #dump stuff in the cargo hold
-                oldHauled = thing['Hauled']
-                thing['Hauled'] = min([oldHauled + remaining, thing['H']['cur'] * 10])
-                remaining -= thing['Hauled'] - oldHauled
+
+        base = dataModel.findObjectsInListAtLoc(game['objects']['starBaseList'],
+                                                star['location']['x'],
+                                                star['location']['y'])
+        if base:
+            print(star['name'], " is giving stuff to ", base['name'])
+            base['BP']['cur'] += remaining
+            remaining = 0
+        else:
+            for thing in dataModel.findObjectsAt(game, star['location']['x'], star['location']['y']):
+                #is this thing a ship?
+                if thing['type'] == "ship":
+                    ship = thing
+                    print(star['name'], " is giving stuff to ", ship['name'])
+                    #dump stuff in the cargo hold
+                    oldHauled = ship['Hauled']
+                    ship['Hauled'] = min([oldHauled + remaining, ship['H']['cur'] * 10])
+                    remaining -= ship['Hauled'] - oldHauled
 
 
-        star['BP']['cur'] = star['BP']['cur'] + star['BP']['perturn']
-    for thing in game['objects']['starBaseList']:
-        thing['BP']['cur'] = thing['BP']['cur'] + thing['BP']['perturn']
+        star['BP']['cur'] += remaining
+
+    for base in game['objects']['starBaseList']:
+        base['BP']['cur'] += base['BP']['perturn']
+
     for thing in game['objects']['thingList']:
-        thing['BP']['cur'] = thing['BP']['cur'] + thing['BP']['perturn']
+        thing['BP']['cur'] += thing['BP']['perturn']
 
 # PURPOSE:
 # RETURNS: name/plid of winning player or None
@@ -675,7 +687,7 @@ class gameserver:
                 # self.game['state']['phase'] = "build"
 
             elif (self.game['state']['phase'] == "damageselection"):
-                # Given player finished allocating damge to ships
+                # Given player finished allocating damage to ships
                 changePlayerPhase(self.game, plid, "damageselection", "waiting")
 
                 # When all players ready AUTO move to the next round of combat
@@ -782,12 +794,22 @@ class gameserver:
             #this is as simple as can be.
             #find both ships, add the name of 1 to the carried list of 2
             ship = dataModel.findShip(self.game, cmd['shipName'])
-            star = dataModel.findStarAtLoc(self.game['objects']['starList'], ship['location']['x'], ship['location']['y'])
+            star = dataModel.findObjectsInListAtLoc(self.game['objects']['starList'],
+                                                    ship['location']['x'],
+                                                    ship['location']['y'])
             shipment = int(cmd['shipment'])
             #are these guys in the same square
             if ship['location']['x'] == star['location']['x'] and ship['location']['y'] == star['location']['y']:
                 star['BP']['cur'] -= shipment
                 ship['Hauled'] += shipment
+                if (shipment > 0):
+                    action = "loading"
+                else:
+                    action = "unloading"
+                self.log(dataModel.playerNameGet(self.game, cmd['plid']) + ":"
+                         + ship['name']
+                         + " " + action
+                         + " at " + star['name'])
 
 
         elif cmdStr == 'combatorders': # Per ship? All ships?

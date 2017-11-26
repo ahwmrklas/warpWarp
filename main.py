@@ -549,8 +549,10 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_separator()
         for ship in tkRoot.game['objects']['shipList']:
             #if we own this star, and have a hold, we should be able to load/unload goods.
-            star = findStarAtLoc(tkRoot.game['objects']['starList'],ship['location']['x'], ship['location']['y'])
-            if (star and star['owner'] == tkRoot.cfg.Profile.plid and ship['H']['cur']*10 > ship['Hauled']):
+            star = findObjectsInListAtLoc(tkRoot.game['objects']['starList'],
+                                          ship['location']['x'],
+                                          ship['location']['y'])
+            if (star and star['owner'] == tkRoot.cfg.Profile.plid and ship['H']['cur'] > 0):
                 labelString = "'%s'    Hauling: %d/%d" % (ship['name'],
                         ship['Hauled'], ship['H']['cur'] * 10)
                 phaseMenuObject.add_command(label=labelString,
@@ -576,7 +578,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                         phaseMenuObject.add_command(label=labelString, command=lambda shipName=ship['name']: moveMenu(tkRoot, shipName))
                     else:
                         #find a way to get system ships on to warp ships
-                        labelString = "\tSystem Ship:'%s'    Moves left: N/A" % (ship['name'])
+                        labelString = "System Ship:'%s'    Moves left: N/A" % (ship['name'])
                         #TODO: make hCon more secure
                         phaseMenuObject.add_command(label=labelString,
                                 command=lambda name=ship['name']: loadShip(tkRoot, ship, tkRoot.game['objects']['shipList']))
