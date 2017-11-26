@@ -368,13 +368,14 @@ def harvest(game):
         else:
             for thing in dataModel.findObjectsAt(game, star['location']['x'], star['location']['y']):
                 #is this thing a ship?
-                if (thing['type'] == "ship") and (ship['owner'] == star['owner']):
+                if (thing['type'] == "ship"):
                     ship = thing
-                    print(star['name'], " is giving stuff to ", ship['name'])
-                    #dump stuff in the cargo hold
-                    oldHauled = ship['Hauled']
-                    ship['Hauled'] = min([oldHauled + remaining, ship['H']['cur'] * 10])
-                    remaining -= ship['Hauled'] - oldHauled
+                    if (ship['owner'] == star['owner']):
+                        print(star['name'], " is giving stuff to ", ship['name'])
+                        #dump stuff in the cargo hold
+                        oldHauled = ship['Hauled']
+                        ship['Hauled'] = min([oldHauled + remaining, ship['H']['cur'] * 10])
+                        remaining -= ship['Hauled'] - oldHauled
 
 
         star['BP']['cur'] += remaining
