@@ -57,7 +57,10 @@ class playerAiThrd(threading.Thread):
     # RETURNS: game object
     def newPlayer(self):
         print("playerAi: newPlayer")
-        sendJson = warpWarCmds().newPlayer(self.plid, self.playerName, self.startingBases, self.color)
+        sendJson = warpWarCmds().newPlayer(self.plid,
+                                           self.playerName,
+                                           self.startingBases,
+                                           self.color)
         self.hCon.sendCmd(sendJson)
         resp = self.hCon.waitFor(5)
         game = json.loads(resp)
@@ -120,6 +123,108 @@ class playerAiThrd(threading.Thread):
             }
         return ship
 
+    # PURPOSE: 
+    # RETURNS: none
+    def moveShip(self, ship, game):
+        # Where am I
+        curLoc = ship['location']
+        # How far can I go
+        curRange = ship['moves']['cur']
+        # Where *should* I go?
+        #   Pick up BP
+        #   Drop off BP
+        #   Conquer planet
+        #   Attack enemy ship
+        #   Pick up System Ship
+        #   Drop off System Ship
+        # I'd like to create a random objective and store it with
+        # The ship. For now just conquer and attack.
+
+        # Find the nearest thing that I don't own.
+
+    # PURPOSE: 
+    # RETURNS: none
+    def selectDamageShip(self, ship):
+        assert(ship)
+
+        damLeft = ship['damage']
+        print("playerAi:", ship['name'], " taking ", damLeft, " damage ")
+
+        # Drain Holds and System Racks
+        changeCheck = 0
+        while ((damLeft > 0) and damLeft != changeCheck):
+            changeCheck = damLeft
+            if (damLeft > 0):
+                if (ship['H']['cur'] > 0):
+                    ship['H']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['SR']['cur'] > 0):
+                    ship['SR']['cur'] -= 1
+                    damLeft -= 1
+
+        changeCheck = 0
+        while ((damLeft > 0) and damLeft != changeCheck):
+            changeCheck = damLeft
+            if (damLeft > 0):
+                if (ship['T']['cur'] > 2):
+                    ship['T']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['S']['cur'] > 2):
+                    ship['S']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['B']['cur'] > 2):
+                    ship['B']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['PD']['cur'] > 4):
+                    ship['PD']['cur'] -= 1
+                    damLeft -= 1
+
+        changeCheck = 0
+        while ((damLeft > 0) and damLeft != changeCheck):
+            changeCheck = damLeft
+            if (damLeft > 0):
+                if (ship['T']['cur'] > 1):
+                    ship['T']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['S']['cur'] > 1):
+                    ship['S']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['B']['cur'] > 1):
+                    ship['B']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['PD']['cur'] > 2):
+                    ship['PD']['cur'] -= 1
+                    damLeft -= 1
+
+        changeCheck = 0
+        while ((damLeft > 0) and damLeft != changeCheck):
+            changeCheck = damLeft
+            if (damLeft > 0):
+                if (ship['T']['cur'] > 0):
+                    ship['T']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['S']['cur'] > 0):
+                    ship['S']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['B']['cur'] > 0):
+                    ship['B']['cur'] -= 1
+                    damLeft -= 1
+            if (damLeft > 0):
+                if (ship['PD']['cur'] > 0):
+                    ship['PD']['cur'] -= 1
+                    damLeft -= 1
+
+        # This better be zero ... or the ship explodes
+        ship['damage'] = damLeft
 
     # PURPOSE: 
     # RETURNS: none
@@ -128,14 +233,30 @@ class playerAiThrd(threading.Thread):
         baseList = dataModel.getOwnedListOfType(game, self.plid, 'starBaseList')
         for base in baseList:
             # Take the points at that base and build a ship there
-            print("build something at ", base['name'], " for ", base['BP']['cur'])
+            print("playerAI: build something at ",
+                  base['name'],
+                  " for ", base['BP']['cur'])
             ship = self.createShip(base['BP']['cur'], base['location']['x'],
                                                       base['location']['y'])
             if ship:
-                sendJson = warpWarCmds().buildShip(self.plid, ship, base['name'])
+                sendJson = warpWarCmds().buildShip(self.plid,
+                                                   ship,
+                                                   base['name'])
                 self.hCon.sendCmd(sendJson)
                 resp = self.hCon.waitFor(5)
                 game = json.loads(resp)
+
+    # PURPOSE: 
+    # RETURNS: none
+    def moveThings(self, game):
+        # Loop through every ship I own
+        shipList = dataModel.getOwnedListOfType(game, self.plid, 'shipList')
+        for ship in shipList:
+            print("playerAI: move ship", ship['name'], " at ",
+                   ship['location']['x'], ", ", ship['location']['y'])
+            self.moveShip(ship, game)
+ 
+
 
     # PURPOSE: 
     # RETURNS: game object
@@ -146,6 +267,19 @@ class playerAiThrd(threading.Thread):
         #resp = self.hCon.waitFor(5)
         #game = json.loads(resp)
         #print("playerAi:RESP:", len(resp))
+
+    # PURPOSE: 
+    # RETURNS: none
+    def selectDamageAll(self, game):
+        print("playerAi: select damage")
+        # Find ships with damage
+        for ship in game['objects']['shipList']:
+            if (ship['owner'] == self.plid) and (ship['damage'] > 0):
+                self.selectDamageShip(ship)
+                sendJson = warpWarCmds().acceptDamage(self.plid, ship)
+                self.hCon.sendCmd(sendJson)
+                resp = self.hCon.waitFor(5)
+                # I think we can ignore the response
 
     # PURPOSE: automatically called by base thread class, right?
     #   Waits for clients to send us requests.
@@ -187,6 +321,7 @@ class playerAiThrd(threading.Thread):
                     self.ready()
             elif (gamePhase == "move"):
                 if (playerPhase == "move"):
+                    self.moveThings(game)
                     self.ready()
             elif (gamePhase == "combat"):
                 if (playerPhase == "combat"):
@@ -194,6 +329,7 @@ class playerAiThrd(threading.Thread):
                     self.ready()
             elif (gamePhase == "damageselection"):
                 if (playerPhase == "damageselection"):
+                    self.selectDamageAll(game)
                     self.ready()
 
         self.hCon.quitCmd()

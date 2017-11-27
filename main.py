@@ -194,7 +194,8 @@ def damageAllocationMenu(tkRoot, shipName):
         allocationResult = damageAllocation(tkRoot, ship)
 
         if (allocationResult is not None and allocationResult.finished):
-            sendJson = warpWarCmds().acceptDamage(tkRoot.cfg.Profile.plid, allocationResult.ship)
+            sendJson = warpWarCmds().acceptDamage(tkRoot.cfg.Profile.plid,
+                                                  allocationResult.ship)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
 
@@ -476,10 +477,9 @@ def damageSelectionPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
              (ship['location']['x'] == hex_x) and
              (ship['location']['y'] == hex_y)
            ):
-            if (ship['type'] == 'ship'):
-                if (ship['damage'] > 0):
-                    labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
-                    popup.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
+            if (ship['type'] == 'ship') and (ship['damage'] > 0):
+                labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
+                popup.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
 
     try:
         #disable left click
@@ -682,15 +682,23 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # So you have a list of myships/yourships, each ships orders.
         # each attacks results. Then you select your own ship and
         # get a dialog to allocate the damage results.
+        isShipWithDamage = False
         for ship in tkRoot.game['objects']['shipList']:
-            if (ship['owner'] == tkRoot.cfg.Profile.plid):
-                if (ship['damage'] > 0):
-                    labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
-                    phaseMenuObject.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
+            if ((ship['owner'] == tkRoot.cfg.Profile.plid) and
+                (ship['damage'] > 0)):
+                isShipWIthDamage = True
+                labelString = "ship %s has %d damage" % (ship['name'],
+                                                         ship['damage'])
+                phaseMenuObject.add_command(label=labelString,
+                                            command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
 
-        phaseMenuObject.add_command(label="Ready",
-                                      command=lambda:sendReadyMenu(tkRoot))
+        # don't let the user progress if there is unallocated damage
+        if (not isShipWithDamage):
+            phaseMenuObject.add_command(label="Ready",
+                                        command=lambda:sendReadyMenu(tkRoot))
+
         tkRoot.hexMap.setRightPrivateCallBack(damageSelectionPopUp, tkRoot)
+
     elif (gamePhase == 'victory'):
         gamePhase = "Game Over. You are a " + playerPhase
     else:

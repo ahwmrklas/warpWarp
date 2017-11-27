@@ -226,12 +226,13 @@ def figureStuffOut(logger, game, orders, myShipName, myPower, myTactic, myDrive,
         targetDrive      = targetShipOrders['tactic'][1]
         targetScreen     = targetShipOrders['screens']
     else:
-        # Can't find otders for the target.
+        # Can't find orders for the target.
         # That shouldn't happen. assert?
         # Maybe the target player was just lazy?
         # ??? This should be considered an error on the part
         # of the client.
         print("targetship:", myTarget, "CAN'T FIND ORDERS!!!!")
+        logger.log(myTarget + " No orders. Assume RETREAT D=0")
         targetTactic     = 'RETREAT'
         targetDrive      = 0
         targetScreen     = 0
@@ -688,8 +689,23 @@ class gameserver:
                 # self.game['state']['phase'] = "build"
 
             elif (self.game['state']['phase'] == "damageselection"):
+
                 # Given player finished allocating damage to ships
-                changePlayerPhase(self.game, plid, "damageselection", "waiting")
+                # Are they being honest?
+                isHonest = True
+                for ship in self.game['objects']['shipList']:
+                    print(" ship name ", ship['name'], " dam ", ship['damage'])
+                    if (ship['owner'] == plid) and (ship['damage'] > 0):
+                        isHonest = False
+                        break;
+                if (isHonest):
+                    changePlayerPhase(self.game,
+                                      plid,
+                                      "damageselection",
+                                      "waiting")
+                else:
+                    self.log(dataModel.playerNameGet(self.game, plid) +
+                             " Still has damage to allocate")
 
                 # When all players ready AUTO move to the next round of combat
                 if areAllPlayersInPhase(self.game, "waiting"):
