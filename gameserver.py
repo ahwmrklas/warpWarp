@@ -550,10 +550,12 @@ class gameserver:
             #
             # Need to be given the name of the game?
             # Warn/Error if current game hasn't been saved (is dirty)
-            self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Created a new game")
-            gameName = cmd['name']
+            plid = cmd['plid']
+            gamename = cmd['gamename']
+            name = cmd['name']
             self.game = dataModel.defaultGame()
             self.game['state']['phase'] = "creating"
+            self.log(name + " Created a new game")
             # TODO probably need things like game options???
             # TODO lots of options, right?
 

@@ -117,7 +117,9 @@ def connectServer(tkRoot):
 def newGame(tkRoot):
     print("newGame")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().newGame(tkRoot.cfg.Profile.plid, "foo")
+        sendJson = warpWarCmds().newGame(tkRoot.cfg.Profile.plid,
+                                         tkRoot.cfg.Profile.playerName,
+                                         "foo")
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 

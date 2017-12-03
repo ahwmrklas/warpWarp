@@ -28,8 +28,11 @@ class warpWarCmds():
     # PURPOSE: Create a new game string
     #          (moves to creating phase)
     # RETURNS: string with json
-    def newGame(self, plid, name):
-        cmd  = { 'cmd' : {'cmd': "newgame", 'plid':plid, 'name': name} }
+    def newGame(self, plid, name, gamename):
+        cmd  = { 'cmd' : {'cmd': "newgame", 'plid':plid,
+                                            'name': name,
+                                            'gamename': gamename,
+                                            } }
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
