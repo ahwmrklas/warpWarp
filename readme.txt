@@ -81,3 +81,6 @@ class Ship():
 
 class Base()
 </pre>
+
+-----
+Note to future versions of Alex. Dad won the star/starbase resource argument. stop having it.

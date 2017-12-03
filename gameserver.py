@@ -816,10 +816,18 @@ class gameserver:
             star = dataModel.findObjectsInListAtLoc(self.game['objects']['starList'],
                                                     ship['location']['x'],
                                                     ship['location']['y'])
+            base = dataModel.findObjectsInListAtLoc(self.game['objects']['starBaseList'],
+                                                    ship['location']['x'],
+                                                    ship['location']['y'])
+
+            if base != None:
+                target = base
+            else:
+                target = star
             shipment = int(cmd['shipment'])
             #are these guys in the same square
-            if ship['location']['x'] == star['location']['x'] and ship['location']['y'] == star['location']['y']:
-                star['BP']['cur'] -= shipment
+            if ship['location']['x'] == target['location']['x'] and ship['location']['y'] == target['location']['y']:
+                target['BP']['cur'] -= shipment
                 ship['Hauled'] += shipment
                 if (shipment > 0):
                     action = "loading"
@@ -828,7 +836,7 @@ class gameserver:
                 self.log(dataModel.playerNameGet(self.game, cmd['plid']) + ":"
                          + ship['name']
                          + " " + action
-                         + " at " + star['name'])
+                         + " at " + target['name'])
 
 
         elif cmdStr == 'combatorders': # Per ship? All ships?
