@@ -117,9 +117,7 @@ def connectServer(tkRoot):
 def newGame(tkRoot):
     print("newGame")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().newGame(tkRoot.cfg.Profile.plid,
-                                         tkRoot.cfg.Profile.playerName,
-                                         "foo")
+        sendJson = warpWarCmds().newGame(tkRoot.cfg.Profile.plid, tkRoot.cfg.Profile.playerName,"foo")
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -654,9 +652,27 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                     for ship in conflictDict[key]:
                         enemyShips.append(ship)
 
-            tkRoot.hexMap.hiliteMap(int(conflict[0]['location']['x']),
+            #make sure that the colors align with the players in the conflict dict
+            i = 0
+            colors = [""]*6
+            belligerentIDs = list(conflictDict.keys())
+            belligerents = [playerTableGet(tkRoot.game, ID) for ID in belligerentIDs]
+            while (i < 6):
+                if len(belligerents) > 1:
+                    colors[i] = belligerents[i % len(belligerents)]['color']
+                else:
+                    colors[i] = belligerents[0]['color']
+                i += 1
+
+            tkRoot.hexMap.specialHiliteMap(int(conflict[0]['location']['x']),
                                     int(conflict[0]['location']['y']),
-                                    player['color'], 4, None)
+                                    colors[0],
+                                    colors[1],
+                                    colors[2],
+                                    colors[3],
+                                    colors[4],
+                                    colors[5],
+                                    4, None)
 
             if enemyShips:
                 labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))

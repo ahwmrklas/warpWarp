@@ -5,6 +5,18 @@ import dataModel
 
 
 class hexMap(HexagonalGrid):
+    class HighlightSettings():
+        def __init__(self,x,y,color1,color2,color3,color4,color5,color6,boldness):
+            self.x = x
+            self.y = y
+            self.color1 = color1
+            self.color2 = color2
+            self.color3 = color3
+            self.color4 = color4
+            self.color5 = color5
+            self.color6 = color6
+            self.boldness = boldness
+
     def __init__(self, frame, tkRoot, width, height):
         self.hiliteList = []
         self.anchorFrame = frame
@@ -27,7 +39,12 @@ class hexMap(HexagonalGrid):
     # A color of "None" erases any hilite for that location
     # RETURN: none
     def hiliteMap(self, x, y, color, boldness=2, callback=None):
-        self.hiliteList.append((x,y,color,boldness,callback))
+        setting = self.HighlightSettings(x,y,color,color,color,color,color,color,boldness=2)
+        self.hiliteList.append(setting)
+
+    def specialHiliteMap(self, x, y, color1,color2,color3,color4,color5,color6, boldness=2, callback=None):
+        setting = self.HighlightSettings(x,y,color1,color2,color3,color4,color5,color6,boldness)
+        self.hiliteList.append(setting)
 
     # PURPOSE: Erase all hiliting
     # RETURN: none
@@ -70,7 +87,16 @@ class hexMap(HexagonalGrid):
     
         # Draw a pretty colored hilight around all the special hexes
         for hilite in self.hiliteList:
-            self.setBorders(hilite[0], hilite[1], hilite[2], hilite[3])
+            self.setCell(hilite.x, hilite.y,
+                                fill=None,
+                                color1=hilite.color1,
+                                color2=hilite.color2,
+                                color3=hilite.color3,
+                                color4=hilite.color4,
+                                color5=hilite.color5,
+                                color6=hilite.color6,
+                                width=hilite.boldness,
+                                tags=None)
 
         print("five")
     
