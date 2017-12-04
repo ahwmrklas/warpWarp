@@ -349,7 +349,6 @@ def resolveCombat(logger, game, orders):
                         figureStuffOut(logger, game, orders, myShip,
                                        myPower, myTactic, myDrive, myTarget)
 
-
 # PURPOSE:
 # RETURNS:
 def harvest(game):

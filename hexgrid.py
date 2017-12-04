@@ -118,11 +118,12 @@ class HexagonalGrid(HexaCanvas):
         # Create a content in the cell of coordinates x and y. Could specify
         # options throught keywords : color, fill, color1, color2, color3,
         # color4; color5, color6
+        if (xCell >= 0 and xCell < self.grid_width and
+            yCell >= 0 and yCell < self.grid_height):
 
-        #compute pixel coordinate of the center of the cell:
-        [pix_x, pix_y] = self.findPixel(xCell, yCell)
-
-        self.create_hexagone(pix_x, pix_y, *args, **kwargs)
+            #compute pixel coordinate of the center of the cell:
+            [pix_x, pix_y] = self.findPixel(xCell, yCell)
+            self.create_hexagone(pix_x, pix_y, *args, **kwargs)
 
     # PURPOSE: Draw the entire grid with the given color
     def drawGrid(self, color, tags=None):
