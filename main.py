@@ -163,7 +163,8 @@ def conquestAtLocation(tkRoot, friendlyShips, nonShipList):
         ship = friendlyShips[0]
         tkRoot.battleOrders[ship['name']] = {
                                                 'ship' : ship['name'],
-                                                'conquer': nonShipList
+                                                'conquer': nonShipList,
+                                                'tactic': 'CONQUER'
                                             }
 
 # PURPOSE:
@@ -450,8 +451,11 @@ def combatPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
                 enemyOther.append(obj)
 
     if ( (len(friendlyShip) > 0) and (len(enemyShip) > 0) ):
-        labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShip), len(enemeyShip))
-        popup.add_command(label=labelString, command=lambda friendlyShip=friendlyShip, enemyShip=enemyShip:combatAtLocation(tkRoot, friendlyShip, enemyShip))
+        labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShip), len(enemyShip))
+        popup.add_command(label=labelString,
+                          command=lambda friendlyShip=friendlyShip,
+                          enemyShip=enemyShip:
+                          combatAtLocation(tkRoot, friendlyShip, enemyShip))
     if ( (len(friendlyShip) > 0) and (len(enemyOther) > 0) ):
         tmp = 'normal'
         if (len(enemyShip) > 0):
@@ -460,10 +464,17 @@ def combatPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
         bases = []
         for base in enemyOther:
             bases.append(base['name'])
-        popup.add_command(label=labelString, state=tmp, command=lambda friendlyShip=friendlyShip, bases=bases:conquestAtLocation(tkRoot, friendlyShip, bases))
+        popup.add_command(label=labelString,
+                          state=tmp,
+                          command=lambda friendlyShip=friendlyShip,
+                          bases=bases:
+                          conquestAtLocation(tkRoot, friendlyShip, bases))
     if ( (len(friendlyOther) > 0) and (len(enemyShip) > 0) ):
         labelString = "%d Enemies can counquer this sector" % (len(enemyShip))
-        popup.add_command(label=labelString, state='disable', command=lambda friendlyShip=friendlyShip :conquestAtLocation(tkRoot, enemyShip, 'unused'))
+        popup.add_command(label=labelString,
+                          state='disable',
+                          command=lambda friendlyShip=friendlyShip:
+                          conquestAtLocation(tkRoot, enemyShip, 'unused'))
 
     try:
         #disable left click
@@ -693,13 +704,23 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
 
             if enemyShips:
                 labelString = "%d Friendlies vs %d Enemies" % (len(friendlyShips), len(enemyShips))
-                phaseMenuObject.add_command(label=labelString, command=lambda friendlyShips=friendlyShips, enemyShips=enemyShips:combatAtLocation(tkRoot, friendlyShips, enemyShips))
+                phaseMenuObject.add_command(label=labelString,
+                                command=lambda friendlyShips=friendlyShips,
+                                enemyShips=enemyShips:
+                                combatAtLocation(tkRoot,
+                                                 friendlyShips,
+                                                 enemyShips))
             elif nonShipList:
-                labelString = "%d Friendlies control this sector" % (len(friendlyShips))
+                labelString = "%d Friendlies can conquer this sector" % (len(friendlyShips))
                 bases = []
                 for base in nonShipList:
                     bases.append(base['name'])
-                phaseMenuObject.add_command(label=labelString, command=lambda friendlyShips=friendlyShips, bases=bases:conquestAtLocation(tkRoot, friendlyShips, bases))
+                phaseMenuObject.add_command(label=labelString,
+                                command=lambda friendlyShips=friendlyShips,
+                                bases=bases:
+                                conquestAtLocation(tkRoot,
+                                                   friendlyShips,
+                                                   bases))
             else:
                 assert(0)
 
