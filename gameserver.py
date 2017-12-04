@@ -263,6 +263,11 @@ def figureStuffOut(logger, game, orders, myShipName, myPower, myTactic, myDrive,
     if (damage < 0):
         return
 
+    # This damage calculation is incorrect.
+    # Lookup the rules and the screens only protect you from
+    # the TOTAL number of hits in the round. So a whole bunch
+    # of "1" damage can overcome the shields eventually.
+
     # Target didn't escape but has the screen protected it?
     if (damage < targetScreen):
         damage = 0
@@ -276,15 +281,9 @@ def figureStuffOut(logger, game, orders, myShipName, myPower, myTactic, myDrive,
         print("targetship:", myTarget, "CAN'T FIND SHIP!!!!")
         return
 
-    # Note I was going to have a negative damage mean
-    # the ship escaped
-
-    # This damage calculation is incorrect.
-    # Lookup the rules and the screens only protect you from
-    # the TOTAL number of hits in the round. So a whole bunch
-    # of "1" damage can overcome the shields eventually.
-
-    if (targetShip['damage'] < 0) and (damage >=0):
+    if (targetShip['damage'] < 0):
+        # target was trying to escape.
+        # Show that they didn't
         targetShip['damage'] = 0
 
     targetShip['damage'] += damage
@@ -332,21 +331,24 @@ def resolveCombat(logger, game, orders):
                 myDrive      = shipOrders['tactic'][1]
                 myTarget     = shipOrders['beams'][0]
 
-                figureStuffOut(logger, game, orders, myShip, myPower, myTactic, myDrive, myTarget)
+                figureStuffOut(logger, game, orders, myShip,
+                               myPower, myTactic, myDrive, myTarget)
 
             else:
-                # Need ship to deduct missiles
-                ship = dataModel.findShip(game, myShip)
-                assert(ship)
                 for missile in shipOrders['missiles']:
                     myPower  = 2
                     myTactic = 'ATTACK'
                     myDrive  = missile[1]
                     myTarget = missile[0]
                     if (myDrive > 0):
+                        # Need ship to deduct missiles
+                        ship = dataModel.findShip(game, myShip)
+                        assert(ship)
                         assert(ship['M']['cur'] > 0)
                         ship['M']['cur'] -= 1
-                        figureStuffOut(logger, game, orders, myShip, myPower, myTactic, myDrive, myTarget)
+                        figureStuffOut(logger, game, orders, myShip,
+                                       myPower, myTactic, myDrive, myTarget)
+
 
 # PURPOSE:
 # RETURNS:
@@ -453,6 +455,34 @@ class gameserver:
             self.game['history'].pop(0)
         self.game['history'].append({'seqid':self.seqid, 'cmd':msg})
         self.seqid += 1
+
+    # PURPOSE: 
+    # RETURNS:
+    def acceptRetreat(self, plid, shipName, newX, newY):
+        assert(self.game['state']['phase'] == "damageselection")
+
+        ship = dataModel.findShip(self.game, shipName)
+
+        # We've retreated. Clear "-1" flag indicating
+        # user needs to accept retreat
+        ship['damage'] = 0
+
+        # Move to our new location ... trusting the user
+        ship['location']['x'] = newX
+        ship['location']['y'] = newY
+
+        # If the new location is free of enemies then I can
+        # move there
+        objList = dataModel.findObjectsAt(self.game, newX, newY)
+        for obj in objList:
+            if (obj['owner'] != plid):
+                # Can't retreat here, blow up
+                dataModel.removeShip(self.game, shipName)
+                self.log("The '" + shipName + "' couldn't retreat! Destroyed!")
+                return
+
+        self.log("The '" + shipName + "' Retreated to "
+                  + str(newX) + " " + str(newY))
 
     # PURPOSE: Interpret JSON command and do something
     # RETURNS: true for properly parsed command
@@ -858,6 +888,18 @@ class gameserver:
 
             self.game['orders'][plid] = battleOrders
 
+            # Set a flag for every ship that is RETREATing.
+            # This flag assumes the retreat was successful.
+            # Prove it false. When another ship stops
+            # you from succeeding the other ship will turn the
+            # flag off.
+            for myShip, shipOrders, in battleOrders.items():
+                myTactic     = shipOrders['tactic'][0]
+                print("order for ", myShip, myTactic)
+                if (myTactic == 'RETREAT'):
+                    ship = dataModel.findShip(self.game, myShip)
+                    ship['damage'] = -1
+
             # When all players ready (have submitted orders)
             # AUTO move to damageselection phase
             # When all damage has been selected ... by all players ...
@@ -894,6 +936,9 @@ class gameserver:
             else:
                 # Replace existing ship
                 self.game['objects']['shipList'][index] = newShip
+
+        elif cmdStr == 'acceptretreat':
+            self.acceptRetreat(cmd['plid'], cmd['ship'], cmd['x'], cmd['y'])
 
         elif cmdStr == 'savegame':
             # Write file ... who is responsible for game save?

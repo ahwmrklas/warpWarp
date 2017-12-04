@@ -114,6 +114,15 @@ def findShip(game, shipName):
             return ship
     return None
 
+# PURPOSE: look up ship name in game ship list and remove it
+# RETURNS: True if removed
+def deleteShip(game, shipName):
+    for ship in game['objects']['shipList']:
+        if ship['name'] == shipName:
+            game['objects']['shipList'].remove(ship)
+            return True
+    return False
+
 # PURPOSE:
 # RETURNS:
 def findObjectsInListAtLoc(objList, x, y):

@@ -139,6 +139,14 @@ class warpWarCmds():
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
+    # PURPOSE: Create the retreat string
+    # RETURNS: string with json
+    def acceptRetreat(self, plid, ship, x, y):
+        cmd  = { 'cmd' : {'cmd': "acceptretreat", 'plid':plid, 'ship':ship,
+                                  'x':x, 'y':y} }
+        jsonStr = json.dumps(cmd, ensure_ascii=False)
+        return jsonStr
+
     # PURPOSE: Create the quit string
     # RETURNS: string with json
     def quitGame(self, plid):

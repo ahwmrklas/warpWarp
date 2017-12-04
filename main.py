@@ -187,6 +187,14 @@ def sendCombatReady(tkRoot):
 
 # PURPOSE:
 # RETURNS:
+def retreatMenu(tkRoot, shipName):
+    print("retreatMenu", shipName)
+    if (tkRoot.hCon is not None):
+        ship = findShip(tkRoot.game, shipName)
+        createRetreatGraph(tkRoot, tkRoot.game, tkRoot.hexMap, shipName)
+
+# PURPOSE:
+# RETURNS:
 def damageAllocationMenu(tkRoot, shipName):
     print("damageAllocationMenu", shipName)
     if (tkRoot.hCon is not None):
@@ -475,11 +483,20 @@ def damageSelectionPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
     for ship in objs:
         if ( (ship['owner'] == tkRoot.cfg.Profile.plid) and
              (ship['location']['x'] == hex_x) and
-             (ship['location']['y'] == hex_y)
+             (ship['location']['y'] == hex_y) and
+             (ship['type'] == 'ship') 
            ):
-            if (ship['type'] == 'ship') and (ship['damage'] > 0):
-                labelString = "ship %s has %d damage" % (ship['name'], ship['damage'])
-                popup.add_command(label=labelString, command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
+            if (ship['damage'] > 0):
+                labelString = "ship %s has %d damage" % (ship['name'],
+                                                         ship['damage'])
+                popup.add_command(label=labelString,
+                          command=lambda name=ship['name']:
+                          damageAllocationMenu(tkRoot, name))
+            elif (ship['damage'] < 0):
+                labelString = "ship %s must retreat" % (ship['name'])
+                popup.add_command(label=labelString,
+                          command=lambda name=ship['name']:
+                          retreatMenu(tkRoot, name))
 
     try:
         #disable left click
@@ -700,18 +717,27 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # So you have a list of myships/yourships, each ships orders.
         # each attacks results. Then you select your own ship and
         # get a dialog to allocate the damage results.
-        isShipWithDamage = False
+        allShipsSafe = True
         for ship in tkRoot.game['objects']['shipList']:
-            if ((ship['owner'] == tkRoot.cfg.Profile.plid) and
-                (ship['damage'] > 0)):
-                isShipWIthDamage = True
-                labelString = "ship %s has %d damage" % (ship['name'],
+            if (ship['owner'] == tkRoot.cfg.Profile.plid):
+                if (ship['damage'] > 0):
+                    allShipsSafe = False
+                    labelString = "ship %s has %d damage" % (ship['name'],
                                                          ship['damage'])
-                phaseMenuObject.add_command(label=labelString,
-                                            command=lambda name=ship['name']:damageAllocationMenu(tkRoot, name))
+                    phaseMenuObject.add_command(label=labelString,
+                                        command=lambda name=ship['name']:
+                                        damageAllocationMenu(tkRoot, name))
+                elif (ship['damage'] < 0):
+                    allShipsSafe = False
+                    labelString = "ship %s must retreat" % (ship['name'])
+                    phaseMenuObject.add_command(label=labelString,
+                                        command=lambda name=ship['name']:
+                                        retreatMenu(tkRoot, name))
+                else:
+                    pass
 
         # don't let the user progress if there is unallocated damage
-        if (not isShipWithDamage):
+        if (allShipsSafe):
             phaseMenuObject.add_command(label="Ready",
                                         command=lambda:sendReadyMenu(tkRoot))
 
