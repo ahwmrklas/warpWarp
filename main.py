@@ -19,6 +19,7 @@ from combat import *
 from mapUtil import *
 from connect import *
 from damage import *
+from ServerApp import ServerApp
 from cmds import warpWarCmds
 from ConfigHandler import ConfigHandler
 import history
@@ -313,6 +314,10 @@ def saveGame(game):
     saveFile = open (saveFileName, 'w')
     saveFile.write(saveString)
     saveFile.close()
+
+#quickly start the server app.
+def makeServerApp():
+    ServerApp()
 
 
 # I don't like these. They don't seem very objecty
@@ -788,6 +793,8 @@ def addMenus(tkRoot):
     fileMenu.add_command(label="Open", command=lambda:loadGame(tkRoot))
     fileMenu.add_command(label="Save", command=lambda:saveGame(tkRoot.game))
     fileMenu.add_separator()
+    fileMenu.add_command(label="Start Server", command=lambda:makeServerApp())
+    fileMenu.add_separator()
     fileMenu.add_command(label="Refresh", command=lambda:refresh(tkRoot))
     fileMenu.add_separator()
     fileMenu.add_command(label="Exit", command=lambda:exitProgram(tkRoot))
@@ -892,11 +899,11 @@ def main():
     # Put buttons into the button frame
     tkRoot.quitButton = Button(tkRoot.bottomFrame, text = "Quit",
                   command = lambda :exitProgram(tkRoot))
-    tkRoot.quitButton.pack(side="left")
+    tkRoot.quitButton.grid(row=0, column=0, padx=15)
 
     tkRoot.playersButton = Button(tkRoot.bottomFrame, text = "Players",
                                   command = lambda :popupPlayers(tkRoot))
-    tkRoot.playersButton.pack(side="right")
+    tkRoot.playersButton.grid(row=0, column=1, padx=15)
 
     # Display default game info on the map
     tkRoot.hexMap.updateMap(tkRoot.game)
