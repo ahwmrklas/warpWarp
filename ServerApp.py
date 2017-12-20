@@ -22,7 +22,7 @@ class ServerApp(threading.Thread):
         self.Q = Q.Queue()
         self.hNET = None
         self.hPlayerAi = None
-        self.cfg = ConfigHandler.ConfigHandler('warpwar2.ini')
+        self.cfg = ConfigHandler.ConfigHandler('warpwar.ini')
         print(self.cfg.Server.serverIP)
         print(self.cfg.Server.serverPort)
         print(self.cfg.PlayerAI.name)
