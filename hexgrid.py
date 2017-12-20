@@ -204,7 +204,7 @@ class HexagonalGrid(HexaCanvas):
             #who am I closest to? guess.
             x_guess = int(x/ (2 * self.Δx))
             y_guess = int(y / (1.5 * self.hexaSize))
-            print ("probably hex ", x_guess, y_guess)
+            #print ("probably hex ", x_guess, y_guess)
             #Who surrounds that hex? (They don't have to be real!)
             guess = (x_guess,y_guess)
             x_pix,y_pix = self.findPixel(x_guess,y_guess)
