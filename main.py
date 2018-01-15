@@ -19,10 +19,10 @@ from combat import *
 from mapUtil import *
 from connect import *
 from damage import *
-from ServerApp import ServerApp
 from cmds import warpWarCmds
 from ConfigHandler import ConfigHandler
 import history
+import serv
 import hexpane
 import json
 import getpass
@@ -314,11 +314,6 @@ def saveGame(game):
     saveFile = open (saveFileName, 'w')
     saveFile.write(saveString)
     saveFile.close()
-
-#quickly start the server app.
-def makeServerApp():
-    ServerApp()
-
 
 # I don't like these. They don't seem very objecty
 def aboutHelp():
@@ -793,8 +788,6 @@ def addMenus(tkRoot):
     fileMenu.add_command(label="Open", command=lambda:loadGame(tkRoot))
     fileMenu.add_command(label="Save", command=lambda:saveGame(tkRoot.game))
     fileMenu.add_separator()
-    fileMenu.add_command(label="Start Server", command=lambda:makeServerApp())
-    fileMenu.add_separator()
     fileMenu.add_command(label="Refresh", command=lambda:refresh(tkRoot))
     fileMenu.add_separator()
     fileMenu.add_command(label="Exit", command=lambda:exitProgram(tkRoot))
@@ -879,7 +872,7 @@ def main():
     tkRoot.hexMap.bind("<Configure>", lambda event, tkRoot=tkRoot :Configure(event, tkRoot))
 
 
-    # Create anaother Pane in the right PanedWindow(infoPane)
+    # Create another Pane in the right PanedWindow(infoPane)
     # for displaying history. There is only one pane in this infoPane for now
     # ... but we can add others
     # +--------------------+
@@ -891,6 +884,8 @@ def main():
     # |                    |
     # |   history pane     |
     # +--------------------+
+    tkRoot.serv = serv.serv(tkRoot.infoPane)
+    tkRoot.infoPane.add(tkRoot.serv, stretch='always')
     tkRoot.hexpane = hexpane.hexpane(tkRoot.infoPane)
     tkRoot.infoPane.add(tkRoot.hexpane, stretch='always')
     tkRoot.hist = history.history(tkRoot.infoPane)

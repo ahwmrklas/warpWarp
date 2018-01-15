@@ -18,7 +18,8 @@ class ServerApp(threading.Thread):
     
     # PURPOSE: Called for class construction
     # RETURNS: none
-    def __init__(self):
+    def __init__(self, tkRoot):
+        self.root = tk.Toplevel()
         self.Q = Q.Queue()
         self.hNET = None
         self.hPlayerAi = None
@@ -27,8 +28,8 @@ class ServerApp(threading.Thread):
         print(self.cfg.Server.serverPort)
         print(self.cfg.PlayerAI.name)
 
-        threading.Thread.__init__(self, name="ServerMyTkApp")
-        self.start()
+        #threading.Thread.__init__(self, name="ServerMyTkApp")
+        #self.start()
         
     # PURPOSE: Button handler. The Quit button
     #          call this when "Quit" button clicked
@@ -38,7 +39,7 @@ class ServerApp(threading.Thread):
         if (self.hNET is not None) :
             self.hNET.quit()
         if (self.root is not None) :
-            self.root.destroy()
+            self.root.quit()
         if (self.hPlayerAi is not None) :
             self.hPlayerAi.quit()
         print("STest: Server Gui exit")
@@ -64,7 +65,6 @@ class ServerApp(threading.Thread):
     # PURPOSE: Construct all the GUI junk
     # RETURNS: nothing
     def initGui(self):
-        self.root = tk.Tk()
         self.root.title("Server IP:port")
         self.root.protocol("WM_DELETE_WINDOW", 
                               lambda :self.quitCB())
@@ -124,9 +124,9 @@ class ServerApp(threading.Thread):
         self.recvMsgEntry.grid(row=6, column=1)
 
         # Create a Start button
-        self.quit = tk.Button(self.root, text = "Start",
+        self.start = tk.Button(self.root, text = "Start",
                               command = lambda :self.startServer())
-        self.quit.grid(row=7, column=1)
+        self.start.grid(row=7, column=1)
 
         # Create a quit button (obviously to exit the program)
         self.quit = tk.Button(self.root, text = "Quit",
@@ -182,14 +182,18 @@ class ServerApp(threading.Thread):
         self.initGui()
         self.poll()
         print("STest: POLL is done?")
-        self.root.mainloop()
 
 
 # PURPOSE: start up stuff...
 # RETURNS: none?
 def main():
-    hGui = ServerApp()
-    print("STest: two threads created. Main program exiting")
+    root = tk.Tk()
+    root.withdraw()
+    hGui = ServerApp(root)
+    hGui.initGui()
+    hGui.poll()
+    root.mainloop()
+    print("STest: Main program exiting")
 
 # Start the main function
 if __name__ == "__main__":
