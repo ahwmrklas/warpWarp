@@ -11,12 +11,15 @@ class serv(TK.Frame):
     # PURPOSE:
     # RETURNS:
     def __init__(self, master, **kwargs):
-        TK.Frame.__init__(self, master, **kwargs)
+        TK.LabelFrame.__init__(self, master, text="Server", **kwargs)
 
         self.cfg = ConfigHandler.ConfigHandler('warpwar.ini')
         print("serv --init");
         print(self.cfg.Server.serverIP)
         print(self.cfg.Server.serverPort)
+
+        self.startstop = None
+        self.hNET = None
 
         self.initGui()
 
@@ -30,20 +33,23 @@ class serv(TK.Frame):
         self.portEntry.insert(0, self.cfg.Server.serverPort)
         self.portEntry.pack()
 
-        # Create a Start button
-        self.start = TK.Button(self, text = "Start",
+        # Create a button
+        self.startstop = TK.Button(self, text = "Start",
                               command = lambda :self.startServer())
-        self.start.pack()
+        self.startstop.pack()
 
-        # Create a quit button (obviously to exit the program)
-        self.stop = TK.Button(self, text = "Stop",
-                              command = lambda :self.quitCB())
-        self.stop.pack()
 
     # PURPOSE: Start the network server thread
     # RETURNS: nothing
     def startServer(self):
         print("serv: start server")
+
+        self.serverEntry.config(state="disabled")
+        self.portEntry.config(state="disabled")
+        self.config(text="Server Running")
+
+        self.startstop.config(text="Stop", command = lambda :self.quitCB())
+
         self.cfg.Server.serverIP = self.serverEntry.get()
         self.cfg.Server.serverPort = self.portEntry.get()
         self.cfg.saveConfig()
@@ -56,6 +62,13 @@ class serv(TK.Frame):
     # RETURNS: I don't know.
     def quitCB(self):
         print("serv: quiting?")
+
+        self.serverEntry.config(state="normal")
+        self.portEntry.config(state="normal")
+        self.config(text="Server")
+
+        self.startstop.config(text="Start", command = lambda :self.startServer())
+
         if (self.hNET is not None) :
             self.hNET.quit()
         print("serv: Server Gui exit")

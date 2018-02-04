@@ -9,7 +9,7 @@ class history(TK.Frame):
     # PURPOSE:
     # RETURNS:
     def __init__(self, master, **kwargs):
-        TK.Frame.__init__(self, master, **kwargs)
+        TK.LabelFrame.__init__(self, master, text="log", **kwargs)
         self.text = TK.Text(self, width=30, state=TK.DISABLED)
         self.text.pack(expand=TK.YES, fill=TK.BOTH)
         self.lastSeqid = 0

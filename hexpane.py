@@ -1,12 +1,12 @@
 #The purpose of this class is to display information on a hex
 #The main game should update this when the user hovers over a hex
 
-from tkinter import *
+import tkinter as TK
 
-class hexpane(Frame):
+class hexpane(TK.Frame):
     def __init__(self, master, **kwargs):
-        Frame.__init__(self, master, **kwargs)
-        self.label = Label(self, text="X=%d, Y=%d" %(0,0), height=10)
+        TK.LabelFrame.__init__(self, master, text="HexInfo", **kwargs)
+        self.label = TK.Label(self, text="X=%d, Y=%d" %(0,0), height=10)
         self.label.pack()
 
     def update(self, objs):
@@ -16,7 +16,7 @@ class hexpane(Frame):
             if _text:
                 _text += "\n"
             _text += obj['type'] + ":" + obj['name']
-        self.label = Label(self, text=_text, height=10, justify="left")
+        self.label = TK.Label(self, text=_text, height=10, justify="left")
         self.label.pack()
 
     def shipInfo(ship):

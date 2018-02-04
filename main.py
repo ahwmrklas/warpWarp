@@ -21,13 +21,15 @@ from connect import *
 from damage import *
 from cmds import warpWarCmds
 from ConfigHandler import ConfigHandler
-import history
-import serv
-import hexpane
-import aipane
 import json
 import getpass
 import math
+
+# Panes that can be put in the pane window
+import histpane
+import servpane
+import hexpane
+import aipane
 
 
 # PURPOSE: Timer call back every second to check if the mouse has moved.
@@ -894,11 +896,11 @@ def main():
     # +--------------------+
     tkRoot.hexInfoFrame = hexpane.hexpane(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.hexInfoFrame, stretch='always')
-    tkRoot.servFrame = serv.serv(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.servFrame = servpane.serv(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.servFrame, stretch='always')
     tkRoot.aiFrame = aipane.aipane(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.aiFrame, stretch='always')
-    tkRoot.histFrame = history.history(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.histFrame = histpane.history(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.histFrame, stretch='always')
 
     # Put buttons into the button frame

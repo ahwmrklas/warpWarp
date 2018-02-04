@@ -12,10 +12,11 @@ class aipane(TK.Frame):
     # PURPOSE:
     # RETURNS:
     def __init__(self, master, **kwargs):
-        TK.Frame.__init__(self, master, **kwargs)
+        TK.LabelFrame.__init__(self, master, text="Computer Player", **kwargs)
 
         print("aipane --init");
         self.hPlayerAi = None
+        self.startstop = None
 
         self.cfg = ConfigHandler.ConfigHandler('warpwar.ini')
         print(self.cfg.PlayerAI.name)
@@ -35,25 +36,27 @@ class aipane(TK.Frame):
         self.portEntry.insert(0, self.cfg.Server.serverPort)
         self.portEntry.pack()
 
-        self.aiName = TK.Entry(self)
-        self.aiName.insert(0, self.cfg.PlayerAI.name)
-        self.aiName.pack()
+        self.aiNameEntry = TK.Entry(self)
+        self.aiNameEntry.insert(0, self.cfg.PlayerAI.name)
+        self.aiNameEntry.pack()
 
         # Create a Start button
-        self.start = TK.Button(self, text = "Start",
+        self.startstop = TK.Button(self, text = "Start",
                               command = lambda :self.startAI())
-        self.start.pack()
-
-        # Create a quit button (obviously to exit the program)
-        self.stop = TK.Button(self, text = "Stop",
-                              command = lambda :self.stopAI())
-        self.stop.pack()
+        self.startstop.pack()
 
     # PURPOSE: Start the playerAI thread
     # RETURNS: nothing
     def startAI(self):
         print("aipane: start")
-        self.hPlayerAi = playerAi.playerAiThrd(self.aiName.get(),
+
+        self.serverEntry.config(state="disabled")
+        self.portEntry.config(state="disabled")
+        self.aiNameEntry.config(state="disabled")
+
+        self.startstop.config(text="Stop", command = lambda :self.stopAI())
+
+        self.hPlayerAi = playerAi.playerAiThrd(self.aiNameEntry.get(),
                                                self.serverEntry.get(),
                                                int(self.portEntry.get())
                                               )
@@ -63,5 +66,12 @@ class aipane(TK.Frame):
     # RETURNS: I don't know.
     def stopAI(self):
         print("aipane: stop the AI")
+
+        self.serverEntry.config(state="normal")
+        self.portEntry.config(state="normal")
+        self.aiNameEntry.config(state="normal")
+
+        self.startstop.config(text="Start", command = lambda :self.startAI())
+
         if (self.hPlayerAi is not None) :
             self.hPlayerAi.quit()
