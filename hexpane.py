@@ -4,8 +4,8 @@
 from tkinter import *
 
 class hexpane(Frame):
-    def __init__(self, master):
-        Frame.__init__(self, master)
+    def __init__(self, master, **kwargs):
+        Frame.__init__(self, master, **kwargs)
         self.label = Label(self, text="X=%d, Y=%d" %(0,0), height=10)
         self.label.pack()
 

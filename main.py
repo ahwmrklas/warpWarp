@@ -24,6 +24,7 @@ from ConfigHandler import ConfigHandler
 import history
 import serv
 import hexpane
+import aipane
 import json
 import getpass
 import math
@@ -70,7 +71,7 @@ def tooltip(tkRoot):
                 height = label.winfo_reqheight()
                 tkRoot.tooltip.wm_geometry("+%d+%d" % (x, y-height))
                 label.pack(ipadx=1)
-                tkRoot.hexpane.update(objs)
+                tkRoot.hexInfoFrame.update(objs)
 
 
 
@@ -83,6 +84,13 @@ def exitProgram(tkRoot):
     print("quitMain")
     if (tkRoot.hCon is not None):
         tkRoot.hCon.quitCmd()
+
+    # Kill any server running too
+    tkRoot.servFrame.quitCB()
+
+    # Kill any playerAI running
+    tkRoot.aiFrame.stopAI()
+
     tkRoot.destroy()
     tkRoot.quit()
 
@@ -357,7 +365,7 @@ def updateWWMenu(event, tkRoot):
     if (tkRoot.game):
         gamePhase = tkRoot.game['state']['phase']
         for hist in tkRoot.game['history']:
-            tkRoot.hist.set(hist['seqid'], str(hist['cmd']) + "\n")
+            tkRoot.histFrame.set(hist['seqid'], str(hist['cmd']) + "\n")
         if ((tkRoot.game['map']['width']  != tkRoot.hexMap.grid_width) or
             (tkRoot.game['map']['height'] != tkRoot.hexMap.grid_height)
            ):
@@ -849,8 +857,8 @@ def main():
     # |       button frame                 |
     # +------------------------------------+
     tkRoot.topPane = PanedWindow(tkRoot, orient='horizontal', bg='blue')
-    tkRoot.bottomFrame = Frame(tkRoot)
-    tkRoot.bottomFrame.pack(side="bottom")
+    tkRoot.buttonFrame = Frame(tkRoot)
+    tkRoot.buttonFrame.pack(side="bottom")
 
     # It is important to pack the topPane LAST (but at the top) so that
     # the buttons don't disappear when shrinking the whole window
@@ -873,8 +881,8 @@ def main():
 
 
     # Create another Pane in the right PanedWindow(infoPane)
-    # for displaying history. There is only one pane in this infoPane for now
-    # ... but we can add others
+    # for displaying history. There is, history, info and server,
+    # and playerai ...  we can add others
     # +--------------------+
     # |                    |
     # |   Future pane1     |
@@ -884,19 +892,21 @@ def main():
     # |                    |
     # |   history pane     |
     # +--------------------+
-    tkRoot.serv = serv.serv(tkRoot.infoPane)
-    tkRoot.infoPane.add(tkRoot.serv, stretch='always')
-    tkRoot.hexpane = hexpane.hexpane(tkRoot.infoPane)
-    tkRoot.infoPane.add(tkRoot.hexpane, stretch='always')
-    tkRoot.hist = history.history(tkRoot.infoPane)
-    tkRoot.infoPane.add(tkRoot.hist, stretch='always')
+    tkRoot.hexInfoFrame = hexpane.hexpane(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.infoPane.add(tkRoot.hexInfoFrame, stretch='always')
+    tkRoot.servFrame = serv.serv(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.infoPane.add(tkRoot.servFrame, stretch='always')
+    tkRoot.aiFrame = aipane.aipane(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.infoPane.add(tkRoot.aiFrame, stretch='always')
+    tkRoot.histFrame = history.history(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.infoPane.add(tkRoot.histFrame, stretch='always')
 
     # Put buttons into the button frame
-    tkRoot.quitButton = Button(tkRoot.bottomFrame, text = "Quit",
+    tkRoot.quitButton = Button(tkRoot.buttonFrame, text = "Quit",
                   command = lambda :exitProgram(tkRoot))
     tkRoot.quitButton.grid(row=0, column=0, padx=15)
 
-    tkRoot.playersButton = Button(tkRoot.bottomFrame, text = "Players",
+    tkRoot.playersButton = Button(tkRoot.buttonFrame, text = "Players",
                                   command = lambda :popupPlayers(tkRoot))
     tkRoot.playersButton.grid(row=0, column=1, padx=15)
 
