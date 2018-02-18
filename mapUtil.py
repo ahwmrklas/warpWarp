@@ -55,7 +55,7 @@ class hexMap(HexagonalGrid):
     # RETURN: none
     def updateMap(self, game):
     
-        print("updateMap")
+        print("GUI: updateMap")
         if (game is None):
             return
 
@@ -97,13 +97,11 @@ class hexMap(HexagonalGrid):
                                 color6=hilite.color6,
                                 width=hilite.boldness,
                                 tags=None)
-
-        print("five")
     
     # PURPOSE:
     # RETURNS: Nothing ... but a return might be useful
     def clickHex(self, tkRoot, x, y):
-        print("Clicked on ", x, y, " Display info about hex")
+        print("GUI: Clicked on ", x, y, " Display info about hex")
 
         assert(tkRoot)
         if (tkRoot.game is None):
