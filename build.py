@@ -5,6 +5,36 @@ import math
 
 class build(Dialog):
 
+    class _Spinbox(tk.Frame):
+        def __init__(self, master, limit, callback):
+            tk.Frame.__init__(self, master)
+            self.limit = limit
+            self.callback = callback
+
+        def _grid(self, row=0, column=0):
+            self.spinnerValue = tk.IntVar()
+            self.text = tk.Label(self, text="0", textvariable=self.spinnerValue, width=5, anchor='e', relief='ridge', bg='white')
+            self.text.grid(row=0, column=0)
+            self.spinnerValue.set(0)
+            self.upButton = tk.Button(self, text=u"\u25B2", bg='green', activebackground='green yellow',
+                    font=('Times', 12, 'bold'), width=1, height=1, command=self.upPress)
+            self.upButton.grid(row=0, column=1)
+            self.downButton = tk.Button(self, text=u"\u25BC", bg='red4', activebackground='red',
+                    font=('Times', 12, 'bold'), width=1, height=1, command=self.downPress)
+            self.downButton.grid(row=0, column=2)
+            self.grid(row=row, column=column)
+
+        def upPress(self):
+            self.spinnerValue.set(min(self.spinnerValue.get() + 1, self.limit))
+            self.callback()
+
+        def downPress(self):
+            self.spinnerValue.set(max(self.spinnerValue.get() - 1, 0))
+            self.callback()
+
+        def get(self):
+            return self.spinnerValue.get()
+
     # PURPOSE:
     # RETURNS:
     def __init__(self, master, base):
@@ -45,80 +75,80 @@ class build(Dialog):
 
         tmpLbl = Label(spinFrame, text="POWER DRIVE")
         tmpLbl.grid(row=2, column=0)
-        self.pwrSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
+        self.pwrSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
         self.spinList.append(self.pwrSpn)
-        self.pwrSpn.grid(row=2, column=1)
+        self.pwrSpn._grid(row=2, column=1)
 
         tmpLbl = Label(spinFrame, text="BEAMS")
         tmpLbl.grid(row=3, column=0)
-        self.beamSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
-        self.beamSpn.grid(row=3, column=1)
+        self.beamSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.beamSpn._grid(row=3, column=1)
         self.spinList.append(self.beamSpn)
 
         tmpLbl = Label(spinFrame, text="SCREENS")
         tmpLbl.grid(row=4, column=0)
-        self.screenSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
-        self.screenSpn.grid(row=4, column=1)
+        self.screenSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.screenSpn._grid(row=4, column=1)
         self.spinList.append(self.screenSpn)
 
         tmpLbl = Label(spinFrame, text="ELECTRONIC COUNTERMEASURES")
         tmpLbl.grid(row=5, column=0)
-        self.ecmSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
-        self.ecmSpn.grid(row=5, column=1)
+        self.ecmSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.ecmSpn._grid(row=5, column=1)
         self.spinList.append(self.ecmSpn)
 
         tmpLbl = Label(spinFrame, text="TUBES")
         tmpLbl.grid(row=6, column=0)
-        self.tubeSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
-        self.tubeSpn.grid(row=6, column=1)
+        self.tubeSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.tubeSpn._grid(row=6, column=1)
         self.spinList.append(self.tubeSpn)
 
         tmpLbl = Label(spinFrame, text="MISSLES (x3)")
         tmpLbl.grid(row=7, column=0)
-        self.mslSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
-        self.mslSpn.grid(row=7, column=1)
+        self.mslSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.mslSpn._grid(row=7, column=1)
         self.spinList.append(self.mslSpn)
 
         tmpLbl = Label(spinFrame, text="ARMOR (x2)")
         tmpLbl.grid(row=8, column=0)
-        self.armorSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
-        self.armorSpn.grid(row=8, column=1)
+        self.armorSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.armorSpn._grid(row=8, column=1)
         self.spinList.append(self.armorSpn)
 
         tmpLbl = Label(spinFrame, text="CANNONS")
         tmpLbl.grid(row=9, column=0)
-        self.cannonSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
-        self.cannonSpn.grid(row=9, column=1)
+        self.cannonSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.cannonSpn._grid(row=9, column=1)
         self.spinList.append(self.cannonSpn)
 
         tmpLbl = Label(spinFrame, text="SHELLS (x6)")
         tmpLbl.grid(row=10, column=0)
-        self.shellSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="disabled", command=self.updateSpinners)
-        self.shellSpn.grid(row=10, column=1)
+        self.shellSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.shellSpn._grid(row=10, column=1)
         self.spinList.append(self.shellSpn)
 
         tmpLbl = Label(spinFrame, text="SYSTEMSHIP RACKS")
         tmpLbl.grid(row=11, column=0)
-        self.srSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
-        self.srSpn.grid(row=11, column=1)
+        self.srSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.srSpn._grid(row=11, column=1)
         self.spinList.append(self.srSpn)
 
         tmpLbl = Label(spinFrame, text="HOLDS")
         tmpLbl.grid(row=12, column=0)
-        self.holdSpn = Spinbox(spinFrame, from_=0, to=self.remaining, state="readonly", command=self.updateSpinners)
-        self.holdSpn.grid(row=12, column=1)
+        self.holdSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.holdSpn._grid(row=12, column=1)
         self.spinList.append(self.holdSpn)
 
         tmpLbl = Label(spinFrame, text="REPAIR BAYS (1/5 BP)")
         tmpLbl.grid(row=13, column=0)
-        self.rpSpn = Spinbox(spinFrame, from_=0, to=int(self.remaining / 5), state="disabled", command=self.updateSpinners)
-        self.rpSpn.grid(row=13, column=1)
+        self.rpSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.rpSpn._grid(row=13, column=1)
         #self.spinList.append(self.rpSpn) we treat this one special
 
         tmpLbl = Label(spinFrame, text="WARP GENERATOR")
         tmpLbl.grid(row=14, column=0)
-        self.warpSpn = Spinbox(spinFrame, from_=0, to=1, state="readonly", command=self.updateSpinners)
-        self.warpSpn.grid(row=14, column=1)
+        self.warpSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.warpSpn._grid(row=14, column=1)
 
         spinFrame.grid()
 
@@ -133,9 +163,9 @@ class build(Dialog):
         used = used + 5 * int(self.warpSpn.get())
 
         for spinner in self.spinList:
-            spinner.config(to=self.base['BP']['cur'] - used + int(spinner.get()))
+            spinner.limit=self.base['BP']['cur'] - used + int(spinner.get())
 
-        self.rpSpn.config(to=int((self.base['BP']['cur'] - used)/5) + int(self.rpSpn.get()))
+        self.rpSpn.limit = int((self.base['BP']['cur'] - used)/5) + int(self.rpSpn.get())
 
         self.spentW.config(text="Used BP:%d" % used)
         self.remainingW.config(text="Remaining BP:%d" % (self.base['BP']['cur'] - used))
