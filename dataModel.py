@@ -304,8 +304,8 @@ def getConflictList(objects):
 # RETURNS: A dict of ships on each side
 # Example:
 #   {
-#       "alex" : [alexShip1]
-#       "Rex"  : [RexShip1, rexShip2]
+#       "john" : [johnShip1]
+#       "Mary"  : [MaryShip1, MaryShip2]
 #       "bob"  : [bobShip1, bobShip2]
 #   }
 def organizeConflict(conflict):

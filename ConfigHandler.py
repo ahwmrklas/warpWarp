@@ -18,6 +18,8 @@ class ConfigHandler():
     class Profile():
         def __init__(self):
             self.playerName = getpass.getuser()
+            self.color = "red"
+            self.bases = "Ur Mosul Larsu"
             self.names = []
             self.plids = []
         def squashnames(self):
@@ -77,6 +79,10 @@ class ConfigHandler():
 
             if cfgParser.has_option('profile', 'name'):
                 self.Profile.playerName = cfgParser.get('profile', 'name')
+            if cfgParser.has_option('profile', 'color'):
+                self.Profile.color = cfgParser.get('profile', 'color')
+            if cfgParser.has_option('profile', 'bases'):
+                self.Profile.bases = cfgParser.get('profile', 'bases')
             if cfgParser.has_option('profile', 'names'):
                 self.Profile.expandnames(cfgParser.get('profile', 'names'))
             if cfgParser.has_option('profile', 'plids'):
@@ -107,7 +113,9 @@ class ConfigHandler():
         self.Profile.plid()
 
         cfgParser = configparser.ConfigParser()
-        cfgParser['profile'] = {'name' : self.Profile.playerName,
+        cfgParser['profile'] = {'name'  : self.Profile.playerName,
+                                'color' : self.Profile.color,
+                                'bases' : self.Profile.bases,
                                 'names' : self.Profile.squashnames(),
                                 'plids' : self.Profile.squashplids()}
         cfgParser['client']  = {'serverIP' : self.Client.serverIP,

@@ -28,6 +28,8 @@ import math
 # Panes that can be put in the pane window
 import histpane
 import servpane
+import connpane
+import plyrpane
 import hexpane
 import aipane
 
@@ -89,6 +91,12 @@ def exitProgram(tkRoot):
 
     # Kill any server running too
     tkRoot.servFrame.quitCB()
+
+    # Kill any client running too
+    tkRoot.connFrame.disconnect()
+
+    # Kill any client running too
+    tkRoot.plyrFrame.disconnect()
 
     # Kill any playerAI running
     tkRoot.aiFrame.stopAI()
@@ -337,7 +345,7 @@ def aboutHelp():
 def helpHelp():
     print("helpHelp")
 
-# PURPOSE:
+# PURPOSE: Handle <<sendReady>> event
 # RETURNS:
 def sendReady(event, tkRoot):
     print("sendReady:", event)
@@ -356,7 +364,7 @@ def newDataForGame(tkRoot, data):
     tkRoot.game = json.loads(jsonStr)
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
-# PURPOSE:
+# PURPOSE: handle <<updateWWMenu>>
 # RETURNS:
 def updateWWMenu(event, tkRoot):
     print("updateWWMenu:", event)
@@ -818,7 +826,7 @@ def addMenus(tkRoot):
     tkRoot.config(menu=menuBar)
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
-# handle Configure event
+# handle <Configure> event
 # Redraw the map after a window resize
 def Configure(event, tkRoot):
     if (tkRoot.configureDelay):
@@ -902,6 +910,10 @@ def main():
     tkRoot.infoPane.add(tkRoot.hexInfoFrame, stretch='always')
     tkRoot.servFrame = servpane.serv(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.servFrame, stretch='always')
+    tkRoot.connFrame = connpane.conn(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.infoPane.add(tkRoot.connFrame, stretch='always')
+    tkRoot.plyrFrame = plyrpane.plyr(tkRoot.infoPane, borderwidth=1, relief="sunken")
+    tkRoot.infoPane.add(tkRoot.plyrFrame, stretch='always')
     tkRoot.aiFrame = aipane.aipane(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.aiFrame, stretch='always')
     tkRoot.histFrame = histpane.history(tkRoot.infoPane, borderwidth=1, relief="sunken")

@@ -86,13 +86,3 @@ class serv(TK.Frame):
     # RETURNS: none
     def displayMsg(self, msg):
         pass
-
-    # PURPOSE:
-    # RETURNS:
-    def set(self, seqid, newText):
-        if (seqid > self.lastSeqid):
-            self.lastSeqid = seqid
-            self.text.config(state=TK.NORMAL)
-            self.text.insert(TK.END, str(seqid) + ": " + newText)
-            self.text.config(state=TK.DISABLED)
-            print("text", newText)
