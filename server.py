@@ -26,6 +26,17 @@ class srvrThrd(threading.Thread):
         self.hGUI = hGui
         self.serverContinue = True
         self.gameserver = gameserver.gameserver()
+
+        try:
+            self.s = socket.socket()
+            self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            self.s.bind((self.ipAddr, self.port))
+
+            self.s.listen(5)
+        except:
+            print("server: Failed to create server at ", self.ipAddr)
+            self.serverContinue = False
+
         threading.Thread.__init__(self, name="ServerSvrThread")
         self.start()
 
@@ -34,13 +45,13 @@ class srvrThrd(threading.Thread):
     def quit(self):
         print("server: Sending quit msg to server")
         try:
-            s = socket.socket()
-            s.connect( (self.ipAddr, self.port) )
+            self.s = socket.socket()
+            self.s.connect( (self.ipAddr, self.port) )
             tmp = warpWarCmds()
             sendJson = tmp.quitGame('STest')
 
-            s.send(zlib.compress(sendJson.encode()))
-            s.close()
+            self.s.send(zlib.compress(sendJson.encode()))
+            self.s.close()
         except:
             print("server: Socket error. Only GUI closes")
 
@@ -49,13 +60,9 @@ class srvrThrd(threading.Thread):
     #   Waits for clients to send us requests.
     # RETURNS: none
     def run(self):
-        s = socket.socket()
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        s.bind((self.ipAddr, self.port))
 
-        s.listen(5)
         while self.serverContinue:
-           c, addr = s.accept()
+           c, addr = self.s.accept()
 
            compressed = c.recv(8192)
            cmd = zlib.decompress(compressed)

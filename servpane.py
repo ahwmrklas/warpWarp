@@ -44,18 +44,18 @@ class serv(TK.Frame):
     def startServer(self):
         print("serv: start server")
 
-        self.serverEntry.config(state="disabled")
-        self.portEntry.config(state="disabled")
-        self.config(text="Server Running")
-
-        self.startstop.config(text="Stop", command = lambda :self.quitCB())
-
         self.cfg.Server.serverIP = self.serverEntry.get()
         self.cfg.Server.serverPort = self.portEntry.get()
         self.cfg.saveConfig()
         self.hNET = server.srvrThrd(self.cfg.Server.serverIP,
                                     int(self.cfg.Server.serverPort),
                                     self)
+        print("serv: hNet continue", self.hNET.serverContinue )
+        if (self.hNET.serverContinue):
+            self.serverEntry.config(state="disabled")
+            self.portEntry.config(state="disabled")
+            self.config(text="Server Running")
+            self.startstop.config(text="Stop", command = lambda :self.quitCB())
 
     # PURPOSE: Button handler. The Quit button
     #          call this when "Quit" button clicked
