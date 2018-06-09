@@ -24,6 +24,8 @@ class plyr(TK.Frame):
 
         self.initGui()
 
+        self.useConnection(None)
+
     # PURPOSE: Do all the fun UI things
     # RETURNS: nothing
     def initGui(self):

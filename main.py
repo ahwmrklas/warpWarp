@@ -694,7 +694,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             print(nonShipList)
             #who am I,and who is my enemy?
             friendlyShips = []
-            if (tkRoot.cfg.Profile.plid in conflictDict):
+            if (tkRoot.cfg.Profile.plid() in conflictDict):
                 friendlyShips = conflictDict[tkRoot.cfg.Profile.plid()]
             enemyShips = []
             for key in conflictDict:

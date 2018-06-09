@@ -89,6 +89,7 @@ class warpWarCmds():
     # RETURNS: string with json
     def moveShip(self, plid, name, x, y):
         cmd  = { 'cmd' : {'cmd':"moveship", 'plid':plid, 'name':name, 'x':x, 'y':y} }
+        print(cmd)
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 

@@ -20,7 +20,7 @@ def createMoveGraph(tkRoot, game, hexMap, shipName):
     movesLeft = ship['moves']['cur']
 
     hiliteColor = 'Green'
-    player = dataModel.playerTableGet(game, tkRoot.cfg.Profile.plid)
+    player = dataModel.playerTableGet(game, tkRoot.cfg.Profile.plid())
     if (player):
         hiliteColor = player['color']
 
@@ -78,7 +78,7 @@ def moveOnClick(private, x, y):
         # mind about a move and cancel it before it is
         # permanent
         if (tkRoot.hCon is not None):
-            sendJson = warpWarCmds().moveShip(tkRoot.cfg.Profile.plid, shipName, x, y)
+            sendJson = warpWarCmds().moveShip(tkRoot.cfg.Profile.plid(), shipName, x, y)
             tkRoot.hCon.sendCmd(sendJson)
 
 # PURPOSE:
@@ -113,7 +113,7 @@ def retreatOnClick(private, x, y):
         enemyPresent = False
         objList = dataModel.findObjectsAt(tkRoot.game, x, y)
         for obj in objList:
-           if (obj['owner'] != tkRoot.cfg.Profile.plid):
+           if (obj['owner'] != tkRoot.cfg.Profile.plid()):
                 enemyPresent = True
 
         if (not enemyPresent):
@@ -130,7 +130,7 @@ def retreatOnClick(private, x, y):
             # mind about a move and cancel it before it is
             # permanent
             if (tkRoot.hCon is not None):
-                sendJson = warpWarCmds().acceptRetreat(tkRoot.cfg.Profile.plid,
+                sendJson = warpWarCmds().acceptRetreat(tkRoot.cfg.Profile.plid(),
                                                        shipName, x, y)
                 tkRoot.hCon.sendCmd(sendJson)
 
@@ -144,7 +144,7 @@ def createRetreatGraph(tkRoot, game, hexMap, shipName):
     movesLeft = 1
 
     hiliteColor = 'Green'
-    player = dataModel.playerTableGet(game, tkRoot.cfg.Profile.plid)
+    player = dataModel.playerTableGet(game, tkRoot.cfg.Profile.plid())
     if (player):
         hiliteColor = player['color']
 
@@ -158,7 +158,7 @@ def createRetreatGraph(tkRoot, game, hexMap, shipName):
                     enemyPresent = False
                     objList = dataModel.findObjectsAt(game, x, y)
                     for obj in objList:
-                       if (obj['owner'] != tkRoot.cfg.Profile.plid):
+                       if (obj['owner'] != tkRoot.cfg.Profile.plid()):
                             enemyPresent = True
 
                     if (not enemyPresent):
