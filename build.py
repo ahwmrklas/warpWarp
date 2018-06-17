@@ -63,6 +63,27 @@ class build(Dialog):
         self.remainingW.grid()
         remainingFrame.grid(row=0,column=3)
 
+
+    def makeSelection(self, master):
+        master.grid()
+        config = Frame(master)
+        pictureFrame = Frame(master, relief=RIDGE, bd=5)
+        pictureFrame.grid(row=0,column=0)
+        dropFrame = Frame(config)
+        string = StringVar(master)
+        w = OptionMenu(dropFrame, string, *[1,2,3,4])
+        w.grid(sticky=E+W)
+        dropFrame.grid(row=0, sticky=E+W)
+
+        buttonFrame = Frame(config)
+        w = Button(buttonFrame, text="Save")
+        w.pack(side=LEFT, padx=5, pady=5)
+        w = Button(buttonFrame, text="Remove")
+        w.pack(side=LEFT, padx=5, pady=5)
+        buttonFrame.grid(row=1)
+        config.grid(row=0, column=1)
+
+
     # PURPOSE:
     # RETURNS:
     def makeSpinners(self, spinFrame):
@@ -176,8 +197,27 @@ class build(Dialog):
         #have a bunch of spinboxes and checkboxes
         statusFrame = Frame(master)
         self.makeHeader(statusFrame)
+        selectFrame = Frame(master)
+        self.makeSelection(selectFrame)
         spinFrame = Frame(master)
         self.makeSpinners(spinFrame)
+
+
+    def buttonbox(self):
+        box = Frame(self)
+
+        w = Button(box, text="OK", width=20, command=self.ok, default=ACTIVE)
+        w.pack(side=LEFT, padx=5, pady=5)
+        w = Button(box, text="Cancel", width=10, command=self.cancel)
+        w.pack(side=LEFT, padx=5, pady=5)
+
+        self.bind("<Return>", self.ok)
+        self.bind("<Escape>", self.cancel)
+
+        box.pack()
+
+
+
 
     # PURPOSE:
     # RETURNS:
