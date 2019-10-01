@@ -11,12 +11,12 @@ class plyr(TK.Frame):
 
     # PURPOSE:
     # RETURNS:
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, cfg, **kwargs):
         TK.LabelFrame.__init__(self, master, text="Join Game", **kwargs)
 
         self.hCon = None
 
-        self.cfg = ConfigHandler.ConfigHandler('warpwar.ini')
+        self.cfg = cfg;
         print("plyrpane --init");
         print(self.cfg.Profile.playerName)
         print(self.cfg.Profile.color)
@@ -37,8 +37,8 @@ class plyr(TK.Frame):
         self.playerColor.insert(0, self.cfg.Profile.color)
         self.playerColor.pack()
 
-        self.playerBases = TK.Entry(self)
-        self.playerBases.insert(0, self.cfg.Profile.bases)
+        self.playerBases = TK.OptionMenu(self, self.cfg.Profile.bases, self.cfg.Profile.bases)
+        #self.playerBases.insert(0, self.cfg.Profile.bases)
         self.playerBases.pack()
 
         # Create a button

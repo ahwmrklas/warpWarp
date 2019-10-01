@@ -6,24 +6,30 @@ from client import comThrd
 from cmds import warpWarCmds
 import time
 
+import servpane
+import connpane
+import plyrpane
+from ConfigHandler import *
+
 class connect(Dialog):
 
     # PURPOSE:
     # RETURNS:
-    def __init__(self, master, defaultName, defaultIP, defaultPort):
+    def __init__(self, master, cfg):
+        self.cfg = cfg
         self.name = StringVar()
-        self.name.set(defaultName)
-        self.startBases = StringVar()
-        self.startBases.set("Ur Mosul Larsu") #Someday be a drop downlist
-        self.startBaseList = ["Ur Mosul Larsu", "Nineveh Babylon Ugarit"]
+        self.name.set(self.cfg.Profile.playerName)
         self.color = StringVar()
-        self.color.set("Red")
-        self.ip = StringVar()
-        self.ip = StringVar()
-        self.ip.set(defaultIP)
-        self.port = IntVar()
-        self.port.set(defaultPort)
+        self.color.set(self.cfg.Profile.color)
+
+        self.startBases = StringVar()
+        self.startBases.set(self.cfg.Profile.bases) #Someday be a drop downlist
+
+        #  This list must come from the game we connect to
+        self.startBaseList = ["Ur Mosul Larsu", "Nineveh Babylon Ugarit"]
+
         self.client = None
+        self.conn = None
         Dialog.__init__(self, master)
 
     # PURPOSE:
@@ -50,35 +56,30 @@ class connect(Dialog):
         tmp = tk.OptionMenu(master, self.startBases, *self.startBaseList)
         tmp.pack()
 
-        tmp = Label(master, text="SeverIP")
-        tmp.pack()
+        self.plyr = plyrpane.plyr(master,self.cfg, borderwidth=1, relief="sunken")
+        self.plyr.pack()
 
-        tmp = tk.Entry(master, textvariable=self.ip)
-        tmp.pack()
+        self.serv = servpane.serv(master, borderwidth=1, relief="sunken")
+        self.serv.pack()
 
-        tmp = Label(master, text="Port")
-        tmp.pack()
+        self.conn = connpane.conn(master, borderwidth=1, relief="sunken")
+        self.conn.pack()
 
-        tmp = tk.Entry(master, textvariable=self.port)
-        tmp.pack()
+        print("calling use connection   ", self.conn.hCon)
+        self.plyr.useConnection(self.conn.hCon)
 
         return tmp # initial focus
 
     # PURPOSE:
     # RETURNS:
     def validate(self):
-        print("IP   ", self.ip.get())
-        print("PORT ", self.port.get())
-        tmp = warpWarCmds().ping('connectDlg')
-        self.client = comThrd(self.ip.get(), self.port.get())
-        self.client.sendCmd(tmp)
-        resp = self.client.waitFor(5)
-
-        print("RESP:", len(resp))
-        if (len(resp) > 0):
-            return True
-        else:
+        print("hCon   ", self.conn.hCon)
+        print("hConIP   ", self.conn.cfg.Client.serverIP)
+        print("hConPort   ", self.conn.cfg.Client.serverPort)
+        self.client = self.conn.hCon
+        if (self.client is None):
             return False
+        return True
 
     # PURPOSE:
     # RETURNS:

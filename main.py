@@ -27,9 +27,6 @@ import math
 
 # Panes that can be put in the pane window
 import histpane
-import servpane
-import connpane
-import plyrpane
 import hexpane
 import aipane
 
@@ -89,15 +86,6 @@ def exitProgram(tkRoot):
     if (tkRoot.hCon is not None):
         tkRoot.hCon.quitCmd()
 
-    # Kill any server running too
-    tkRoot.servFrame.quitCB()
-
-    # Kill any client running too
-    tkRoot.connFrame.disconnect()
-
-    # Kill any client running too
-    tkRoot.plyrFrame.disconnect()
-
     # Kill any playerAI running
     tkRoot.aiFrame.stopAI()
 
@@ -112,7 +100,7 @@ def connectServer(tkRoot):
         tkRoot.hCon.quitCmd()
         tkRoot.hCon = None
 
-    tmp = connect(tkRoot, tkRoot.cfg.Profile.playerName, tkRoot.cfg.Client.serverIP, tkRoot.cfg.Client.serverPort)
+    tmp = connect(tkRoot, tkRoot.cfg);
     if (tmp is not None):
         tkRoot.hCon = tmp.result
 
@@ -122,8 +110,6 @@ def connectServer(tkRoot):
         tkRoot.playerStartBases = tmp.playerStartBases
         tkRoot.playerColor = tmp.playerColor
 
-        tkRoot.cfg.Client.serverIP = tmp.ip.get()
-        tkRoot.cfg.Client.serverPort = tmp.port.get()
         tkRoot.cfg.saveConfig()
 
         sendJson = warpWarCmds().newPlayer(tkRoot.cfg.Profile.plid(), tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
@@ -908,12 +894,6 @@ def main():
     # +--------------------+
     tkRoot.hexInfoFrame = hexpane.hexpane(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.hexInfoFrame, stretch='always')
-    tkRoot.servFrame = servpane.serv(tkRoot.infoPane, borderwidth=1, relief="sunken")
-    tkRoot.infoPane.add(tkRoot.servFrame, stretch='always')
-    tkRoot.connFrame = connpane.conn(tkRoot.infoPane, borderwidth=1, relief="sunken")
-    tkRoot.infoPane.add(tkRoot.connFrame, stretch='always')
-    tkRoot.plyrFrame = plyrpane.plyr(tkRoot.infoPane, borderwidth=1, relief="sunken")
-    tkRoot.infoPane.add(tkRoot.plyrFrame, stretch='always')
     tkRoot.aiFrame = aipane.aipane(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.aiFrame, stretch='always')
     tkRoot.histFrame = histpane.history(tkRoot.infoPane, borderwidth=1, relief="sunken")
