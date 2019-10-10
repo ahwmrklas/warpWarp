@@ -18,9 +18,9 @@ class plyr(TK.Frame):
 
         self.cfg = cfg;
         print("plyrpane --init");
-        print(self.cfg.Profile.playerName)
-        print(self.cfg.Profile.color)
-        print(self.cfg.Profile.bases)
+        print("  ", self.cfg.Profile.playerName)
+        print("  ", self.cfg.Profile.color)
+        print("  ", self.cfg.Profile.bases)
 
         self.initGui()
 
@@ -37,8 +37,13 @@ class plyr(TK.Frame):
         self.playerColor.insert(0, self.cfg.Profile.color)
         self.playerColor.pack()
 
-        self.playerBases = TK.OptionMenu(self, self.cfg.Profile.bases, self.cfg.Profile.bases)
-        #self.playerBases.insert(0, self.cfg.Profile.bases)
+        self.startBases = TK.StringVar()
+        self.startBases.set(self.cfg.Profile.bases) #Someday be a drop downlist
+
+        #  This list must come from the game we connect to
+        self.startBaseList = ["Ur Mosul Larsu", "Nineveh Babylon Ugarit"]
+
+        self.playerBases = TK.OptionMenu(self, self.startBases, *self.startBaseList)
         self.playerBases.pack()
 
         # Create a button
@@ -53,7 +58,7 @@ class plyr(TK.Frame):
 
         self.cfg.Profile.playerName = self.playerName.get()
         self.cfg.Profile.color = self.playerColor.get()
-        self.cfg.Profile.bases = self.playerBases.get()
+        self.cfg.Profile.bases = self.startBases.get()
 
         if (self.hCon):
             sendJson = cmds.warpWarCmds().removePlayer(self.cfg.Profile.plid())
@@ -97,6 +102,7 @@ class plyr(TK.Frame):
     #          update enable/disable nature of widgets
     # RETURNS:
     def useConnection(self, hCon):
+        print("plyr: useConnection   ", hCon)
         self.hCon = hCon
         if (self.hCon):
             self.joinUnjoin.config(state="normal")

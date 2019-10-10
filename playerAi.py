@@ -296,11 +296,14 @@ class playerAiThrd(threading.Thread):
             game = self.ping()
             time.sleep(1)
 
+            if ( not game ):
+                continue
+
             playerMe = dataModel.playerTableGet(game, self.plid)
             if (playerMe is None):
                 playerMe = {'phase':None}
 
-            # What is the current game state and player state?
+            # If the game state hasn't changed, skip and try again.
             if ( (gamePhase == game['state']['phase']) and
                  (playerPhase == playerMe['phase']) ):
                  continue
@@ -309,7 +312,7 @@ class playerAiThrd(threading.Thread):
             playerPhase = playerMe['phase']
 
             # Do something with that state
-            print("playerAi:GP ", gamePhase, " PP ", playerPhase)
+            print("playerAi:GamePhase ", gamePhase, " PlayerPhase ", playerPhase)
             if (gamePhase == "creating"):
                 if ( (playerPhase is None) or (playerPhase == "nil")):
                     self.newPlayer()

@@ -6,18 +6,21 @@ import socket
 import ConfigHandler
 import client
 import cmds
+import json
 
 class conn(TK.Frame):
 
     # PURPOSE:
     # RETURNS:
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, owner, **kwargs):
         TK.LabelFrame.__init__(self, master, text="Not Connected", **kwargs)
 
         self.cfg = ConfigHandler.ConfigHandler('warpwar.ini')
         print("connpane --init");
         print(self.cfg.Client.serverIP)
         print(self.cfg.Client.serverPort)
+
+        self.owner = owner
 
         self.conDiscon = None
         self.hCon = None
@@ -55,10 +58,11 @@ class conn(TK.Frame):
             pingCmd = cmds.warpWarCmds().ping('connectDlg')
             self.hCon.sendCmd(pingCmd)
             resp = self.hCon.waitFor(5)
+            resp = json.loads(resp)
         else:
-            resp = ""
+            resp = {}
 
-        if (len(resp) > 0):
+        if (resp):
             print("Connection success!", len(resp))
             self.serverEntry.config(state="disabled")
             self.portEntry.config(state="disabled")
@@ -70,6 +74,11 @@ class conn(TK.Frame):
         else:
             print("Connection failed:", len(resp))
             self.config(text="Connection Failed")
+            self.hCon.quitCmd()
+            self.hCon = None
+
+        # Inform parent Connection might have changed
+        self.owner.change()
 
     # PURPOSE: Button handler. The Quit button
     #          call this when "Quit" button clicked
@@ -88,3 +97,6 @@ class conn(TK.Frame):
 
         self.hCon = None
         print("conn: Client disconnected")
+
+        # Inform parent Connection might have changed
+        self.owner.change()

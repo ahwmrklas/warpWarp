@@ -59,8 +59,8 @@ class comThrd(threading.Thread):
         try:
             resp = self.rcvQ.get(True, count)
         except Q.Empty:
-            resp = ""
-            print("Failed waiting for message")
+            resp = "{}"
+            print("client:Failed waiting for message")
 
         # print("RESP:", len(resp))
         return resp

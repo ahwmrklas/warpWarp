@@ -28,8 +28,6 @@ import math
 # Panes that can be put in the pane window
 import histpane
 import hexpane
-import aipane
-
 
 # PURPOSE: Timer call back every second to check if the mouse has moved.
 #          If it hasn't moved create a tool tip of info for the given location
@@ -86,23 +84,20 @@ def exitProgram(tkRoot):
     if (tkRoot.hCon is not None):
         tkRoot.hCon.quitCmd()
 
-    # Kill any playerAI running
-    tkRoot.aiFrame.stopAI()
-
     tkRoot.destroy()
     tkRoot.quit()
 
 # I don't like these. They don't seem very objecty
 # Perhaps each of them should be a class?
 def connectServer(tkRoot):
-    print("connectServer")
+    print("main:connectServer")
     if (tkRoot.hCon is not None):
         tkRoot.hCon.quitCmd()
         tkRoot.hCon = None
 
     tmp = connect(tkRoot, tkRoot.cfg);
     if (tmp is not None):
-        tkRoot.hCon = tmp.result
+        tkRoot.hCon = tmp.hCon
 
     if (tkRoot.hCon is not None):
         tkRoot.hCon.setCallback(lambda data: newDataForGame(tkRoot, data))
@@ -894,8 +889,6 @@ def main():
     # +--------------------+
     tkRoot.hexInfoFrame = hexpane.hexpane(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.hexInfoFrame, stretch='always')
-    tkRoot.aiFrame = aipane.aipane(tkRoot.infoPane, borderwidth=1, relief="sunken")
-    tkRoot.infoPane.add(tkRoot.aiFrame, stretch='always')
     tkRoot.histFrame = histpane.history(tkRoot.infoPane, borderwidth=1, relief="sunken")
     tkRoot.infoPane.add(tkRoot.histFrame, stretch='always')
 
