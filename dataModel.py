@@ -205,7 +205,7 @@ def playerTableGet(game, plid):
 def playerNameGet(game, plid):
     pt = playerTableGet(game, plid)
     if (pt is None) or (pt['name'] is None):
-        return "PlayerUnknow"
+        return "PlayerUnknown"
 
     return pt['name']
 

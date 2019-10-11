@@ -15,8 +15,9 @@ class plyr(TK.Frame):
         TK.LabelFrame.__init__(self, master, text="Join Game", **kwargs)
 
         self.hCon = None
+        self.cfg  = cfg;
+        self.plid = None;
 
-        self.cfg = cfg;
         print("plyrpane --init");
         print("  ", self.cfg.Profile.playerName)
         print("  ", self.cfg.Profile.color)
@@ -79,11 +80,17 @@ class plyr(TK.Frame):
 
             self.cfg.saveConfig()
 
+            # record the PlayerID
+            self.plid = self.cfg.Profile.plid()
+
     # PURPOSE: Button handler. The Quit button
     #          call this when "Quit" button clicked
     # RETURNS: I don't know.
     def disconnect(self):
         print("plyr: Disconnection")
+
+        # clear the PlayerID
+        slef.plid = None
 
         self.playerName.config (state="normal")
         self.playerColor.config(state="normal")

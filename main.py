@@ -81,9 +81,17 @@ def tooltip(tkRoot):
 # RETURNS: I don't know.
 def exitProgram(tkRoot):
     print("quitMain")
-    if (tkRoot.hCon is not None):
-        tkRoot.hCon.quitCmd()
 
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().playerLeave(tkRoot.plid)
+        tkRoot.hCon.sendCmd(sendJson)
+        sendJson = warpWarCmds().quitGame(tkRoot.plid)
+        tkRoot.hCon.sendCmd(sendJson)
+        tkRoot.hCon.quitCmd()
+        tkRoot.hCon = None
+
+    # We should wait for the playerLeave and quit command
+    # to finish, right?
     tkRoot.destroy()
     tkRoot.quit()
 
@@ -98,32 +106,26 @@ def connectServer(tkRoot):
     tmp = connect(tkRoot, tkRoot.cfg);
     if (tmp is not None):
         tkRoot.hCon = tmp.hCon
+        tkRoot.plid = tmp.plid
 
     if (tkRoot.hCon is not None):
         tkRoot.hCon.setCallback(lambda data: newDataForGame(tkRoot, data))
-        tkRoot.cfg.Profile.playerName = tmp.playerName
-        tkRoot.playerStartBases = tmp.playerStartBases
-        tkRoot.playerColor = tmp.playerColor
+        refresh(tkRoot)
 
-        tkRoot.cfg.saveConfig()
-
-        sendJson = warpWarCmds().newPlayer(tkRoot.cfg.Profile.plid(), tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
-
-        print(" main sending: ", sendJson)
-        print ("tkroot.plid: %s" % tkRoot.cfg.Profile.plid())
-        tkRoot.hCon.sendCmd(sendJson)
+        print ("tkroot.plid: {} Name: {}".format(tkRoot.plid, dataModel.playerNameGet(tkRoot.game, tkRoot.plid)))
 
 # PURPOSE:
 # RETURNS:
 def newGame(tkRoot):
     print("newGame")
+    print("What does newGame event mean? Kill old game and reconnect?")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().newGame(tkRoot.cfg.Profile.plid(), tkRoot.cfg.Profile.playerName,"foo")
+        sendJson = warpWarCmds().newGame(tkRoot.plid, tkRoot.cfg.Profile.playerName,"foo")
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.cfg.Profile.plid(), tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
-        tkRoot.hCon.sendCmd(sendJson)
+        #sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        #tkRoot.hCon.sendCmd(sendJson)
 
 # PURPOSE:
 # RETURNS:
@@ -137,11 +139,11 @@ def playerJoinMenu(tkRoot):
     print("playerJoinMenu")
     print("Should launch dialog to pick")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().removePlayer(tkRoot.cfg.Profile.plid())
+        sendJson = warpWarCmds().removePlayer(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
 
-        sendJson = warpWarCmds().newPlayer(tkRoot.cfg.Profile.plid(), tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
-        tkRoot.hCon.sendCmd(sendJson)
+        #sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        #tkRoot.hCon.sendCmd(sendJson)
 
 # PURPOSE:
 # RETURNS:
@@ -175,7 +177,7 @@ def sendCombatReady(tkRoot):
     if (tkRoot.hCon is not None):
 
         if (tkRoot.battleOrders):
-            sendJson = warpWarCmds().combatOrders(tkRoot.cfg.Profile.plid(), tkRoot.battleOrders)
+            sendJson = warpWarCmds().combatOrders(tkRoot.plid, tkRoot.battleOrders)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
 
@@ -183,7 +185,7 @@ def sendCombatReady(tkRoot):
         tkRoot.battleOrders = {}
 
         # Send ready because we are done with this round of combat
-        sendJson = warpWarCmds().ready(tkRoot.cfg.Profile.plid())
+        sendJson = warpWarCmds().ready(tkRoot.plid)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -204,7 +206,7 @@ def damageAllocationMenu(tkRoot, shipName):
         allocationResult = damageAllocation(tkRoot, ship)
 
         if (allocationResult is not None and allocationResult.finished):
-            sendJson = warpWarCmds().acceptDamage(tkRoot.cfg.Profile.plid(),
+            sendJson = warpWarCmds().acceptDamage(tkRoot.plid,
                                                   allocationResult.ship)
             print(" main sending: ", sendJson)
             tkRoot.hCon.sendCmd(sendJson)
@@ -218,7 +220,7 @@ def buildShip(tkRoot, baseName):
         buildResult = build(tkRoot, base)
 
     if (buildResult is not None and buildResult.ship):
-        sendJson = warpWarCmds().buildShip(tkRoot.cfg.Profile.plid(), buildResult.ship, baseName)
+        sendJson = warpWarCmds().buildShip(tkRoot.plid, buildResult.ship, baseName)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -234,9 +236,9 @@ def loadShip(tkRoot, ship, shipList):
         if loadResult.motherVar.get() == "unload":
             motherName = findMother(tkRoot.game['objects']['shipList'], loadResult.ship['name'])
             print(motherName)
-            sendJson = warpWarCmds().unloadShip(tkRoot.cfg.Profile.plid(), loadResult.ship['name'], motherName)
+            sendJson = warpWarCmds().unloadShip(tkRoot.plid, loadResult.ship['name'], motherName)
         else:
-            sendJson = warpWarCmds().loadShip(tkRoot.cfg.Profile.plid(), loadResult.ship['name'], loadResult.motherVar.get())
+            sendJson = warpWarCmds().loadShip(tkRoot.plid, loadResult.ship['name'], loadResult.motherVar.get())
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -248,7 +250,7 @@ def loadCargo(tkRoot, star, ship):
         cargoResult = loadCargoMenu(tkRoot, star, ship)
 
     if (cargoResult is not None and cargoResult.shipment != 0):
-        sendJson = warpWarCmds().loadCargo(tkRoot.cfg.Profile.plid(), star['name'], ship['name'], cargoResult.shipment)
+        sendJson = warpWarCmds().loadCargo(tkRoot.plid, star['name'], ship['name'], cargoResult.shipment)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -263,7 +265,7 @@ def moveMenu(tkRoot, shipName):
 def refresh(tkRoot):
     print("refresh")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ping(tkRoot.cfg.Profile.plid())
+        sendJson = warpWarCmds().ping(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
 
 # PURPOSE:
@@ -302,7 +304,7 @@ def loadGame(tkRoot):
     gameDict = json.loads(gameString)
 
     #send the game to the server.
-    sendJson = warpWarCmds().restoreGame(tkRoot.cfg.Profile.plid(), gameDict)
+    sendJson = warpWarCmds().restoreGame(tkRoot.plid, gameDict)
     print (sendJson)
     tkRoot.hCon.sendCmd(sendJson)
 
@@ -331,7 +333,7 @@ def helpHelp():
 def sendReady(event, tkRoot):
     print("sendReady:", event)
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().ready(tkRoot.cfg.Profile.plid())
+        sendJson = warpWarCmds().ready(tkRoot.plid)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -343,6 +345,7 @@ def newDataForGame(tkRoot, data):
     print("newDataForGame")
     jsonStr = data.decode()
     tkRoot.game = json.loads(jsonStr)
+    print(json.dumps(tkRoot.game))
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE: handle <<updateWWMenu>>
@@ -350,7 +353,7 @@ def newDataForGame(tkRoot, data):
 def updateWWMenu(event, tkRoot):
     print("updateWWMenu:", event)
 
-    pt = playerTableGet(tkRoot.game, tkRoot.cfg.Profile.plid())
+    pt = playerTableGet(tkRoot.game, tkRoot.plid)
     playerPhase = None
     if (pt):
         playerPhase = pt['phase']
@@ -383,7 +386,7 @@ def buildPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
     popup = Menu(tkRoot, tearoff=0)
     popup.add_command(label="Bases in this sector:")
     for base in tkRoot.game['objects']['starBaseList']:
-        if ( (base['owner'] == tkRoot.cfg.Profile.plid()) and
+        if ( (base['owner'] == tkRoot.plid) and
              (base['location']['x'] == hex_x) and
              (base['location']['y'] == hex_y)
            ):
@@ -407,7 +410,7 @@ def movePopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
     popup = Menu(tkRoot, tearoff=0)
     popup.add_command(label="Ships in this sector:")
     for ship in tkRoot.game['objects']['shipList']:
-        if ( (ship['owner'] == tkRoot.cfg.Profile.plid()) and
+        if ( (ship['owner'] == tkRoot.plid) and
              (ship['location']['x'] == hex_x) and
              (ship['location']['y'] == hex_y)
            ):
@@ -439,7 +442,7 @@ def combatPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
     enemyShip    = []
     enemyOther    = []
     for obj in objs:
-        if ( (obj['owner'] == tkRoot.cfg.Profile.plid()) and
+        if ( (obj['owner'] == tkRoot.plid) and
              (obj['location']['x'] == hex_x) and
              (obj['location']['y'] == hex_y)
            ):
@@ -495,7 +498,7 @@ def damageSelectionPopUp(private, pixel_X, pixel_Y, hex_x, hex_y):
 
     objs = findObjectsAt(tkRoot.game, hex_x, hex_y)
     for ship in objs:
-        if ( (ship['owner'] == tkRoot.cfg.Profile.plid()) and
+        if ( (ship['owner'] == tkRoot.plid) and
              (ship['location']['x'] == hex_x) and
              (ship['location']['y'] == hex_y) and
              (ship['type'] == 'ship') 
@@ -544,7 +547,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
                                         player['color'], 2, None)
 
     phaseMenuObject = Menu(menuBar)
-    player = playerTableGet(tkRoot.game, tkRoot.cfg.Profile.plid())
+    player = playerTableGet(tkRoot.game, tkRoot.plid)
     if (playerPhase == 'waiting'):
         # Player is waiting on opponent. All they can do is refresh.
         phaseMenuObject.add_command(label="WAITING on opponent")
@@ -572,7 +575,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Bases you own:")
         #Technically, its only bases that can do this
         for base in tkRoot.game['objects']['starBaseList']:
-            if (base['owner'] == tkRoot.cfg.Profile.plid()):
+            if (base['owner'] == tkRoot.plid):
                 print (base['owner'])
                 labelString = "'%s'    BP left: %d" % (base['name'],
                         base['BP']['cur'])
@@ -587,7 +590,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             star = findObjectsInListAtLoc(tkRoot.game['objects']['starList'],
                                           ship['location']['x'],
                                           ship['location']['y'])
-            if (star and star['owner'] == tkRoot.cfg.Profile.plid() and ship['H']['cur'] > 0):
+            if (star and star['owner'] == tkRoot.plid and ship['H']['cur'] > 0):
                 labelString = "'%s'    Hauling: %d/%d" % (ship['name'],
                         ship['Hauled'], ship['H']['cur'] * 10)
                 phaseMenuObject.add_command(label=labelString,
@@ -607,7 +610,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         if player['phase'] == "move":
             phaseMenuObject.add_command(label="Ships you own:")
             for ship in tkRoot.game['objects']['shipList']:
-                if (ship['owner'] == tkRoot.cfg.Profile.plid()):
+                if (ship['owner'] == tkRoot.plid):
                     if (ship['WG']['cur'] == True):
                         labelString = "'%s'    Moves left: %d/%d" % (ship['name'],
                                                                      ship['moves']['cur'],
@@ -675,11 +678,11 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
             print(nonShipList)
             #who am I,and who is my enemy?
             friendlyShips = []
-            if (tkRoot.cfg.Profile.plid() in conflictDict):
-                friendlyShips = conflictDict[tkRoot.cfg.Profile.plid()]
+            if (tkRoot.plid in conflictDict):
+                friendlyShips = conflictDict[tkRoot.plid]
             enemyShips = []
             for key in conflictDict:
-                if key != tkRoot.cfg.Profile.plid():
+                if key != tkRoot.plid:
                     for ship in conflictDict[key]:
                         enemyShips.append(ship)
 
@@ -743,7 +746,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         # get a dialog to allocate the damage results.
         allShipsSafe = True
         for ship in tkRoot.game['objects']['shipList']:
-            if (ship['owner'] == tkRoot.cfg.Profile.plid()):
+            if (ship['owner'] == tkRoot.plid):
                 if (ship['damage'] > 0):
                     allShipsSafe = False
                     labelString = "ship %s has %d damage" % (ship['name'],
@@ -824,12 +827,10 @@ def main():
     tkRoot = Tk()
     tkRoot.title("WarpWar")
     tkRoot.hCon = None
+    tkRoot.plid = None
     tkRoot.hexMap = None
     tkRoot.game = None
     tkRoot.configureDelay = None
-
-    tkRoot.playerStartBases = None
-    tkRoot.playerColor = None
 
     #get the user's profile.
     tkRoot.cfg = ConfigHandler("warpwar.ini")

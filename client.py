@@ -84,7 +84,7 @@ class comThrd(threading.Thread):
             self.callbackWithData(cmd)
         except Exception as error:
             returnMe = error
-            print("Socket error: ", error, "\n")
+            print("client.py Socket error: ", error, "\n")
 
         s.close()
         return returnMe

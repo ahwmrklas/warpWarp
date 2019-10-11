@@ -19,7 +19,8 @@ class connect(Dialog):
     def __init__(self, master, cfg):
         self.cfg = cfg
 
-        self.conn = None
+        self.hCon = None
+        self.plid = None
 
         Dialog.__init__(self, master)
 
@@ -70,9 +71,5 @@ class connect(Dialog):
         # Handle for the connection to the server is in the connection pane
         self.hCon = self.conn.hCon
 
-        # Player Name, Color and Bases is in the player pane
-        self.playerName = self.plyr.playerName.get()
-        self.playerColor = self.plyr.playerColor.get()
-
-        tmp = self.plyr.startBases.get()
-        self.playerStartBases = tmp.split()
+        # PlayerID can be used to look up all player information
+        self.plid = self.plyr.plid
