@@ -17,13 +17,13 @@ class comThrd(threading.Thread):
 
     # PURPOSE: Called for class construction
     # RETURNS: none
-    def __init__(self, ip, port):
+    def __init__(self, ip, port, dbgName):
         self.sendQ = Q.Queue()
         self.rcvQ = Q.Queue()
         self.ip = ip
         self.port = port
         self.callbackWithData = self.defaultCB
-        threading.Thread.__init__(self, name="ClientComThrd")
+        threading.Thread.__init__(self, name=dbgName)
         self.start()
 
     # PURPOSE: Set the callback function which will be called
@@ -43,6 +43,7 @@ class comThrd(threading.Thread):
     #    send a msg via our Q for our thread to handle
     # RETURNS: none
     def quitCmd(self):
+        print("client.py quitCmd ", self.name)
         self.sendQ.put("quit")
 
     # PURPOSE: Default callback. Put data in internal Q
@@ -60,7 +61,7 @@ class comThrd(threading.Thread):
             resp = self.rcvQ.get(True, count)
         except Q.Empty:
             resp = "{}"
-            print("client:Failed waiting for message")
+            print("client.py: Failed waiting for message")
 
         # print("RESP:", len(resp))
         return resp
@@ -72,9 +73,10 @@ class comThrd(threading.Thread):
     def handleSend(self):
         msg = self.sendQ.get()
         returnMe = None
-        # print("client ", self.ip, self.port, msg, "\n")
+        #print("client ", self.name, msg)
         try:
             s = socket.socket()
+            s.settimeout(5)
             s.connect((self.ip, self.port))
             compressed = zlib.compress(msg.encode())
             s.send(compressed)
@@ -84,7 +86,7 @@ class comThrd(threading.Thread):
             self.callbackWithData(cmd)
         except Exception as error:
             returnMe = error
-            print("client.py Socket error: ", error, "\n")
+            print("client.py ", self.name, " Socket error: ", error, "\n")
 
         s.close()
         return returnMe
@@ -92,7 +94,7 @@ class comThrd(threading.Thread):
     # PURPOSE: Do what is needed when server sends us a quit message
     # RETURNS: none
     def handleQuit(self):
-        print("comThrd-quit command")
+        print("comThrd-quit command ", self.name)
 
     # PURPOSE: automatically called by base thread class, right?
     # RETURNS: none
@@ -105,4 +107,4 @@ class comThrd(threading.Thread):
                 self.handleQuit()
                 break
 
-        print("client comThrd exiting")
+        print("client.py comThrd exiting ", self.name)

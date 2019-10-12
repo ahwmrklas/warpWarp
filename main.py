@@ -82,13 +82,15 @@ def tooltip(tkRoot):
 def exitProgram(tkRoot):
     print("quitMain")
 
-    if (tkRoot.hCon is not None):
+    if (tkRoot.hCon):
         sendJson = warpWarCmds().playerLeave(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
         sendJson = warpWarCmds().quitGame(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
         tkRoot.hCon.quitCmd()
-        tkRoot.hCon = None
+
+    if (tkRoot.hPlayerAi):
+        tkRoot.hPlayerAi.quit()
 
     # We should wait for the playerLeave and quit command
     # to finish, right?
@@ -107,6 +109,7 @@ def connectServer(tkRoot):
     if (tmp is not None):
         tkRoot.hCon = tmp.hCon
         tkRoot.plid = tmp.plid
+        tkRoot.hPlayerAi = tmp.hPlayerAi
 
     if (tkRoot.hCon is not None):
         tkRoot.hCon.setCallback(lambda data: newDataForGame(tkRoot, data))
@@ -120,11 +123,11 @@ def newGame(tkRoot):
     print("newGame")
     print("What does newGame event mean? Kill old game and reconnect?")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().newGame(tkRoot.plid, tkRoot.cfg.Profile.playerName,"foo")
+        sendJson = warpWarCmds().newGame(tkRoot.plid, dataModel.playerNameGet(tkRoot.game, tkRoot.plid),"foo")
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
-        #sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        #sendJson = warpWarCmds().newPlayer(tkRoot.plid, dataModel(tkRoot.game, tkRoot.plid) tkRoot.playerStartBases, tkRoot.playerColor)
         #tkRoot.hCon.sendCmd(sendJson)
 
 # PURPOSE:
@@ -142,7 +145,7 @@ def playerJoinMenu(tkRoot):
         sendJson = warpWarCmds().removePlayer(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
 
-        #sendJson = warpWarCmds().newPlayer(tkRoot.plid, tkRoot.cfg.Profile.playerName, tkRoot.playerStartBases, tkRoot.playerColor)
+        #sendJson = warpWarCmds().newPlayer(tkRoot.plid, dataModel.playerNameGet(tkRoot.game, tkRoot.plid), tkRoot.playerStartBases, tkRoot.playerColor)
         #tkRoot.hCon.sendCmd(sendJson)
 
 # PURPOSE:
@@ -337,15 +340,15 @@ def sendReady(event, tkRoot):
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
-# PURPOSE: THis is called in the context of the client socket receiving thread
+# PURPOSE: This is called in the context of the client socket receiving thread
 # We shouldn't alter tkRoot.game here because that is used in the GUI thread.
 # (But at the moment I do)
 # RETURNS:
 def newDataForGame(tkRoot, data):
-    print("newDataForGame")
+    print("main.py: newDataForGame")
     jsonStr = data.decode()
     tkRoot.game = json.loads(jsonStr)
-    print(json.dumps(tkRoot.game))
+    #print(json.dumps(tkRoot.game))
     tkRoot.event_generate("<<updateWWMenu>>", when='tail')
 
 # PURPOSE: handle <<updateWWMenu>>
@@ -672,7 +675,7 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Conflicts:")
         for conflict in conflictList:
             conflictDict, nonShipList = organizeConflict(conflict)
-            print(tkRoot.cfg.Profile.playerName)
+            print(dataModel.playerNameGet(tkRoot.game, tkRoot.plid))
             print(conflictDict)
             print("NONSHIP")
             print(nonShipList)
@@ -828,6 +831,7 @@ def main():
     tkRoot.title("WarpWar")
     tkRoot.hCon = None
     tkRoot.plid = None
+    tkRoot.hPlayerAi = None
     tkRoot.hexMap = None
     tkRoot.game = None
     tkRoot.configureDelay = None
@@ -919,6 +923,15 @@ def main():
 
     # Let tkinter main loop run forever and handle input events
     tkRoot.mainloop()
+
+    # it is better to wait for child threads here (after GUI ends)
+    # rather than in the GUI code. That created deadlocks.
+    if (tkRoot.hCon):
+        tkRoot.hCon.join()
+        tkRoot.hCon = None
+    if (tkRoot.hPlayerAi):
+        tkRoot.hPlayerAi.join()
+        tkRoot.hPlayerAi = None
 
 
 # Start the main function

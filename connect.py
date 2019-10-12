@@ -21,6 +21,7 @@ class connect(Dialog):
 
         self.hCon = None
         self.plid = None
+        self.hPlayerAi = None
 
         Dialog.__init__(self, master)
 
@@ -73,3 +74,5 @@ class connect(Dialog):
 
         # PlayerID can be used to look up all player information
         self.plid = self.plyr.plid
+
+        self.hPlayerAi = self.ai.hPlayerAi

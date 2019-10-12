@@ -52,7 +52,7 @@ class conn(TK.Frame):
         self.cfg.Client.serverPort = self.portEntry.get()
 
         self.hCon = client.comThrd(self.cfg.Client.serverIP,
-                                   int(self.cfg.Client.serverPort))
+                                   int(self.cfg.Client.serverPort), "connection")
 
         if (self.hCon):
             pingCmd = cmds.warpWarCmds().ping('connectDlg')

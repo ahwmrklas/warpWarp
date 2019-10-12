@@ -33,7 +33,7 @@ class playerAiThrd(threading.Thread):
         self.ipAddr = ipAddr
         self.port = port
         self.threadContinue = True
-        self.client = None
+        self.rcvQ = Q.Queue()
         threading.Thread.__init__(self, name="playerAiThrd")
         self.start()
 
@@ -42,19 +42,16 @@ class playerAiThrd(threading.Thread):
     # RETURNS: none
     def quit(self):
         print("playerAi: quiting")
-        self.threadContinue = False
+        self.rcvQ.put("quit")
 
     # PURPOSE: Simple ping to the server to read game state
-    # RETURNS: game object
+    # RETURNS: none
     def ping(self):
         sendJson = warpWarCmds().ping(self.plid)
         self.hCon.sendCmd(sendJson)
-        resp = self.hCon.waitFor(5)
-        game = json.loads(resp)
-        return game
 
     # PURPOSE: 
-    # RETURNS: game object
+    # RETURNS: none
     def newPlayer(self):
         print("playerAi: newPlayer")
         sendJson = warpWarCmds().newPlayer(self.plid,
@@ -62,22 +59,20 @@ class playerAiThrd(threading.Thread):
                                            self.startingBases,
                                            self.color)
         self.hCon.sendCmd(sendJson)
-        resp = self.hCon.waitFor(5)
-        game = json.loads(resp)
-        self.plid = game['playerList'][-1]['plid']
-        print("playerAi:RESP:", len(resp), "plid", self.plid)
-        return game
 
     # PURPOSE: 
-    # RETURNS: game object
+    # RETURNS: none
+    def leave(self):
+        print("playerAi: leaveGame")
+        sendJson = warpWarCmds().playerLeave(self.plid)
+        self.hCon.sendCmd(sendJson)
+
+    # PURPOSE: 
+    # RETURNS: none
     def ready(self):
         print("playerAi: ready")
         sendJson = warpWarCmds().ready(self.plid)
         self.hCon.sendCmd(sendJson)
-        resp = self.hCon.waitFor(5)
-        game = json.loads(resp)
-        print("playerAi:RESP:", len(resp))
-        return game
 
     # PURPOSE: Build a "random ship"
     #          Doesn't need to be in class
@@ -243,8 +238,6 @@ class playerAiThrd(threading.Thread):
                                                    ship,
                                                    base['name'])
                 self.hCon.sendCmd(sendJson)
-                resp = self.hCon.waitFor(5)
-                game = json.loads(resp)
 
     # PURPOSE: 
     # RETURNS: none
@@ -259,14 +252,11 @@ class playerAiThrd(threading.Thread):
 
 
     # PURPOSE: 
-    # RETURNS: game object
+    # RETURNS: none
     def combatOrders(self):
         print("playerAi: combatOrders (nothing right now)")
         #sendJson = warpWarCmds().combatOrders(self.plid, tkRoot.battleOrders)
         #self.hCon.sendCmd(sendJson)
-        #resp = self.hCon.waitFor(5)
-        #game = json.loads(resp)
-        #print("playerAi:RESP:", len(resp))
 
     # PURPOSE: 
     # RETURNS: none
@@ -278,8 +268,15 @@ class playerAiThrd(threading.Thread):
                 self.selectDamageShip(ship)
                 sendJson = warpWarCmds().acceptDamage(self.plid, ship)
                 self.hCon.sendCmd(sendJson)
-                resp = self.hCon.waitFor(5)
-                # I think we can ignore the response
+
+    # PURPOSE: This is called in the context of the client socket
+    #   receiving thread
+    #   Put that data in the PlayerAI Q so the main thread can read it
+    # RETURNS: none
+    def newDataForGame(self, data):
+        #print("playerAI: newDataForGame")
+        jsonStr = data.decode()
+        self.rcvQ.put(jsonStr)
 
     # PURPOSE: automatically called by base thread class, right?
     #   Waits for clients to send us requests.
@@ -289,14 +286,28 @@ class playerAiThrd(threading.Thread):
         gamePhase = None
         playerPhase = None
 
-        self.hCon = comThrd(self.ipAddr, self.port)
+        self.hCon = comThrd(self.ipAddr, self.port, "playerAI")
+        self.hCon.setCallback(lambda data: self.newDataForGame(data))
 
         while (self.threadContinue):
-            # Ping
-            game = self.ping()
-            time.sleep(1)
+
+            # The input Q should just have a bunch
+            # of updates from the server ... the "game"
+            try:
+                resp = self.rcvQ.get(True, 5)
+            except Q.Empty:
+                resp = "{}"
+
+            if (resp == "quit"):
+                self.threadContinue = False
+                continue
+
+            game = json.loads(resp)
 
             if ( not game ):
+                # Ping
+                self.ping()
+                time.sleep(1)
                 continue
 
             playerMe = dataModel.playerTableGet(game, self.plid)
@@ -306,7 +317,10 @@ class playerAiThrd(threading.Thread):
             # If the game state hasn't changed, skip and try again.
             if ( (gamePhase == game['state']['phase']) and
                  (playerPhase == playerMe['phase']) ):
-                 continue
+                # Ping
+                self.ping()
+                time.sleep(1)
+                continue
 
             gamePhase   = game['state']['phase']
             playerPhase = playerMe['phase']
@@ -334,7 +348,18 @@ class playerAiThrd(threading.Thread):
                 if (playerPhase == "damageselection"):
                     self.selectDamageAll(game)
                     self.ready()
+            elif (gamePhase == "quiting"):
+                self.leave()
+                self.quit()
+            else:
+                # Ping
+                self.ping()
+                time.sleep(1)
+
+        # If AI player is quiting AI player should politely leave game
+        self.leave()
 
         self.hCon.quitCmd()
+        self.hCon.join()
 
         print("playerAi:run: exiting")

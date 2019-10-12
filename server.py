@@ -52,8 +52,8 @@ class srvrThrd(threading.Thread):
 
             self.s.send(zlib.compress(sendJson.encode()))
             self.s.close()
-        except:
-            print("server: Socket error. Only GUI closes")
+        except Exception as error:
+            print("server.py Socket error: ", error, "\n")
 
 
     # PURPOSE: automatically called by base thread class, right?
@@ -78,4 +78,6 @@ class srvrThrd(threading.Thread):
            c.send(compressed)
            c.close()
 
-        print("server: socket listen exiting")
+        self.s.shutdown(socket.SHUT_RDWR)
+        self.s.close()
+        print("server.py: thread exiting")

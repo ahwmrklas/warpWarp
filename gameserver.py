@@ -503,7 +503,7 @@ class gameserver:
             self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Ended the game")
 
             # This cmd doesn't save anything. Call save if you want to save
-            self.game['state']['phase'] = None
+            self.game['state']['phase'] = "quiting"
             self.gameContinues = False
 
         elif cmdStr == 'ping':
