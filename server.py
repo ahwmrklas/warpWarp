@@ -26,6 +26,7 @@ class srvrThrd(threading.Thread):
         self.hGUI = hGui
         self.serverContinue = True
         self.gameserver = gameserver.gameserver()
+        self.s = None
 
         try:
             self.s = socket.socket()
@@ -45,13 +46,15 @@ class srvrThrd(threading.Thread):
     def quit(self):
         print("server: Sending quit msg to server")
         try:
-            self.s = socket.socket()
-            self.s.connect( (self.ipAddr, self.port) )
+            tmpS = socket.socket()
+            tmpS.connect( (self.ipAddr, self.port) )
             tmp = warpWarCmds()
             sendJson = tmp.quitGame('STest')
 
-            self.s.send(zlib.compress(sendJson.encode()))
-            self.s.close()
+            tmpS.send(zlib.compress(sendJson.encode()))
+            tmpS.shutdown(socket.SHUT_RDWR)
+            tmpS.close()
+            tmpS = None
         except Exception as error:
             print("server.py Socket error: ", error, "\n")
 
@@ -78,6 +81,9 @@ class srvrThrd(threading.Thread):
            c.send(compressed)
            c.close()
 
-        self.s.shutdown(socket.SHUT_RDWR)
-        self.s.close()
+        if (self.s):
+            self.s.shutdown(socket.SHUT_RDWR)
+            self.s.close()
+            self.s = None
+
         print("server.py: thread exiting")

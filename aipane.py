@@ -18,6 +18,10 @@ class aipane(TK.Frame):
         self.hPlayerAi = None
         self.startstop = None
 
+        #  This list must come from the game we connect to
+        self.startBaseList = ["Ur Mosul Larsu", "Nineveh Babylon Ugarit"]
+        self.startingBases = ['Babylon', 'Nineveh', 'Ugarit']
+
         self.cfg = ConfigHandler.ConfigHandler('warpwar.ini')
         print(self.cfg.PlayerAI.name)
         print(self.cfg.Server.serverIP)
@@ -40,6 +44,12 @@ class aipane(TK.Frame):
         self.aiNameEntry.insert(0, self.cfg.PlayerAI.name)
         self.aiNameEntry.pack()
 
+        # This isn't used yet
+        self.startBases = TK.StringVar()
+        self.startBases.set(self.startBaseList[1])
+        self.playerBases = TK.OptionMenu(self, self.startBases, *self.startBaseList)
+        self.playerBases.pack()
+
         # Create a Start button
         self.startstop = TK.Button(self, text = "Start",
                               command = lambda :self.startAI())
@@ -58,7 +68,8 @@ class aipane(TK.Frame):
 
         self.hPlayerAi = playerAi.playerAiThrd(self.aiNameEntry.get(),
                                                self.serverEntry.get(),
-                                               int(self.portEntry.get())
+                                               int(self.portEntry.get()),
+                                               self.startingBases
                                               )
 
     # PURPOSE: Button handler. The Quit button

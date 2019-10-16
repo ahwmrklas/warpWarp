@@ -54,13 +54,6 @@ class warpWarCmds():
         jsonStr = json.dumps(cmd, ensure_ascii=False)
         return jsonStr
 
-    # PURPOSE: Remove the player from the game (only during create)
-    # RETURNS: string with json
-    def removePlayer(self, plid):
-        cmd  = { 'cmd' : {'cmd': "removeplayer", 'plid':plid} }
-        jsonStr = json.dumps(cmd, ensure_ascii=False)
-        return jsonStr
-
     # PURPOSE: Generic ready command.
     #          Given player is ready for next phase
     # RETURNS: string with json

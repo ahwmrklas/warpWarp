@@ -1,7 +1,6 @@
 # display player information to "join" a game
 #
 import tkinter as TK
-import socket
 
 import ConfigHandler
 import client
@@ -22,10 +21,14 @@ class plyr(TK.Frame):
         print("  ", self.cfg.Profile.playerName)
         print("  ", self.cfg.Profile.color)
         print("  ", self.cfg.Profile.bases)
+        print("This base list not used")
+
+        #  This list must come from the game we connect to
+        self.startBaseList = ["Ur Mosul Larsu", "Nineveh Babylon Ugarit"]
 
         self.initGui()
 
-        self.useConnection(None)
+        self.useConnection(None, None)
 
     # PURPOSE: Do all the fun UI things
     # RETURNS: nothing
@@ -39,10 +42,7 @@ class plyr(TK.Frame):
         self.playerColor.pack()
 
         self.startBases = TK.StringVar()
-        self.startBases.set(self.cfg.Profile.bases) #Someday be a drop downlist
-
-        #  This list must come from the game we connect to
-        self.startBaseList = ["Ur Mosul Larsu", "Nineveh Babylon Ugarit"]
+        self.startBases.set(self.startBaseList[0])
 
         self.playerBases = TK.OptionMenu(self, self.startBases, *self.startBaseList)
         self.playerBases.pack()
@@ -62,12 +62,12 @@ class plyr(TK.Frame):
         self.cfg.Profile.bases = self.startBases.get()
 
         if (self.hCon):
-            sendJson = cmds.warpWarCmds().removePlayer(self.cfg.Profile.plid())
+            sendJson = cmds.warpWarCmds().playerLeave(self.cfg.Profile.plid())
             self.hCon.sendCmd(sendJson)
 
             sendJson = cmds.warpWarCmds().newPlayer(self.cfg.Profile.plid(),
                                                     self.cfg.Profile.playerName,
-                                                    self.cfg.Profile.bases,
+                                                    self.cfg.Profile.bases.split(" "),
                                                     self.cfg.Profile.color)
             self.hCon.sendCmd(sendJson)
 
@@ -100,7 +100,7 @@ class plyr(TK.Frame):
         self.joinUnjoin.config(text="Join", command = lambda :self.join())
 
         if (self.hCon):
-            sendJson = cmds.warpWarCmds().removePlayer(self.cfg.Profile.plid())
+            sendJson = cmds.warpWarCmds().playerLeave(self.cfg.Profile.plid())
             self.hCon.sendCmd(sendJson)
 
         print("plyr: stopped playing")
@@ -108,10 +108,10 @@ class plyr(TK.Frame):
     # PURPOSE: Use the given connection to client to end "join"
     #          update enable/disable nature of widgets
     # RETURNS:
-    def useConnection(self, hCon):
+    def useConnection(self, hCon, tmpGame):
         print("plyr: useConnection   ", hCon)
-        self.hCon = hCon
-        if (self.hCon):
+        if (hCon and tmpGame and tmpGame['state']['phase'] == "creating"):
+            self.hCon = hCon
             self.joinUnjoin.config(state="normal")
             if (self.joinUnjoin.cget("text") == "Join"):
                 self.playerName.config(state="normal")

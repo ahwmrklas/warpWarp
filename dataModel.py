@@ -99,6 +99,36 @@ class Player():
         self.shipList = ships
         self.baseList = bases
 
+# The game phase enum
+class Phase():
+    eNone            = 0
+    eCreating        = 1
+    eBuild           = 2
+    eMove            = 3
+    eCombat          = 4
+    eBattle          = 5
+    eDamageSelection = 6
+    eVictory         = 7
+    eQuitting        = 8
+
+# Commands enum
+class Command():
+    eNone            = 0
+    eQuit            = 1
+    ePing            = 2
+    eNewPlayer       = 3
+    eNewGame         = 4
+    eStart           = 5
+    eBuildShip       = 6
+    eReady           = 7
+    eMoveShip        = 8
+    eLoadShip        = 9
+    eUnLoadShip      = 10
+    eLoadCargo       = 11
+    eCombatOrders    = 12
+    eAcceptRetreat   = 13
+    eListGames       = 14
+    ePlayerLeave     = 15
 
 #
 # (as of 06/11/17 above functions aren't doing anything useful)
@@ -382,7 +412,7 @@ def emptyGame():
 # PURPOSE: create and return the default WarpWar map
 #    This is the game to start playing
 #    FIXME TODO
-#    I don't think this actually insantiates a new object.
+#    I don't think this actually instantiates a new object.
 # RETURNS: new default WarpWar map
 def defaultGame():
     defaultGame = {

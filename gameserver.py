@@ -499,16 +499,15 @@ class gameserver:
         self.cmdStr = cmdStr
 
         if cmdStr == 'quit':
-            print("GServer:", "quitCommandRecieved")
+            # Quit the game and exit the server process
+            # This cmd doesn't save anything. Call save if you want to save
             self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Ended the game")
 
-            # This cmd doesn't save anything. Call save if you want to save
-            self.game['state']['phase'] = "quiting"
+            self.game['state']['phase'] = "quitting"
             self.gameContinues = False
 
         elif cmdStr == 'ping':
-            # simple test to see if server responds. So print and respond
-            # print("GServer:", "ping")
+            # simple test to see if server responds. So do nothing and respond
             pass
 
         elif cmdStr == 'newplayer':
@@ -522,15 +521,18 @@ class gameserver:
             color = cmd['color']
 
             if int(cmd['plid']) == 0:
+                # If they didn't provide a playerid create one
                 plid = max([0] + [player['plid'] for player in self.game['playerList']]) + 1
             else:
                 plid = cmd['plid']
 
-            print("GServer:", "newPlayer", newPlayer)
+            print("GServer:", "newPlayer", newPlayer, plid, startingBases)
 
             player = dataModel.playerTableGet(self.game, plid)
 
             if player is None:
+                # Brand new player. If the game is "accepting players"
+                # Add the new player
                 if ((self.game['state']['phase'] is None) or
                     (self.game['state']['phase'] == "creating")):
                     
@@ -543,14 +545,17 @@ class gameserver:
                     self.log(newPlayer + " is "  + color + " and starts with" + str(startingBases))
                     for base in startingBases:
                         ownIt = dataModel.findBase(self.game, base)
-                        print(newPlayer, "owns", base)
                         if ownIt:
+                            print(newPlayer, "owns", base)
                             ownIt['owner'] = plid
                             #give them everything at that base
-                            baseItems = dataModel.findObjectsAt(self.game, ownIt['location']['x'],
+                            baseItems = dataModel.findObjectsAt(self.game,
+                                                                ownIt['location']['x'],
                                                                 ownIt['location']['y'])
                             for baseItem in baseItems:
                                 baseItem['owner'] = plid
+                        else:
+                            self.log(newPlayer + " Error: Missing base " + base)
                 else:
                     print("GServer:", "may not join on going game!")
                     self.log(newPlayer + " rejected from game in phase " +
@@ -591,9 +596,10 @@ class gameserver:
         elif cmdStr == 'start':
             # Basically just change state so players can begin building
             # and playing
-            self.log("Start command is unused?")
+            self.log("Starting game. Players should build now.")
             assert(self.game['state']['phase'] == "creating")
             self.game['state']['phase'] = "build"
+            changeAllPlayerPhase(self.game, "creating", "build")
 
         elif cmdStr == 'buildship':
             # Now we get to fun stuff
@@ -649,7 +655,7 @@ class gameserver:
                     self.game['objects']['shipList'].append(ship)
                     self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Built the '" + ship['name'] + "' at " + baseName)
                 else:
-                    print ("GServer cheater!:", "base can't afford ship")
+                    print ("GServer cheater!:", "base({}) can't afford ship({})".format(base['BP']['cur'], cost))
 
         elif cmdStr == 'ready':
             # A generic cmd used to end several phases
@@ -660,10 +666,6 @@ class gameserver:
             if (self.game['state']['phase'] == "creating"):
                 # Record ready for given player
                 changePlayerPhase(self.game, plid, "creating", "waiting")
-
-                if areAllPlayersInPhase(self.game, "waiting"):
-                    self.game['state']['phase'] = "build"
-                    changeAllPlayerPhase(self.game, "waiting", "build")
 
             elif (self.game['state']['phase'] == "build"):
                 # Given player can no longer build and must wait
@@ -993,7 +995,7 @@ class gameserver:
             self.log("loadgame isn't implemented")
 
         elif cmdStr == 'playerleave':
-            # Player is quiting
+            # Player is quitting
             # We could check for permission but I don't think so.
             # This is informational
             # Input? Player name? Some unique player key code for security?

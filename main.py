@@ -132,6 +132,12 @@ def newGame(tkRoot):
 
 # PURPOSE:
 # RETURNS:
+def sendStartMenu(tkRoot):
+    print("sendStartMenu")
+    tkRoot.event_generate("<<sendStart>>", when='tail')
+
+# PURPOSE:
+# RETURNS:
 def sendReadyMenu(tkRoot):
     print("sendReadyMenu")
     tkRoot.event_generate("<<sendReady>>", when='tail')
@@ -142,7 +148,7 @@ def playerJoinMenu(tkRoot):
     print("playerJoinMenu")
     print("Should launch dialog to pick")
     if (tkRoot.hCon is not None):
-        sendJson = warpWarCmds().removePlayer(tkRoot.plid)
+        sendJson = warpWarCmds().playerLeave(tkRoot.plid)
         tkRoot.hCon.sendCmd(sendJson)
 
         #sendJson = warpWarCmds().newPlayer(tkRoot.plid, dataModel.playerNameGet(tkRoot.game, tkRoot.plid), tkRoot.playerStartBases, tkRoot.playerColor)
@@ -337,6 +343,15 @@ def sendReady(event, tkRoot):
     print("sendReady:", event)
     if (tkRoot.hCon is not None):
         sendJson = warpWarCmds().ready(tkRoot.plid)
+        print(" main sending: ", sendJson)
+        tkRoot.hCon.sendCmd(sendJson)
+
+# PURPOSE: Handle <<sendStart>> event
+# RETURNS:
+def sendStart(event, tkRoot):
+    print("sendStart:", event)
+    if (tkRoot.hCon is not None):
+        sendJson = warpWarCmds().start(tkRoot.plid)
         print(" main sending: ", sendJson)
         tkRoot.hCon.sendCmd(sendJson)
 
@@ -569,10 +584,10 @@ def phaseMenu(tkRoot, gamePhase, playerPhase):
         phaseMenuObject.add_command(label="Join",
                               command=lambda:playerJoinMenu(tkRoot))
     elif (gamePhase == 'creating'):
-        phaseMenuObject.add_command(label="Join",
+        phaseMenuObject.add_command(label="Start",
+                              command=lambda:sendStartMenu(tkRoot))
+        phaseMenuObject.add_command(label="ReJoin",
                               command=lambda:playerJoinMenu(tkRoot))
-        phaseMenuObject.add_command(label="Ready",
-                              command=lambda:sendReadyMenu(tkRoot))
     elif (gamePhase == 'build'):
         assert(player)
         phaseMenuObject.add_command(label="Bases you own:")
@@ -842,6 +857,7 @@ def main():
     tkRoot.battleOrders = {}
     tkRoot.bind("<<updateWWMenu>>", lambda event :updateWWMenu(event, tkRoot))
     tkRoot.bind("<<sendReady>>", lambda event :sendReady(event, tkRoot))
+    tkRoot.bind("<<sendStart>>", lambda event :sendStart(event, tkRoot))
 
 
     # menu bar

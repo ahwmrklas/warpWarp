@@ -24,11 +24,11 @@ class playerAiThrd(threading.Thread):
 
     # PURPOSE: Called for class construction
     # RETURNS: none
-    def __init__(self, name, ipAddr, port):
+    def __init__(self, name, ipAddr, port, startingBases):
         self.playerName = name
         self.plid = 123
         self.nameCnt = 0
-        self.startingBases = ['Babylon', 'Nineveh', 'Ugarit']
+        self.startingBases = startingBases
         self.color = 'Green'
         self.ipAddr = ipAddr
         self.port = port
@@ -330,8 +330,6 @@ class playerAiThrd(threading.Thread):
             if (gamePhase == "creating"):
                 if ( (playerPhase is None) or (playerPhase == "nil")):
                     self.newPlayer()
-                elif (playerPhase == "creating"):
-                    self.ready()
             elif (gamePhase == "build"):
                 if (playerPhase == "build"):
                     self.buildThings(game)
