@@ -173,7 +173,7 @@ def findBase(game, baseName):
             return base
     # FIXME ... should we really look in thinglist?
     # I imagined "things" couldn't be used to build ships ...
-    # BUt they might have build points on them.
+    # But they might have build points on them.
     for thing in game['objects']['thingList']:
         if thing['name'] == baseName:
             return thing
@@ -242,7 +242,7 @@ def playerNameGet(game, plid):
 # PURPOSE: Get list of all things  *of type objType* owned by player
 # RETURNS: list of things of given objType
 def getOwnedListOfType(game, plid, objType):
-    assert(game and plid and objType)
+    assert(game and objType)
 
     objects = game['objects']
     assert(objects)
@@ -257,7 +257,7 @@ def getOwnedListOfType(game, plid, objType):
 # PURPOSE: Get list of all things owned by player
 # RETURNS: list of things (ships, bases, stars, relics)
 def getOwnedList(game, plid):
-    assert(game and plid)
+    assert(game)
 
     objects = game['objects']
     assert(objects)

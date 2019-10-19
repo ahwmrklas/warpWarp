@@ -73,6 +73,11 @@ class build(Dialog):
         self.shipNameEntry = Entry(spinFrame)
         self.shipNameEntry.grid(row=1, column=1)
 
+        tmpLbl = Label(spinFrame, text="WARP GENERATOR")
+        tmpLbl.grid(row=14, column=0)
+        self.warpSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
+        self.warpSpn._grid(row=14, column=1)
+
         tmpLbl = Label(spinFrame, text="POWER DRIVE")
         tmpLbl.grid(row=2, column=0)
         self.pwrSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
@@ -144,11 +149,6 @@ class build(Dialog):
         self.rpSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
         self.rpSpn._grid(row=13, column=1)
         #self.spinList.append(self.rpSpn) we treat this one special
-
-        tmpLbl = Label(spinFrame, text="WARP GENERATOR")
-        tmpLbl.grid(row=14, column=0)
-        self.warpSpn = self._Spinbox(spinFrame, self.remaining, self.updateSpinners)
-        self.warpSpn._grid(row=14, column=1)
 
         spinFrame.grid()
 

@@ -615,8 +615,8 @@ class gameserver:
             assert(self.game['state']['phase'] == "build")
 
             #lets do this the lazy way first. just append the ship to the list!
-            print("GServer:", "ship to append:")
-            print(ship)
+            print("GServer:", "ship to append: The ", ship['name'])
+            #print(ship)
             #How much will this ship cost?
             cost = 0
             cost += ship['PD']['max']
@@ -648,9 +648,9 @@ class gameserver:
                 #does the base have enough to pay for the ship?
                 if base['BP']['cur'] >= cost:
                     #subtract the cost...
-                    print (base)
+                    #print (base)
                     base['BP']['cur'] -= cost
-                    print (base)
+                    #print (base)
                     #and build the ship!
                     self.game['objects']['shipList'].append(ship)
                     self.log(dataModel.playerNameGet(self.game, cmd['plid']) + " Built the '" + ship['name'] + "' at " + baseName)

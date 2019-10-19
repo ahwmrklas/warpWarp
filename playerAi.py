@@ -15,6 +15,7 @@ import gameserver
 import json
 import time
 import dataModel
+import ijk
 import math
 from cmds import warpWarCmds
 from client import comThrd
@@ -125,6 +126,7 @@ class playerAiThrd(threading.Thread):
         curLoc = ship['location']
         # How far can I go
         curRange = ship['moves']['cur']
+        print(ship['name'], "at", curLoc, "range", curRange)
         # Where *should* I go?
         #   Pick up BP
         #   Drop off BP
@@ -135,7 +137,25 @@ class playerAiThrd(threading.Thread):
         # I'd like to create a random objective and store it with
         # The ship. For now just conquer and attack.
 
+        # Find the plid of the other player.
+        # If there are more than one other player
+        # only gets the first one
+        otherPlid = None
+        for player in game['playerList'] :
+            if (player['plid'] != self.plid):
+                otherPlid = player['plid']
+
+        print("otherPlid", otherPlid)
         # Find the nearest thing that I don't own.
+        unOwnedList = dataModel.getOwnedList(game, None)
+        otherPlayerList = dataModel.getOwnedList(game, otherPlid)
+
+        for obj in unOwnedList:
+            # Find the closest thing.
+            si,sj,sk = ijk.XYtoIJK(curLoc['x'], curLoc['y'])
+            fi,fj,fk = ijk.XYtoIJK(obj['location']['x'], obj['location']['y'])
+            delta = int((abs(si-fi) + abs(sj-fj) + abs(sk-fk)) / 2)
+            print("to obj", obj['name'], " delta ", delta)
 
     # PURPOSE: 
     # RETURNS: none
